@@ -38885,8 +38885,8 @@
     {
       "id": "qZFXxxJQdZWz4zGKjujPD",
       "type": "ellipse",
-      "x": 682.109074771447,
-      "y": -388.5807358928883,
+      "x": -684.0424355213183,
+      "y": -288.7780507098241,
       "width": 367.7325025520636,
       "height": 261.8255418170692,
       "angle": 0,
@@ -38904,24 +38904,24 @@
         "type": 2
       },
       "seed": 50901530,
-      "version": 72,
-      "versionNonce": 1626418569,
-      "isDeleted": false,
+      "version": 109,
+      "versionNonce": 279070804,
+      "isDeleted": true,
       "boundElements": [
         {
           "type": "text",
           "id": "DOAY1TfLDtu7gsCdXN4I2"
         }
       ],
-      "updated": 1772414417920,
+      "updated": 1772415249917,
       "link": null,
       "locked": false
     },
     {
       "id": "DOAY1TfLDtu7gsCdXN4I2",
       "type": "text",
-      "x": 755.4923280120893,
-      "y": -282.7372730376995,
+      "x": -610.6591822806762,
+      "y": -182.93458785463528,
       "width": 220.93984985351562,
       "height": 50,
       "angle": 0,
@@ -38937,11 +38937,11 @@
       "index": "b5V",
       "roundness": null,
       "seed": 1605027782,
-      "version": 75,
-      "versionNonce": 929338473,
-      "isDeleted": false,
+      "version": 113,
+      "versionNonce": 2009339628,
+      "isDeleted": true,
       "boundElements": [],
-      "updated": 1772414417920,
+      "updated": 1772415249917,
       "link": null,
       "locked": false,
       "text": "Isso aqui é tal coisa e\ntals",
