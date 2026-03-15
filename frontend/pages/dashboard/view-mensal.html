@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Resumo Mensal</title>
+
+<link href="https://fonts.googleapis.com/css?family=Roboto:400,700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../static/styles/style.css">
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+
+.dashboard-container{
+    background:#fff;
+    width:360px;
+    padding:2rem;
+    border-radius:16px;
+    box-shadow:0 8px 32px rgba(44,62,80,0.2);
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+}
+
+.month-header{
+    width:100%;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    font-weight:700;
+    color:#2c3e50;
+    margin-bottom:1rem;
+}
+
+.month-header span{
+    cursor:pointer;
+}
+
+.chart-container{
+    width:220px;
+    margin:1rem 0;
+}
+
+.stats{
+    width:100%;
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:1rem;
+    margin-top:1rem;
+}
+
+.card{
+    background:#f7f9fc;
+    border-radius:10px;
+    padding:0.8rem;
+    text-align:center;
+    border:1px solid #ACB6E5;
+}
+
+.card-title{
+    font-size:0.8rem;
+    color:#2c3e50;
+}
+
+.card-value{
+    font-size:1.1rem;
+    font-weight:700;
+    margin-top:0.3rem;
+}
+
+.bottom-nav{
+    margin-top:1.5rem;
+    width:100%;
+    display:flex;
+    justify-content:space-around;
+    border-top:1px solid #ddd;
+    padding-top:1rem;
+}
+
+.nav-btn{
+    font-size:1.3rem;
+    cursor:pointer;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="dashboard-container">
+
+<div class="month-header">
+<span>←</span>
+<h3>FEVEREIRO</h3>
+<span>→</span>
+</div>
+
+<div class="chart-container">
+<canvas id="gastosChart"></canvas>
+</div>
+
+<div class="stats">
+
+<div class="card">
+<div class="card-title">Economizou</div>
+<div class="card-value">R$700,00</div>
+</div>
+
+<div class="card">
+<div class="card-title">Gasto total</div>
+<div class="card-value">R$5000,00</div>
+</div>
+
+<div class="card">
+<div class="card-title">Maior despesa</div>
+<div class="card-value">Alimentação</div>
+</div>
+
+<div class="card">
+<div class="card-title">Valor</div>
+<div class="card-value">R$1000,00</div>
+</div>
+
+</div>
+
+<div class="bottom-nav">
+<div class="nav-btn">☰</div>
+<div class="nav-btn">＋</div>
+<div class="nav-btn">👤</div>
+</div>
+
+</div>
+
+<script>
+
+const ctx = document.getElementById('gastosChart');
+
+new Chart(ctx,{
+type:'pie',
+data:{
+labels:['Streaming','Lazer','Transporte'],
+datasets:[{
+data:[3000,1500,500],
+backgroundColor:[
+'#7a4b5d',
+'#ACB6E5',
+'#74ebd5'
+]
+}]
+},
+options:{
+plugins:{
+legend:{
+position:'bottom'
+}
+}
+}
+});
+
+</script>
+
+</body>
+</html>
