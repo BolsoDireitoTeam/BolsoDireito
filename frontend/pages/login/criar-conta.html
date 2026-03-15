@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link href="https://fonts.googleapis.com/css?family=Roboto:400,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../static/styles/style.css"> <!--os .. saem de login e de pages-->
+    
+</head>
+<body>
+    <div class="login-container">
+        <h2>Registre-se</h2>
+        <form method="post" action="/login">
+            <input type="text" name="usuario" placeholder="Usuário" required>
+            <input type="text" name="email" placeholder="E-mail" required>
+            <input type="password" name="senha" placeholder="Senha" required>
+            <input type="password" name="senha" placeholder="Confirme a senha" required>
+            <button type="submit">Criar Conta!</button>
+        </form>
+        <div class="signup-link">
+            Já tem uma conta? <a href="./login.html">Faça o login</a>
+        </div>
+    </div>
+</body>
+</html>
