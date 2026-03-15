@@ -6,38 +6,48 @@ O projeto nasceu da necessidade de ter uma **ferramenta simples e objetiva para 
 ## Excalidraw
 https://link.excalidraw.com/l/AaVqH1mqaR6/245qM1E3E5x
 
-
 ```
 BolsoDireito/
-├── frontend/    (Seu app em React + Bootstrap/Tailwind)
-    ├── public/                 # Imagens estáticas, ícones (favicon), index.html base
+├── frontend/
+    ├── static/             # Imagens, logos do projeto
+    │   ├── common/             
+    │   └── styles/         # Seus arquivos CSS globais (se não usar apenas Bootstrap)
+    │       └── style.css
+    ├── components/         # Pedaços de UI reutilizáveis
+    │   ├── common/         # Botões genéricos, inputs, modais
+    │   └── layout/         # O seu footer.html, navbar, etc.
+    ├── pages/              # As telas completas
+    │   ├── login/          # login, criar-conta html's
+    │   │   ├── criar-conta.html
+    │   │   └── login.html
+    │   ├── dashboard/      # view-mensal, overview html's
+    │   │   ├── view-anual.html
+    │   │   ├── view-mensal.html
+    │   │   └── overview.html
+    │   ├── profile/        # profile-config e aporte html's
+    │   │   ├── profile-config.html
+    │   │   └── aporte-config.html
+    │   └── upload/         # categoria, gasto e csv's html's
+    │       ├── extrato-upload.html
+    │       ├── fatura-upload.html
+    │       ├── gasto-upload.html
+    │       └── categoria-upload.html          
+    ├── services/           
+    │   └── api.js          # Funções que dão "fetch" pro Back-end
+    ├── utils/              # Funções auxiliares (ex:formatarMoeda)
+    ├── App.jsx             # Componente raiz que gerencia as rotas
+    ├── main.jsx            # Ponto de entrada do React
+    └── package.json            # Dependências do projeto Front-end
+
+└── backend/     # Node.js
     ├── src/
-    │   ├── static/             # SVGs, imagens, logos do projeto
-    │   ├── components/         # Pedaços de UI reutilizáveis
-    │   │   ├── common/         # Botões genéricos, inputs, modais
-    │   │   └── layout/         # O seu footer.html, navbar, etc.
-    │   ├── pages/              # As telas completas do seu diagrama
-    │   │   ├── Login/          # Representa o login.html
-    │   │   ├── Dashboard/      # Representa view-mensal.html / overview
-    │   │   ├── Profile/        # Representa editar-info-pessoal e financeiro
-    │   │   └── Expenses/       # Telas de adicionar categorias e gastos
-    │   ├── services/           # Funções que fazem o "fetch" (chamadas) para o seu Back-end
-    │   │   └── api.js          # Configuração de conexão com o Node.js
-    │   ├── styles/             # Seus arquivos CSS globais (se não usar apenas Bootstrap)
-    │   ├── utils/              # Funções auxiliares (ex: formatarMoeda, formatarData)
-    │   ├── App.jsx             # Componente raiz que gerencia as rotas
-    │   └── main.jsx            # Ponto de entrada do React
-    ├── package.json            # Dependências do projeto Front-end
-    └── vite.config.js          # Configuração do build (recomendo usar Vite para criar o projeto React)
-└── backend/     (Sua API em Node.js)
-    ├── src/
-    │   ├── config/             # Configuração do Banco de Dados (ex: conexão com MongoDB ou PostgreSQL)
+    │   ├── config/             # Configuração do Banco de Dados (ex: conexão com PostgreSQL ou usar JSON)
     │   ├── controllers/        # A lógica de negócio (ex: o cálculo de GANHO_FINAL_MES)
     │   │   ├── GastoController.js
     │   │   ├── FaturaController.js
     │   │   └── UsuarioController.js
     │   ├── models/             # Representação do seu Diagrama de Classes
-    │   │   ├── Gasto.js        # Esquema de dados do Gasto (id, valor, data, categoria)
+    │   │   ├── Gasto.js        # id, valor, data, categoria, estabelecimento
     │   │   ├── Fatura.js       
     │   │   └── Usuario.js      
     │   ├── routes/             # Endpoints da sua API (ex: POST /gastos, GET /fatura)
