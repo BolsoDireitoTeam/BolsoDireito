@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visão Anual</title>
+
+    <link href="https://fonts.googleapis.com/css?family=Roboto:400,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../static/styles/style.css">
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+        <style>
+        body {
+            margin: 0;
+            font-family: 'Roboto', sans-serif;
+            background: #0b0b0f;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .annual-container {
+            width: 360px;
+            min-height: 760px;
+            background: #0b0b0f;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            border-radius: 20px;
+            overflow: hidden;
+        }
+
+        .content {
+            width: 100%;
+            padding: 1.5rem 1.2rem 1rem 1.2rem;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 1.2rem;
+        }
+
+        .chart-box {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .bar-chart-container {
+            width: 100%;
+            max-width: 310px;
+            height: 240px;
+        }
+
+        .pie-chart-container {
+            width: 100%;
+            max-width: 290px;
+            height: 290px;
+        }
+
+        .bottom-nav {
+            width: 100%;
+            border-top: 2px solid #d9d9d9;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding: 0.9rem 0 1rem 0;
+            box-sizing: border-box;
+        }
+
+        .nav-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-decoration: none;
+            font-size: 1.4rem;
+            width: 50px;
+            height: 50px;
+        }
+
+        .nav-btn.center {
+            border: 2px solid #d9d9d9;
+            border-radius: 50%;
+            font-size: 2rem;
+            width: 56px;
+            height: 56px;
+        }
+
+        .nav-btn.user {
+            flex-direction: column;
+            font-size: 0.8rem;
+            gap: 0.2rem;
+        }
+
+        .nav-btn.user span:first-child {
+            font-size: 1.6rem;
+            line-height: 1;
+        }
+    </style>
+    </head>
+<body>
+
+    <div class="annual-container">
+        <div class="content">
+            <h1 class="title">overview</h1>
+
+            <div class="chart-box">
+                <div class="bar-chart-container">
+                    <canvas id="barChart"></canvas>
+                </div>
+            </div>
+
+            <div class="chart-box">
+                <div class="pie-chart-container">
+                    <canvas id="pieChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="bottom-nav">
+            <a href="#" class="nav-btn">📋</a>
+            <a href="#" class="nav-btn center">＋</a>
+            <a href="#" class="nav-btn user">
+                <span>👤</span>
+                <span>User</span>
+            </a>
+        </div>
+    </div>
+
+    <script>
+        const meses = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul'];
+        const gastos = [4200, 3100, 3000, 1800, 3600, 3200, 1900];
+
+        const barCtx = document.getElementById('barChart');
+        new Chart(barCtx, {
+            type: 'bar',
+            data: {
+                labels: meses,
+                datasets: [{
+                    label: 'Gastos por mês',
+                    data: gastos,
+                    borderColor: '#ff8cc8',
+                    backgroundColor: 'rgba(0,0,0,0)',
+                    borderWidth: 2,
+                    borderRadius: 6,
+                    barThickness: 18
+                }]
+            },
+            options: {
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    x: {
+                        ticks: {
+                            color: '#d9d9d9',
+                            font: {
+                                size: 14
+                            }
+                        },
+                        grid: {
+                            display: false
+                        },
+                        border: {
+                            color: '#d9d9d9'
+                        }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            display: false
+                        },
+                        grid: {
+                            display: false
+                        },
+                        border: {
+                            color: '#d9d9d9'
+                        }
+                    }
+                }
+            }
+        });
+
+
+const pieCtx = document.getElementById('pieChart');
+new Chart(pieCtx, {
+    type: 'pie',
+    data: {
+        labels: meses,
+        datasets: [{
+            data: gastos,
+            backgroundColor: [
+                '#6e314f',
+                '#7a3958',
+                '#874266',
+                '#944b73',
+                '#a15481',
+                '#ae5d8f',
+                '#bb669d'
+            ],
+            borderColor: '#ff8cc8',
+            borderWidth: 2
+        }]
+    },
+    options: {
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                display: false
+            },
+            tooltip: {
+                enabled: true,
+                callbacks: {
+                    label: function(context) {
+                        return context.label + ': R$ ' + context.raw.toLocaleString('pt-BR');
+                    }
+                }
+            }
+        }
+    }
+});
+
+    </script>
+</body>
+</html>
