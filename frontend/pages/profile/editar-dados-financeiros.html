@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar Dados Financeiros</title>
+    <link href="https://fonts.googleapis.com/css?family=Roboto:400,700&display=swap" rel="stylesheet">
+
+    <style>
+        *{
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
+        }
+
+        body{
+            font-family:'Roboto', sans-serif;
+            min-height:100vh;
+            display:flex;
+            justify-content:center;
+            align-items:center;
+            background:linear-gradient(135deg, #6ad8c9, #aab3e8);
+        }
+
+        .page-container{
+            width:360px;
+            min-height:760px;
+            background:#0b0b0f;
+            color:white;
+            border-radius:24px;
+            box-shadow:0 10px 35px rgba(0,0,0,0.25);
+            display:flex;
+            flex-direction:column;
+            justify-content:space-between;
+            overflow:hidden;
+            border:2px solid #d8d8d8;
+        }
+
+        .content{
+            padding:1.5rem 1rem 1rem;
+        }
+
+        .title{
+            text-align:center;
+            font-size:1.9rem;
+            margin-bottom:1.5rem;
+            color:#f2f2f2;
+        }
+
+        .section-title{
+            font-size:2rem;
+            margin:1rem 0 0.8rem;
+            color:#d8d8d8;
+        }
+
+        .field-label{
+            font-size:1rem;
+            color:#dcdcdc;
+            margin-bottom:0.35rem;
+        }
+
+        .input-box{
+            width:100%;
+            background:#8b4a66;
+            border:2px solid #ff73b5;
+            border-radius:8px;
+            padding:0.65rem 0.9rem;
+            color:#ffd3e9;
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            font-size:1rem;
+            margin-bottom:0.8rem;
+        }
+
+        .input-box span:last-child{
+            color:#f3f3f3;
+            font-size:1rem;
+        }
+
+        .add-row{
+            display:flex;
+            justify-content:flex-end;
+            align-items:center;
+            gap:0.6rem;
+            color:#d8d8d8;
+            font-size:1rem;
+            margin:0.3rem 0 1rem;
+        }
+
+        .add-btn{
+            width:28px;
+            height:28px;
+            border-radius:50%;
+            background:#c35e8d;
+            border:2px solid #ff9fc9;
+            color:white;
+            display:flex;
+            justify-content:center;
+            align-items:center;
+            font-size:1.2rem;
+            font-weight:bold;
+        }
+
+        .bottom-nav{
+            width:100%;
+            border-top:2px solid #d8d8d8;
+            padding:1rem 0;
+            display:flex;
+            justify-content:space-around;
+            align-items:center;
+            background:#0b0b0f;
+        }
+
+        .nav-btn{
+            text-decoration:none;
+            color:#f0f0f0;
+            font-size:1.5rem;
+            width:52px;
+            height:52px;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+        }
+
+        .nav-btn.center{
+            border:2px solid #d8d8d8;
+            border-radius:50%;
+            font-size:2rem;
+        }
+
+        .nav-btn.user{
+            flex-direction:column;
+            font-size:0.8rem;
+            gap:0.15rem;
+        }
+
+        .nav-btn.user span:first-child{
+            font-size:1.4rem;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="page-container">
+        <div class="content">
+            <h1 class="title">Editar Dados Financeiros</h1>
+
+            <h2 class="section-title">ganhos fixos</h2>
+
+            <div class="field-label">salário</div>
+            <div class="input-box">
+                <span>R$1000,00</span>
+                <span>✏️</span>
+            </div>
+
+            <div class="field-label">bolos</div>
+            <div class="input-box">
+                <span>R$300,00</span>
+                <span>✏️</span>
+            </div>
+
+            <div class="field-label">bolos</div>
+            <div class="input-box">
+                <span>R$300,00</span>
+                <span>✏️</span>
+            </div>
+
+            <div class="add-row">
+                <span>adicionar ganho</span>
+                <div class="add-btn">+</div>
+            </div>
+
+            <h2 class="section-title">gastos fixos</h2>
+
+            <div class="field-label">condomínio</div>
+            <div class="input-box">
+                <span>R$1600,00</span>
+                <span>✏️</span>
+            </div>
+
+            <div class="field-label">seguro</div>
+            <div class="input-box">
+                <span>R$1600,00</span>
+                <span>✏️</span>
+            </div>
+
+            <div class="add-row">
+                <span>adicionar gasto</span>
+                <div class="add-btn">+</div>
+            </div>
+        </div>
+
+        <div class="bottom-nav">
+            <a href="./resumo-mensal.html" class="nav-btn">📋</a>
+            <a href="./adicionar-gasto.html" class="nav-btn center">＋</a>
+            <a href="./perfil.html" class="nav-btn user">
+                <span>👤</span>
+                <span>User</span>
+            </a>
+        </div>
+    </div>
+
+</body>
+</html>
