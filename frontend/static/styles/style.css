@@ -1,233 +1,304 @@
-/* --- Variáveis Globais de Cor e Estilo --- */
+/* ==========================================================
+   BOLSO DIREITO — CSS Complementar (Bootstrap 5 required)
+   Apenas o que o Bootstrap não cobre nativamente.
+   ========================================================== */
+
+/* --- Tokens de Marca --- */
 :root {
-    --primary-color: #74ebd5;
-    --secondary-color: #ACB6E5;
-    --text-dark: #2c3e50;
-    --text-muted: #7f8c8d;
-    --bg-light: #f4f7f6;
-    --white: #ffffff;
-    --shadow-sm: 0 4px 6px rgba(0, 0, 0, 0.05);
-    --shadow-md: 0 10px 30px rgba(44, 62, 80, 0.1);
-    --border-radius: 12px;
+    --bd-primary:    #74ebd5;
+    --bd-secondary:  #ACB6E5;
+    --bd-dark:       #2c3e50;
+    --bd-muted:      #7f8c8d;
+    --bd-light:      #f4f7f6;
+    --bd-white:      #ffffff;
+    --bd-radius:     12px;
+    --bd-radius-xl:  20px;
+    --bd-shadow-sm:  0 4px 6px rgba(0,0,0,.05);
+    --bd-shadow-md:  0 10px 30px rgba(44,62,80,.1);
+    --bd-gradient:   linear-gradient(135deg, var(--bd-primary) 0%, var(--bd-secondary) 100%);
 }
 
-/* --- Reset Básico --- */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
+/* --- Reset mínimo que Bootstrap não faz --- */
+*, *::before, *::after { box-sizing: border-box; }
 
 body {
-    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
     font-family: 'Roboto', sans-serif;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh; /* Garante que ocupe a tela toda no mobile */
-    color: var(--text-dark);
+    color: var(--bd-dark);
+    background: var(--bd-light);
+    -webkit-tap-highlight-color: transparent; /* Remove destaque azul no mobile */
 }
 
-/* --- Container Principal (O "Card" branco) --- */
-.login-container {
-    background: var(--white);
+/* =====================================================
+   TELAS DE LOGIN / CADASTRO
+   ===================================================== */
+
+body.login-body {
+    background: var(--bd-gradient);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.login-card {
+    background: var(--bd-white);
     width: 90%;
-    max-width: 400px; /* Limita o tamanho em telas grandes */
+    max-width: 400px;
     padding: 2.5rem 2rem;
-    border-radius: 20px;
-    box-shadow: var(--shadow-md);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    border-radius: var(--bd-radius-xl);
+    box-shadow: var(--bd-shadow-md);
 }
 
-/* --- Logo e Título --- */
-.logo {
-    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
-    padding: 10px;
-    border-radius: 14px;
-    margin-bottom: 1rem;
+.bd-logo {
+    background: var(--bd-gradient);
+    width: 64px;
+    height: 64px;
+    border-radius: 16px;
     display: flex;
+    align-items: center;
     justify-content: center;
-    align-items: center;
+    margin: 0 auto 1rem;
 }
 
-.logo svg {
-    stroke: var(--white);
-}
+.bd-logo svg { stroke: var(--bd-white); }
 
-.login-container h2 {
-    margin-bottom: 2rem;
-    color: var(--text-dark);
+.login-card h1 {
+    font-size: 1.5rem;
     font-weight: 700;
     letter-spacing: 1px;
-    font-size: 1.5rem;
+    color: var(--bd-dark);
+    text-align: center;
+    margin-bottom: 2rem;
 }
 
-/* --- Formulário e Inputs --- */
-form {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-}
-
-.input-group {
-    display: flex;
-    flex-direction: column;
-    margin-bottom: 1.2rem;
-}
-
-.input-group label {
-    font-size: 0.85rem;
-    font-weight: 500;
-    color: var(--text-muted);
-    margin-bottom: 0.4rem;
-    margin-left: 4px;
-}
-
-input[type="text"],
-input[type="password"] {
-    padding: 0.85rem 1rem;
-    background-color: var(--bg-light);
-    border: 1px solid transparent;
-    border-radius: var(--border-radius);
+/* Inputs customizados */
+.bd-input {
+    background-color: var(--bd-light) !important;
+    border: 1px solid transparent !important;
+    border-radius: var(--bd-radius) !important;
+    padding: .85rem 1rem !important;
     font-size: 1rem;
-    color: var(--text-dark);
-    transition: all 0.3s ease;
+    color: var(--bd-dark) !important;
+    transition: all .3s ease;
+    width: 100%;
 }
 
-input[type="text"]:focus,
-input[type="password"]:focus {
-    border-color: var(--primary-color);
-    background-color: var(--white);
-    outline: none;
-    box-shadow: 0 0 0 3px rgba(116, 235, 213, 0.2);
+.bd-input:focus {
+    border-color: var(--bd-primary) !important;
+    background-color: var(--bd-white) !important;
+    outline: none !important;
+    box-shadow: 0 0 0 3px rgba(116,235,213,.2) !important;
 }
 
-/* --- Botão Principal --- */
-.btn-primary {
-    padding: 0.9rem;
-    margin-top: 1rem;
-    background: var(--text-dark);
+.bd-label {
+    font-size: .85rem;
+    font-weight: 500;
+    color: var(--bd-muted);
+    margin-bottom: .4rem;
+    display: block;
+}
+
+/* Botão primário de marca */
+.bd-btn-primary {
+    width: 100%;
+    padding: .9rem;
+    background: var(--bd-dark);
     border: none;
-    border-radius: var(--border-radius);
-    color: var(--white);
+    border-radius: var(--bd-radius);
+    color: var(--bd-white);
     font-size: 1.05rem;
     font-weight: 700;
     cursor: pointer;
-    transition: background 0.3s ease, transform 0.1s ease;
+    transition: background .3s ease, transform .1s ease;
+    font-family: 'Roboto', sans-serif;
 }
 
-.btn-primary:hover {
-    background: #1a252f;
-}
+.bd-btn-primary:hover  { background: #1a252f; }
+.bd-btn-primary:active { transform: scale(.98); }
 
-.btn-primary:active {
-    transform: scale(0.98);
-}
-
-/* --- Links de Rodapé --- */
 .signup-link {
+    text-align: center;
+    font-size: .9rem;
+    color: var(--bd-muted);
     margin-top: 1.5rem;
-    font-size: 0.9rem;
-    color: var(--text-muted);
 }
 
 .signup-link a {
-    color: var(--text-dark);
+    color: var(--bd-dark);
     text-decoration: none;
     font-weight: 700;
-    margin-left: 4px;
-    border-bottom: 2px solid var(--primary-color);
+    border-bottom: 2px solid var(--bd-primary);
     padding-bottom: 2px;
-    transition: color 0.2s ease;
+    transition: color .2s ease;
 }
 
-.signup-link a:hover {
-    color: var(--primary-color);
+.signup-link a:hover { color: var(--bd-primary); }
+
+/* =====================================================
+   SHELL DO APP (TELAS INTERNAS)
+   ===================================================== */
+
+body.app-body {
+    background: var(--bd-light);
+    min-height: 100vh;
 }
 
-/* =========================================
-   ESTILOS DO DASHBOARD / ÁREA INTERNA
-========================================= */
-
-.dashboard-body {
-    align-items: flex-start; /* Diferente do login, o painel começa do topo */
-    background: var(--bg-light); /* Fundo cinza bem claro para os cards brilharem */
-}
-
-.app-container {
+.app-shell {
     width: 100%;
-    max-width: 480px; /* Limite amigável para telas de celular/tablets */
+    max-width: 480px;
     margin: 0 auto;
-    padding: 2rem 1.5rem 6rem 1.5rem; /* Padding inferior grande para a navbar não cobrir conteúdo */
+    padding: 1.5rem 1.25rem 6rem; /* bottom padding: espaço para navbar */
     display: flex;
     flex-direction: column;
-    gap: 1.5rem;
+    gap: 1.25rem;
 }
 
-/* --- Cabeçalho do App --- */
-.dash-header {
+/* --- Cabeçalho padrão do app --- */
+.app-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    padding-top: .5rem;
 }
 
-.dash-header .greeting {
-    color: var(--text-muted);
-    font-size: 0.9rem;
+.app-header .greeting {
+    font-size: .9rem;
     font-weight: 500;
+    color: var(--bd-muted);
+    margin: 0;
 }
 
-.dash-header h2 {
+.app-header h2 {
     font-size: 1.6rem;
-    color: var(--text-dark);
     font-weight: 700;
+    color: var(--bd-dark);
+    margin: 0;
 }
 
-/* --- Card de Saldo Principal --- */
+/* --- Cabeçalho com botão voltar --- */
+.app-header-back {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.app-header-back h2 {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--bd-dark);
+    margin: 0;
+}
+
+.back-btn {
+    background: none;
+    border: none;
+    color: var(--bd-dark);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    padding: .25rem;
+    border-radius: 50%;
+    transition: background .2s;
+}
+
+.back-btn:hover { background: rgba(0,0,0,.05); }
+
+/* =====================================================
+   CARD DE SALDO
+   ===================================================== */
+
 .balance-card {
-    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+    background: var(--bd-gradient);
     padding: 1.8rem 1.5rem;
-    border-radius: 20px;
-    color: var(--white);
-    box-shadow: 0 10px 25px rgba(116, 235, 213, 0.3);
+    border-radius: var(--bd-radius-xl);
+    color: var(--bd-white);
+    box-shadow: 0 10px 25px rgba(116,235,213,.3);
 }
 
 .balance-card p {
-    font-size: 0.95rem;
-    opacity: 0.9;
-    margin-bottom: 0.3rem;
+    font-size: .95rem;
+    opacity: .9;
+    margin-bottom: .3rem;
     font-weight: 500;
 }
 
 .balance-card h3 {
     font-size: 2.2rem;
     font-weight: 700;
-    letter-spacing: -0.5px;
+    letter-spacing: -.5px;
+    margin: 0;
 }
 
-/* --- Seções de Gráficos --- */
-.dashboard-section {
-    background: var(--white);
+/* =====================================================
+   CARDS GENÉRICOS (SEÇÕES DO DASHBOARD)
+   ===================================================== */
+
+.bd-card {
+    background: var(--bd-white);
     padding: 1.5rem;
-    border-radius: var(--border-radius);
-    box-shadow: var(--shadow-sm);
+    border-radius: var(--bd-radius);
+    box-shadow: var(--bd-shadow-sm);
 }
 
-.dashboard-section h4 {
-    color: var(--text-dark);
-    font-size: 1.1rem;
+.bd-card h4 {
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: var(--bd-dark);
     margin-bottom: 1.2rem;
 }
 
 .chart-container {
     position: relative;
-    height: 220px; /* Altura fixa para manter a proporção no mobile */
+    height: 220px;
     width: 100%;
 }
 
-/* --- Navegação Inferior (Bottom Nav Fixa) --- */
+/* =====================================================
+   GRID DE ESTATÍSTICAS
+   ===================================================== */
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+.stat-card {
+    background: var(--bd-white);
+    padding: 1.2rem 1rem;
+    border-radius: var(--bd-radius);
+    box-shadow: var(--bd-shadow-sm);
+    border: 1px solid rgba(172,182,229,.2);
+    display: flex;
+    flex-direction: column;
+}
+
+.stat-title {
+    font-size: .78rem;
+    color: var(--bd-muted);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+    margin-bottom: .5rem;
+}
+
+.stat-value {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--bd-dark);
+    line-height: 1.2;
+}
+
+.stat-subtitle {
+    font-size: .75rem;
+    color: var(--bd-muted);
+    margin-top: .2rem;
+}
+
+/* =====================================================
+   BOTTOM NAVIGATION
+   ===================================================== */
+
 .bottom-nav {
     position: fixed;
     bottom: 0;
@@ -235,12 +306,12 @@ input[type="password"]:focus {
     transform: translateX(-50%);
     width: 100%;
     max-width: 480px;
-    background: var(--white);
+    background: var(--bd-white);
     display: flex;
     justify-content: space-around;
     align-items: center;
-    padding: 0.6rem 1rem 1.2rem 1rem;
-    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.06);
+    padding: .6rem 1rem 1.2rem;
+    box-shadow: 0 -4px 20px rgba(0,0,0,.06);
     border-top-left-radius: 24px;
     border-top-right-radius: 24px;
     z-index: 1000;
@@ -252,174 +323,78 @@ input[type="password"]:focus {
     align-items: center;
     background: none;
     border: none;
-    color: var(--text-muted);
+    color: var(--bd-muted);
     cursor: pointer;
     font-family: 'Roboto', sans-serif;
-    font-size: 0.75rem;
-    gap: 0.4rem;
-    transition: color 0.3s ease;
+    font-size: .75rem;
+    gap: .4rem;
+    transition: color .3s ease;
+    padding: 0;
 }
 
-.nav-btn.active, .nav-btn:hover {
-    color: var(--text-dark);
-    font-weight: 700;
-}
+.nav-btn.active,
+.nav-btn:hover { color: var(--bd-dark); font-weight: 700; }
 
-/* Botão Flutuante Central (+) */
 .nav-btn-add {
-    background: var(--text-dark);
-    color: var(--white);
+    background: var(--bd-dark);
+    color: var(--bd-white);
+    border: 4px solid var(--bd-light);
     border-radius: 50%;
-    width: 55px;
-    height: 55px;
+    width: 56px;
+    height: 56px;
     display: flex;
-    justify-content: center;
     align-items: center;
-    transform: translateY(-25px); /* Joga o botão para cima, fora da barra */
-    box-shadow: 0 8px 15px rgba(44, 62, 80, 0.25);
-    border: 4px solid var(--bg-light); /* Cria um contorno integrado ao fundo */
+    justify-content: center;
     cursor: pointer;
-    transition: transform 0.2s ease, background 0.3s ease;
+    transform: translateY(-24px);
+    box-shadow: 0 8px 15px rgba(44,62,80,.25);
+    transition: transform .2s ease, background .3s ease;
 }
 
-.nav-btn-add:hover {
-    background: var(--primary-color);
-}
+.nav-btn-add:hover  { background: var(--bd-primary); }
+.nav-btn-add:active { transform: translateY(-24px) scale(.95); }
 
-.nav-btn-add:active {
-    transform: translateY(-25px) scale(0.95);
-}
-
-/* =========================================
-   ESTILOS DA VIEW MENSAL
-========================================= */
-
-/* --- Seletor de Mês --- */
-.month-selector {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background: var(--white);
-    padding: 1rem 1.5rem;
-    border-radius: var(--border-radius);
-    box-shadow: var(--shadow-sm);
-    margin-bottom: 0.5rem;
-}
-
-.month-selector h2 {
-    font-size: 1.2rem;
-    color: var(--text-dark);
-    font-weight: 700;
-    letter-spacing: 1px;
-    margin: 0;
-}
-
-.arrow-btn {
-    background: none;
-    border: none;
-    color: var(--text-muted);
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0.5rem;
-    border-radius: 50%;
-    transition: background 0.2s ease, color 0.2s ease;
-}
-
-.arrow-btn:hover {
-    background: var(--bg-light);
-    color: var(--text-dark);
-}
-
-/* --- Grid de Estatísticas --- */
-.stats-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1rem;
-    margin-top: 0.5rem;
-}
-
-.stat-card {
-    background: var(--white);
-    padding: 1.2rem 1rem;
-    border-radius: var(--border-radius);
-    box-shadow: var(--shadow-sm);
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: flex-start;
-    border: 1px solid rgba(172, 182, 229, 0.2);
-}
-
-.stat-title {
-    font-size: 0.8rem;
-    color: var(--text-muted);
-    font-weight: 500;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    margin-bottom: 0.5rem;
-}
-
-.stat-value {
-    font-size: 1.3rem;
-    font-weight: 700;
-    color: var(--text-dark);
-}
-
-.stat-subtitle {
-    font-size: 0.75rem;
-    color: var(--text-muted);
-    margin-top: 0.2rem;
-}
-
-/* Utilitários de Cor para Textos */
-.text-success {
-    color: #27ae60 !important;
-}
-
-.text-danger {
-    color: #e74c3c !important;
-}
-
-/* =========================================
-   ESTILOS DO MENU DE AÇÃO (BOTTOM SHEET)
-========================================= */
+/* =====================================================
+   ACTION SHEET (MENU FLUTUANTE)
+   ===================================================== */
 
 .action-sheet-overlay {
     position: fixed;
-    top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(44, 62, 80, 0.5);
+    inset: 0;
+    background: rgba(44,62,80,.5);
     backdrop-filter: blur(2px);
     z-index: 999;
     opacity: 0;
     visibility: hidden;
-    transition: all 0.3s ease;
+    transition: all .3s ease;
 }
 
-.action-sheet-overlay.active {
-    opacity: 1;
-    visibility: visible;
-}
+.action-sheet-overlay.active { opacity: 1; visibility: visible; }
 
 .action-sheet {
     position: fixed;
-    bottom: -100%; /* Começa escondido para baixo */
+    bottom: -100%;
     left: 50%;
     transform: translateX(-50%);
     width: 100%;
     max-width: 480px;
-    background: var(--white);
+    background: var(--bd-white);
     border-top-left-radius: 24px;
     border-top-right-radius: 24px;
     padding: 2rem 1.5rem;
     z-index: 1000;
-    transition: bottom 0.3s ease-in-out;
-    box-shadow: 0 -10px 25px rgba(0,0,0,0.1);
+    transition: bottom .3s ease-in-out;
+    box-shadow: 0 -10px 25px rgba(0,0,0,.1);
 }
 
-.action-sheet.active {
-    bottom: 0; /* Desliza para cima quando ativado */
+.action-sheet.active { bottom: 0; }
+
+.action-sheet h3 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--bd-dark);
+    margin-bottom: 1.5rem;
+    text-align: center;
 }
 
 .action-grid {
@@ -434,42 +409,77 @@ input[type="password"]:focus {
     align-items: center;
     justify-content: center;
     padding: 1.2rem 1rem;
-    background: var(--bg-light);
+    background: var(--bd-light);
     border: 1px solid transparent;
     border-radius: 16px;
-    color: var(--text-dark);
+    color: var(--bd-dark);
+    font-family: 'Roboto', sans-serif;
     font-weight: 500;
-    font-size: 0.9rem;
+    font-size: .9rem;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all .2s ease;
 }
 
-.action-btn svg {
-    margin-bottom: 0.6rem;
-    stroke: var(--text-muted);
+.action-btn svg { margin-bottom: .6rem; stroke: var(--bd-muted); }
+
+.action-btn:hover,
+.action-btn:active {
+    background: var(--bd-white);
+    border-color: var(--bd-primary);
+    box-shadow: var(--bd-shadow-sm);
+    color: var(--bd-primary);
 }
 
-.action-btn:hover, .action-btn:active {
-    background: var(--white);
-    border-color: var(--primary-color);
-    box-shadow: var(--shadow-sm);
-    color: var(--primary-color);
+.action-btn:hover svg,
+.action-btn:active svg { stroke: var(--bd-primary); }
+
+/* =====================================================
+   SELETOR DE MÊS
+   ===================================================== */
+
+.month-selector {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--bd-white);
+    padding: 1rem 1.5rem;
+    border-radius: var(--bd-radius);
+    box-shadow: var(--bd-shadow-sm);
 }
 
-.action-btn:hover svg, .action-btn:active svg {
-    stroke: var(--primary-color);
+.month-selector h2 {
+    font-size: 1.2rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: var(--bd-dark);
+    margin: 0;
 }
 
-/* =========================================
-   ESTILOS DA ÁREA DO USUÁRIO / CONFIGURAÇÕES
-========================================= */
+.arrow-btn {
+    background: none;
+    border: none;
+    color: var(--bd-muted);
+    cursor: pointer;
+    padding: .5rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    transition: background .2s ease, color .2s ease;
+}
 
-/* --- Cabeçalho de Perfil (Avatar + Nome) --- */
+.arrow-btn:hover {
+    background: var(--bd-light);
+    color: var(--bd-dark);
+}
+
+/* =====================================================
+   PERFIL DO USUÁRIO
+   ===================================================== */
+
 .profile-header {
     display: flex;
     align-items: center;
     gap: 1.5rem;
-    margin-bottom: 2rem;
     padding: 1rem 0;
 }
 
@@ -477,6 +487,7 @@ input[type="password"]:focus {
     position: relative;
     width: 80px;
     height: 80px;
+    flex-shrink: 0;
 }
 
 .profile-avatar {
@@ -484,91 +495,75 @@ input[type="password"]:focus {
     height: 100%;
     border-radius: 50%;
     object-fit: cover;
-    border: 3px solid var(--primary-color);
-    box-shadow: var(--shadow-sm);
+    border: 3px solid var(--bd-primary);
+    box-shadow: var(--bd-shadow-sm);
 }
 
 .edit-avatar-badge {
     position: absolute;
     bottom: 0;
     right: 0;
-    background: var(--text-dark);
-    color: var(--white);
+    background: var(--bd-dark);
+    color: var(--bd-white);
     border-radius: 50%;
     width: 28px;
     height: 28px;
     display: flex;
-    justify-content: center;
     align-items: center;
+    justify-content: center;
     cursor: pointer;
-    border: 2px solid var(--bg-light);
+    border: 2px solid var(--bd-light);
 }
 
 .profile-info h2 {
     font-size: 1.4rem;
-    color: var(--text-dark);
-    margin-bottom: 0.3rem;
+    color: var(--bd-dark);
+    margin-bottom: .2rem;
 }
 
 .profile-info p {
     font-weight: 700;
-    font-size: 1.1rem;
+    font-size: 1.05rem;
+    margin: 0;
 }
 
-/* --- Menu de Opções (user.html) --- */
-.profile-menu {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-}
-
+/* Botão menu largo */
 .menu-btn-wide {
     width: 100%;
     padding: 1.2rem;
-    background: var(--white);
-    border: 1px solid rgba(172, 182, 229, 0.3);
-    border-radius: var(--border-radius);
-    color: var(--text-dark);
+    background: var(--bd-white);
+    border: 1px solid rgba(172,182,229,.3);
+    border-radius: var(--bd-radius);
+    color: var(--bd-dark);
     font-size: 1.05rem;
     font-weight: 500;
     text-align: center;
-    box-shadow: var(--shadow-sm);
+    box-shadow: var(--bd-shadow-sm);
     cursor: pointer;
-    transition: all 0.2s ease;
+    font-family: 'Roboto', sans-serif;
+    transition: all .2s ease;
+    display: block;
 }
 
-.menu-btn-wide:hover, .menu-btn-wide:active {
-    background: var(--bg-light);
-    border-color: var(--primary-color);
+.menu-btn-wide:hover,
+.menu-btn-wide:active {
+    background: var(--bd-light);
+    border-color: var(--bd-primary);
     transform: translateY(-2px);
 }
 
-/* --- Cabeçalho com Botão Voltar --- */
-.dash-header-back {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    margin-bottom: 1.5rem;
-}
+.menu-btn-wide.danger { color: #e74c3c; }
 
-.back-btn {
-    background: none;
-    border: none;
-    color: var(--text-dark);
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
+/* =====================================================
+   INPUTS DE EDIÇÃO
+   ===================================================== */
 
-/* --- Inputs de Edição (Com ícone de lápis) --- */
-.edit-section {
-    margin-bottom: 2rem;
-}
+.edit-section { margin-bottom: 2rem; }
 
 .edit-section h3 {
-    font-size: 1.2rem;
-    color: var(--text-dark);
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: var(--bd-dark);
     margin-bottom: 1rem;
 }
 
@@ -577,160 +572,155 @@ input[type="password"]:focus {
     width: 100%;
 }
 
-.edit-input-wrapper input {
-    width: 100%;
-    padding-right: 2.5rem; /* Espaço para o ícone */
-}
+.edit-input-wrapper input { padding-right: 2.5rem; }
 
 .edit-icon {
     position: absolute;
     right: 1rem;
     top: 50%;
     transform: translateY(-50%);
-    color: var(--text-muted);
-    cursor: pointer;
+    color: var(--bd-muted);
+    pointer-events: none;
 }
 
-/* --- Botão Adicionar Inline --- */
 .btn-add-inline {
     display: flex;
     align-items: center;
     justify-content: flex-end;
-    gap: 0.5rem;
+    gap: .5rem;
     background: none;
     border: none;
-    color: var(--text-muted);
-    font-size: 0.9rem;
+    color: var(--bd-muted);
+    font-size: .9rem;
     font-weight: 500;
     cursor: pointer;
-    margin-top: 0.5rem;
-    transition: color 0.2s ease;
+    margin-top: .5rem;
+    font-family: 'Roboto', sans-serif;
+    transition: color .2s ease;
 }
 
-.btn-add-inline:hover {
-    color: var(--primary-color);
-}
+.btn-add-inline:hover { color: var(--bd-primary); }
 
 .btn-add-inline svg {
-    background: var(--text-dark);
-    color: var(--white);
+    background: var(--bd-dark);
+    stroke: var(--bd-white);
     border-radius: 50%;
     padding: 2px;
 }
 
-/* =========================================
-   ESTILOS DO TECLADO DE VALORES (CALCULADORA)
-========================================= */
+/* =====================================================
+   TECLADO DE VALORES (CALCULADORA)
+   ===================================================== */
 
-.calc-screen-container {
+body.calc-body {
+    background: var(--bd-white);
+}
+
+.calc-shell {
+    width: 100%;
+    max-width: 480px;
+    margin: 0 auto;
     height: 100vh;
     display: flex;
     flex-direction: column;
-    padding-bottom: 2rem;
+    padding: 1.5rem 1.25rem 1.5rem;
 }
 
-/* --- Visor --- */
 .calc-display {
-    background: var(--bg-light);
-    border-radius: var(--border-radius);
+    background: var(--bd-light);
+    border-radius: var(--bd-radius);
     padding: 1.5rem;
     margin-bottom: 1.5rem;
     display: flex;
     flex-direction: column;
     align-items: flex-end;
-    box-shadow: inset 0 2px 5px rgba(0,0,0,0.05);
-    border: 1px solid rgba(172, 182, 229, 0.3);
+    box-shadow: inset 0 2px 5px rgba(0,0,0,.05);
+    border: 1px solid rgba(172,182,229,.3);
 }
 
 .calc-equation {
-    font-size: 1.2rem;
-    color: var(--text-muted);
+    font-size: 1.1rem;
+    color: var(--bd-muted);
     min-height: 1.5rem;
-    margin-bottom: 0.5rem;
-    letter-spacing: 1px;
-    word-wrap: break-word;
-    max-width: 100%;
+    margin-bottom: .5rem;
+    word-break: break-all;
 }
 
 .calc-result {
     font-size: 2.5rem;
     font-weight: 700;
-    color: var(--text-dark);
+    color: var(--bd-dark);
 }
 
-/* --- Teclado (Grid) --- */
 .calc-keypad {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 0.8rem;
-    flex-grow: 1; /* Faz o teclado preencher o espaço vazio na tela */
-    margin-bottom: 1.5rem;
+    gap: .75rem;
+    flex-grow: 1;
+    margin-bottom: 1rem;
 }
 
 .calc-btn {
-    background: var(--white);
-    border: 1px solid rgba(172, 182, 229, 0.4);
-    border-radius: var(--border-radius);
-    font-size: 1.6rem;
+    background: var(--bd-white);
+    border: 1px solid rgba(172,182,229,.4);
+    border-radius: var(--bd-radius);
+    font-size: 1.5rem;
     font-family: 'Roboto', sans-serif;
-    color: var(--text-dark);
     font-weight: 500;
+    color: var(--bd-dark);
     cursor: pointer;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.02);
     display: flex;
-    justify-content: center;
     align-items: center;
-    transition: all 0.1s ease;
+    justify-content: center;
+    box-shadow: 0 3px 6px rgba(0,0,0,.02);
+    transition: all .1s ease;
+    min-height: 60px;
 }
 
 .calc-btn:active {
-    background: var(--bg-light);
-    transform: scale(0.95);
+    background: var(--bd-light);
+    transform: scale(.95);
 }
 
-/* Botões de Operação (Cor Secundária) */
 .op-btn {
-    background: var(--bg-light);
-    color: var(--text-dark);
+    background: var(--bd-light);
     font-weight: 700;
 }
 
-.op-btn:active {
-    background: #e0e6ed;
-}
+.op-btn:active { background: #dde3e9; }
 
-/* Botão Confirmar Gigante */
 .confirm-value-btn {
     width: 100%;
-    padding: 1.2rem;
-    font-size: 1.2rem;
-    margin-top: auto; /* Empurra para o fundo caso a tela seja longa */
+    padding: 1.1rem;
+    font-size: 1.1rem;
+    margin-top: auto;
 }
 
-/* =========================================
-   ESTILOS DE SELEÇÃO (CATEGORIAS E TIPO)
-========================================= */
+/* =====================================================
+   TELAS DE SELEÇÃO (CATEGORIA / TIPO GASTO)
+   ===================================================== */
 
 .selection-header {
     text-align: center;
-    margin-bottom: 2rem;
     padding: 1.5rem;
-    background: var(--text-dark);
-    color: var(--white);
-    border-radius: var(--border-radius);
-    box-shadow: var(--shadow-md);
+    background: var(--bd-dark);
+    color: var(--bd-white);
+    border-radius: var(--bd-radius);
+    box-shadow: var(--bd-shadow-md);
 }
 
 .selection-header h3 {
-    font-size: 1.1rem;
+    font-size: 1rem;
     font-weight: 500;
-    opacity: 0.9;
+    opacity: .85;
+    margin: 0 0 .4rem;
 }
 
 .selection-header h2 {
     font-size: 2rem;
-    margin-top: 0.5rem;
-    color: var(--primary-color);
+    color: var(--bd-primary);
+    margin: 0;
+    font-weight: 700;
 }
 
 .selection-list {
@@ -739,240 +729,246 @@ input[type="password"]:focus {
     gap: 1rem;
 }
 
-/* Botões gigantes para Crédito e Débito */
 .type-btn {
-    padding: 2.5rem 1rem;
-    font-size: 1.6rem;
+    padding: 2.2rem 1rem;
+    font-size: 1.5rem;
     font-weight: 700;
-    border-radius: var(--border-radius);
+    border-radius: var(--bd-radius);
     border: 2px solid transparent;
-    background: var(--white);
-    color: var(--text-dark);
-    box-shadow: var(--shadow-sm);
+    background: var(--bd-white);
+    color: var(--bd-dark);
+    box-shadow: var(--bd-shadow-sm);
     cursor: pointer;
-    transition: all 0.2s ease;
-    text-align: center;
+    font-family: 'Roboto', sans-serif;
+    transition: all .2s ease;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 0.5rem;
+    gap: .4rem;
 }
 
 .type-btn span {
-    font-size: 0.9rem;
+    font-size: .9rem;
     font-weight: 400;
-    color: var(--text-muted);
+    color: var(--bd-muted);
 }
 
-.type-btn:hover, .type-btn:active {
-    border-color: var(--primary-color);
-    background: var(--bg-light);
+.type-btn:hover,
+.type-btn:active {
+    border-color: var(--bd-primary);
+    background: var(--bd-light);
     transform: translateY(-3px);
-    box-shadow: var(--shadow-md);
+    box-shadow: var(--bd-shadow-md);
 }
 
-/* Cores indicativas (opcional, mas ajuda na UX) */
 .type-btn.credit { color: #e74c3c; border-bottom: 4px solid #e74c3c; }
-.type-btn.debit { color: #27ae60; border-bottom: 4px solid #27ae60; }
+.type-btn.debit  { color: #27ae60; border-bottom: 4px solid #27ae60; }
 
-/* =========================================
-   ESTILOS DE IMPORTAÇÃO (CSV E TUTORIAL)
-========================================= */
-
-/* --- Dropdown Tutorial (Accordion) --- */
-.accordion-container {
-    margin-bottom: 2rem;
-}
+/* =====================================================
+   UPLOAD / IMPORTAÇÃO
+   ===================================================== */
 
 .accordion-btn {
     width: 100%;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 1.2rem;
-    background: var(--white);
-    border: 1px solid rgba(172, 182, 229, 0.4);
-    border-radius: var(--border-radius);
-    color: var(--text-dark);
+    padding: 1.1rem 1.2rem;
+    background: var(--bd-white);
+    border: 1px solid rgba(172,182,229,.4);
+    border-radius: var(--bd-radius);
+    color: var(--bd-dark);
+    font-family: 'Roboto', sans-serif;
     font-weight: 500;
     font-size: 1rem;
     cursor: pointer;
-    box-shadow: var(--shadow-sm);
-    transition: all 0.3s ease;
+    box-shadow: var(--bd-shadow-sm);
+    transition: all .3s ease;
 }
 
 .accordion-btn svg {
-    transition: transform 0.3s ease;
-    color: var(--primary-color);
+    transition: transform .3s ease;
+    stroke: var(--bd-primary);
+    flex-shrink: 0;
 }
 
 .accordion-content {
     max-height: 0;
     overflow: hidden;
-    transition: max-height 0.3s ease-out, padding 0.3s ease;
-    background: var(--white);
-    border-radius: 0 0 var(--border-radius) var(--border-radius);
+    transition: max-height .35s ease-out, padding .3s ease;
+    background: var(--bd-white);
+    border-radius: 0 0 var(--bd-radius) var(--bd-radius);
     padding: 0 1.2rem;
-    margin-top: -5px; /* Sobe um pouco para grudar no botão */
-    box-shadow: var(--shadow-sm);
+    margin-top: -6px;
+    box-shadow: var(--bd-shadow-sm);
 }
 
 .accordion-content.active {
-    max-height: 300px;
-    padding: 1.5rem 1.2rem 1rem 1.2rem;
-    border: 1px solid rgba(172, 182, 229, 0.4);
+    max-height: 320px;
+    padding: 1.5rem 1.2rem 1rem;
+    border: 1px solid rgba(172,182,229,.4);
     border-top: none;
 }
 
 .accordion-content p {
-    font-size: 0.9rem;
-    color: var(--text-muted);
-    margin-bottom: 0.6rem;
-    line-height: 1.4;
+    font-size: .9rem;
+    color: var(--bd-muted);
+    margin-bottom: .6rem;
+    line-height: 1.5;
 }
 
-.accordion-content strong {
-    color: var(--text-dark);
-}
+.accordion-content strong { color: var(--bd-dark); }
 
-/* --- Área de Upload de Arquivo --- */
 .upload-area {
-    border: 2px dashed rgba(172, 182, 229, 0.8);
-    border-radius: var(--border-radius);
+    border: 2px dashed rgba(172,182,229,.8);
+    border-radius: var(--bd-radius);
     padding: 2.5rem 1rem;
     text-align: center;
-    background: var(--white);
+    background: var(--bd-white);
     cursor: pointer;
-    transition: all 0.3s ease;
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 1rem;
+    transition: all .3s ease;
 }
 
-.upload-area:hover, .upload-area:active {
-    border-color: var(--primary-color);
+.upload-area:hover,
+.upload-area:active {
+    border-color: var(--bd-primary);
     background: #f0fdfa;
 }
 
-.upload-area svg {
-    color: var(--secondary-color);
-    transition: color 0.3s ease;
-}
+.upload-area svg { stroke: var(--bd-secondary); transition: stroke .3s ease; }
 
-.upload-area:hover svg, .upload-area:active svg {
-    color: var(--primary-color);
-}
+.upload-area:hover svg,
+.upload-area:active svg { stroke: var(--bd-primary); }
 
 .upload-area p {
-    color: var(--text-dark);
+    color: var(--bd-dark);
     font-weight: 500;
+    margin: 0;
 }
 
-/* --- Feedback do Arquivo --- */
 .file-feedback {
-    margin-top: 1rem;
     padding: 1rem;
-    background: #f0fdfa; /* Verde bem claro para indicar sucesso */
-    border-radius: var(--border-radius);
-    color: var(--text-dark);
+    background: #f0fdfa;
+    border-radius: var(--bd-radius);
+    color: var(--bd-dark);
     font-weight: 500;
-    font-size: 0.95rem;
-    border: 1px solid var(--primary-color);
+    font-size: .95rem;
+    border: 1px solid var(--bd-primary);
+    display: flex;
+    align-items: center;
+    gap: .5rem;
 }
 
+/* =====================================================
+   GERENCIAMENTO DE CATEGORIAS
+   ===================================================== */
 
-/* =========================================
-   ESTILOS DE GERENCIAMENTO DE CATEGORIAS
-========================================= */
-
-/* --- Caixa de Inserção --- */
 .add-category-box {
     display: flex;
-    gap: 0.8rem;
+    gap: .8rem;
     margin-bottom: 1rem;
 }
 
 .add-category-box input {
     flex-grow: 1;
     padding: 1rem 1.2rem;
-    border: 1px solid rgba(172, 182, 229, 0.4);
-    border-radius: var(--border-radius);
-    background: var(--white);
+    border: 1px solid rgba(172,182,229,.4);
+    border-radius: var(--bd-radius);
+    background: var(--bd-white);
     font-size: 1rem;
-    color: var(--text-dark);
-    box-shadow: var(--shadow-sm);
-    transition: border-color 0.3s ease;
+    color: var(--bd-dark);
+    box-shadow: var(--bd-shadow-sm);
+    font-family: 'Roboto', sans-serif;
+    transition: border-color .3s ease;
 }
 
 .add-category-box input:focus {
-    border-color: var(--primary-color);
+    border-color: var(--bd-primary);
     outline: none;
 }
 
 .add-category-box button {
-    background: var(--text-dark);
-    color: var(--white);
+    background: var(--bd-dark);
+    color: var(--bd-white);
     border: none;
-    border-radius: var(--border-radius);
+    border-radius: var(--bd-radius);
     padding: 0 1.2rem;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: var(--shadow-sm);
-    transition: all 0.2s ease;
+    box-shadow: var(--bd-shadow-sm);
+    transition: all .2s ease;
 }
 
-.add-category-box button:hover, .add-category-box button:active {
-    background: var(--primary-color);
-    transform: scale(0.95);
+.add-category-box button:hover,
+.add-category-box button:active {
+    background: var(--bd-primary);
+    transform: scale(.96);
 }
 
-/* --- Lista Dinâmica --- */
 .category-list {
     display: flex;
     flex-direction: column;
-    gap: 0.8rem;
+    gap: .8rem;
 }
 
 .category-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 1.2rem;
-    background: var(--white);
-    border: 1px solid rgba(172, 182, 229, 0.3);
-    border-radius: var(--border-radius);
-    box-shadow: var(--shadow-sm);
-    transition: all 0.2s ease;
+    padding: 1.1rem 1.2rem;
+    background: var(--bd-white);
+    border: 1px solid rgba(172,182,229,.3);
+    border-radius: var(--bd-radius);
+    box-shadow: var(--bd-shadow-sm);
+    transition: all .2s ease;
 }
 
 .category-item:hover {
-    border-color: var(--primary-color);
+    border-color: var(--bd-primary);
     transform: translateX(2px);
 }
 
 .category-name {
     font-weight: 500;
-    color: var(--text-dark);
+    color: var(--bd-dark);
     font-size: 1.05rem;
 }
 
 .cat-action-btn {
     background: none;
     border: none;
-    color: var(--text-muted);
+    color: var(--bd-muted);
     cursor: pointer;
-    padding: 0.4rem;
+    padding: .4rem;
     border-radius: 50%;
     display: flex;
     align-items: center;
-    justify-content: center;
-    transition: all 0.2s ease;
+    transition: all .2s ease;
 }
 
-.cat-action-btn:hover, .cat-action-btn:active {
-    color: #e74c3c; /* Vermelho alerta para exclusão */
+.cat-action-btn:hover,
+.cat-action-btn:active {
+    color: #e74c3c;
     background: #fdf2f2;
+}
+
+/* =====================================================
+   UTILITÁRIOS DE COR
+   ===================================================== */
+
+.text-bd-success { color: #27ae60 !important; }
+.text-bd-danger  { color: #e74c3c !important; }
+.text-bd-muted   { color: var(--bd-muted) !important; }
+
+/* Divisor suave */
+.bd-divider {
+    border: none;
+    border-top: 1px solid rgba(172,182,229,.35);
+    margin: 1.5rem 0;
 }

@@ -1,53 +1,40 @@
-// --- Função Original (mantida) ---
+// ============================================================
+//  Bolso Direito — utils.js
+//  Utilitários globais do app (Fase 1: navegação e helpers)
+// ============================================================
+
+/** Formata uma data para pt-BR longa. */
 function FormatDate(date) {
-    return date.toLocaleDateString("pt-BR", {
-        year: "numeric",
-        month: "long",
-        day: "numeric"
-    });
+    return date.toLocaleDateString('pt-BR', { year: 'numeric', month: 'long', day: 'numeric' });
 }
 
-// --- Lógica Global do App ---
-
-// 1. Função para carregar componentes HTML dinamicamente
-function carregarFooter() {
-    const placeholder = document.getElementById('footer-placeholder');
-    
-    if (placeholder) {
-        // Busca o arquivo HTML do footer
-        fetch('../../components/footer.html')
-            .then(response => {
-                if (!response.ok) throw new Error("Erro de requisição. Você está usando o Live Server?");
-                return response.text();
-            })
-            .then(html => {
-                placeholder.innerHTML = html;
-            })
-            .catch(erro => console.error("Erro ao injetar o Footer:", erro));
-    }
+/** Formata um número para moeda brasileira. */
+function formatarMoeda(valor) {
+    return 'R$ ' + Number(valor).toFixed(2).replace('.', ',');
 }
 
-// 2. Funções de interação do Footer (agora acessíveis de qualquer lugar)
+/**
+ * Alterna entre overview.html ↔ view-mensal.html.
+ * Usado pelo botão "Painel" na bottom-nav.
+ */
 function toggleViews() {
     const path = window.location.pathname;
     if (path.includes('overview.html')) {
         window.location.href = 'view-mensal.html';
-    } else {
+    } else if (path.includes('view-mensal.html') || path.includes('view-anual.html')) {
         window.location.href = 'overview.html';
+    } else {
+        window.location.href = '../dashboard/overview.html';
     }
 }
 
+/**
+ * Abre/fecha o Action Sheet e seu overlay.
+ * Os IDs padrão são: 'actionSheet' e 'menuOverlay'.
+ */
 function toggleMenu() {
-    const overlay = document.getElementById('actionOverlay');
-    const sheet = document.getElementById('actionSheet');
-    
-    if(overlay && sheet) {
-        overlay.classList.toggle('active');
-        sheet.classList.toggle('active');
-    }
+    const sheet   = document.getElementById('actionSheet');
+    const overlay = document.getElementById('menuOverlay');
+    if (sheet)   sheet.classList.toggle('active');
+    if (overlay) overlay.classList.toggle('active');
 }
-
-// 3. Executa a carga do footer assim que a página carregar
-document.addEventListener('DOMContentLoaded', () => {
-    carregarFooter();
-});
