@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bolso Direito - Gerenciar Categorias</title>
+    <link href="https://fonts.googleapis.com/css?family=Roboto:400,500,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../static/styles/style.css">
+</head>
+<body class="dashboard-body">
+
+    <div class="app-container">
+        
+        <header class="dash-header-back">
+            <button class="back-btn" onclick="history.back()">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+            </button>
+            <h2>Gerenciar Categorias</h2>
+        </header>
+
+        <div class="add-category-box">
+            <input type="text" id="novaCategoria" placeholder="Nova categoria (ex: Viagem)">
+            <button onclick="adicionarCategoria()">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+            </button>
+        </div>
+
+        <h4 style="margin: 1.5rem 0 1rem; color: var(--text-dark);">Suas Categorias:</h4>
+
+        <div class="category-list" id="listaCategorias">
+            </div>
+
+    </div>
+
+    <div id="footer-placeholder"></div>
+    <script src="../../utils.js"></script>
+
+    <script>
+        // Array simulando o Banco de Dados
+        let categoriasAtuais = ['Lazer', 'Transporte', 'Saúde', 'Alimentação', 'Outros'];
+
+        // Função para desenhar a lista na tela
+        function renderizarCategorias() {
+            const lista = document.getElementById('listaCategorias');
+            lista.innerHTML = ''; // Limpa a lista antes de desenhar
+            
+            categoriasAtuais.forEach((cat, index) => {
+                lista.innerHTML += `
+                    <div class="category-item">
+                        <span class="category-name">${cat}</span>
+                        <div class="category-actions">
+                            <button class="cat-action-btn" onclick="removerCategoria(${index})">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        // Função para Adicionar
+        function adicionarCategoria() {
+            const input = document.getElementById('novaCategoria');
+            const valor = input.value.trim();
+            
+            if(valor) {
+                // Primeira letra maiúscula por estética
+                const valorFormatado = valor.charAt(0).toUpperCase() + valor.slice(1);
+                categoriasAtuais.push(valorFormatado);
+                input.value = ''; // Limpa o campo
+                renderizarCategorias(); // Atualiza a tela
+            } else {
+                alert('Por favor, digite um nome para a categoria.');
+            }
+        }
+
+        // Função para Remover
+        function removerCategoria(index) {
+            const nomeRemovido = categoriasAtuais[index];
+            if(confirm(`Tem certeza que deseja apagar a categoria "${nomeRemovido}"?`)) {
+                categoriasAtuais.splice(index, 1); // Remove 1 item a partir do index
+                renderizarCategorias(); // Atualiza a tela
+            }
+        }
+
+        // Adiciona funcionalidade de apertar "Enter" no teclado para salvar
+        document.getElementById('novaCategoria').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                adicionarCategoria();
+            }
+        });
+
+        // Desenha a lista assim que a página carrega
+        document.addEventListener('DOMContentLoaded', renderizarCategorias);
+    </script>
+</body>
+</html>

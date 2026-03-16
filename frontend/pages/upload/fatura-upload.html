@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bolso Direito - Importar CSV</title>
+    <link href="https://fonts.googleapis.com/css?family=Roboto:400,500,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../static/styles/style.css">
+</head>
+<body class="dashboard-body">
+
+    <div class="app-container">
+        
+        <header class="dash-header-back">
+            <button class="back-btn" onclick="history.back()">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+            </button>
+            <h2>Importar Fatura</h2>
+        </header>
+
+        <div class="accordion-container">
+            <button class="accordion-btn" onclick="toggleTutorial()">
+                <span>Como exportar minha fatura do cartão de crédito?</span>
+                <svg id="chevronIcon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+            </button>
+            <div class="accordion-content" id="tutorialContent">
+                <p><strong>1.</strong> Acesse o aplicativo ou site do seu banco.</p>
+                <p><strong>2.</strong> Vá até a área de Cartão de Crédito ou Extrato.</p>
+                <p><strong>3.</strong> Procure pela opção <strong>"Exportar"</strong> ou <strong>"Baixar Fatura"</strong>.</p>
+                <p><strong>4.</strong> Escolha o formato <strong>.CSV</strong> (ou Excel).</p>
+                <p><strong>5.</strong> Salve o arquivo no seu celular e anexe-o abaixo.</p>
+            </div>
+        </div>
+
+        <h4 style="margin-bottom: 1rem; color: var(--text-dark);">Selecione o arquivo:</h4>
+        
+        <div class="upload-area" id="dropZone" onclick="document.getElementById('csvInput').click()">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+            <p>Toque para anexar um arquivo .csv</p>
+            
+            <input type="file" id="csvInput" accept=".csv" style="display: none;" onchange="handleFileSelect(event)">
+        </div>
+
+        <div id="fileFeedback" class="file-feedback" style="display: none;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#27ae60" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px;"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+            <span id="fileName">fatura.csv</span>
+        </div>
+
+        <button class="btn-primary" onclick="processarCSV()" style="margin-top: 1.5rem; width: 100%;">Processar Fatura</button>
+
+    </div>
+
+    <div id="footer-placeholder"></div>
+    <script src="../../utils.js"></script>
+
+    <script>
+        // Função para abrir e fechar o tutorial
+        function toggleTutorial() {
+            const content = document.getElementById('tutorialContent');
+            const icon = document.getElementById('chevronIcon');
+            
+            content.classList.toggle('active');
+            
+            if (content.classList.contains('active')) {
+                icon.style.transform = 'rotate(180deg)';
+            } else {
+                icon.style.transform = 'rotate(0deg)';
+            }
+        }
+
+        // Função para exibir o nome do arquivo selecionado
+        function handleFileSelect(event) {
+            const file = event.target.files[0];
+            const feedbackArea = document.getElementById('fileFeedback');
+            const fileNameDisplay = document.getElementById('fileName');
+            const dropZone = document.getElementById('dropZone');
+
+            if (file) {
+                // Checa a extensão (segurança simples no front-end)
+                if (file.name.endsWith('.csv')) {
+                    fileNameDisplay.innerText = file.name;
+                    feedbackArea.style.display = 'flex';
+                    feedbackArea.style.alignItems = 'center';
+                    dropZone.style.borderColor = 'var(--primary-color)';
+                    dropZone.style.background = '#f0fdfa'; // fundo esverdeado claro
+                } else {
+                    alert('Por favor, selecione apenas arquivos com a extensão .csv');
+                    event.target.value = ''; // Limpa o input
+                    feedbackArea.style.display = 'none';
+                    dropZone.style.borderColor = 'var(--secondary-color)';
+                    dropZone.style.background = 'var(--white)';
+                }
+            }
+        }
+
+        // Simulação do processamento
+        function processarCSV() {
+            const input = document.getElementById('csvInput');
+            if (input.files.length === 0) {
+                alert("Você precisa anexar um arquivo primeiro!");
+                return;
+            }
+
+            alert("Lendo as colunas e processando o arquivo...\n\n(No futuro, a lógica de leitura do JavaScript transformará os dados em gastos na tela de Overview!)");
+            window.location.href = '../dashboard/overview.html';
+        }
+    </script>
+</body>
+</html>

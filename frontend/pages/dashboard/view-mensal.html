@@ -1,165 +1,130 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Resumo Mensal</title>
-
-<link href="https://fonts.googleapis.com/css?family=Roboto:400,700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../../static/styles/style.css">
-
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-<style>
-
-.dashboard-container{
-    background:#fff;
-    width:360px;
-    padding:2rem;
-    border-radius:16px;
-    box-shadow:0 8px 32px rgba(44,62,80,0.2);
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-}
-
-.month-header{
-    width:100%;
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    font-weight:700;
-    color:#2c3e50;
-    margin-bottom:1rem;
-}
-
-.month-header span{
-    cursor:pointer;
-}
-
-.chart-container{
-    width:220px;
-    margin:1rem 0;
-}
-
-.stats{
-    width:100%;
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:1rem;
-    margin-top:1rem;
-}
-
-.card{
-    background:#f7f9fc;
-    border-radius:10px;
-    padding:0.8rem;
-    text-align:center;
-    border:1px solid #ACB6E5;
-}
-
-.card-title{
-    font-size:0.8rem;
-    color:#2c3e50;
-}
-
-.card-value{
-    font-size:1.1rem;
-    font-weight:700;
-    margin-top:0.3rem;
-}
-
-.bottom-nav{
-    margin-top:1.5rem;
-    width:100%;
-    display:flex;
-    justify-content:space-around;
-    border-top:1px solid #ddd;
-    padding-top:1rem;
-}
-
-.nav-btn{
-    font-size:1.3rem;
-    cursor:pointer;
-}
-
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bolso Direito - Resumo Mensal</title>
+    <link href="https://fonts.googleapis.com/css?family=Roboto:400,500,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../static/styles/style.css">
+    
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
+<body class="dashboard-body">
 
-<body>
+    <div class="app-container">
+        
+        <div class="month-selector">
+            <button class="arrow-btn" onclick="mudarMes(-1)">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+            </button>
+            <h2 id="mesAtual">FEVEREIRO</h2>
+            <button class="arrow-btn" onclick="mudarMes(1)">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+            </button>
+        </div>
 
-<div class="dashboard-container">
+        <section class="dashboard-section">
+            <h4>Distribuição de Gastos</h4>
+            <div class="chart-container">
+                <canvas id="gastosMensaisChart"></canvas>
+            </div>
+        </section>
 
-<div class="month-header">
-<span>←</span>
-<h3>FEVEREIRO</h3>
-<span>→</span>
-</div>
+        <section class="stats-grid">
+            <div class="stat-card">
+                <span class="stat-title">Economizou</span>
+                <span class="stat-value text-success">R$ 700,00</span>
+            </div>
+            
+            <div class="stat-card">
+                <span class="stat-title">Gasto Total</span>
+                <span class="stat-value text-danger">R$ 5.000,00</span>
+            </div>
+            
+            <div class="stat-card">
+                <span class="stat-title">Maior Despesa</span>
+                <span class="stat-value">R$ 1.000,00</span>
+                <span class="stat-subtitle">(Alimentação)</span>
+            </div>
+            
+            <div class="stat-card">
+                <span class="stat-title">Balanço do Mês</span>
+                <span class="stat-value">Positivo</span>
+                <span class="stat-subtitle text-success">+ 14%</span>
+            </div>
+        </section>
 
-<div class="chart-container">
-<canvas id="gastosChart"></canvas>
-</div>
+    </div>
+    <div id="footer-placeholder"></div>
 
-<div class="stats">
+    <div id="footer-placeholder"></div>
 
-<div class="card">
-<div class="card-title">Economizou</div>
-<div class="card-value">R$700,00</div>
-</div>
+    <script src="../../utils.js"></script>
+</body>
+</html>
 
-<div class="card">
-<div class="card-title">Gasto total</div>
-<div class="card-value">R$5000,00</div>
-</div>
+    <script>
+        // Configuração do Gráfico de Pizza
+        Chart.defaults.font.family = "'Roboto', sans-serif";
+        
+        const ctx = document.getElementById('gastosMensaisChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'pie', // Mantive pie (pizza) conforme o seu wireframe
+            data: {
+                labels: ['Streaming', 'Lazer', 'Transporte', 'Alimentação'],
+                datasets: [{
+                    data: [300, 1500, 500, 2700],
+                    backgroundColor: [
+                        '#7f8c8d', // Streaming
+                        '#ACB6E5', // Lazer
+                        '#74ebd5', // Transporte
+                        '#2c3e50'  // Alimentação (Maior despesa)
+                    ],
+                    borderWidth: 2,
+                    borderColor: '#ffffff'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            padding: 20,
+                            usePointStyle: true
+                        }
+                    }
+                }
+            }
+        });
 
-<div class="card">
-<div class="card-title">Maior despesa</div>
-<div class="card-value">Alimentação</div>
-</div>
+        // Simulação simples de navegação de meses
+        const meses = ['JANEIRO', 'FEVEREIRO', 'MARÇO', 'ABRIL', 'MAIO', 'JUNHO'];
+        let mesIndex = 1; // Começa no Fevereiro
 
-<div class="card">
-<div class="card-title">Valor</div>
-<div class="card-value">R$1000,00</div>
-</div>
-
-</div>
-
-<div class="bottom-nav">
-<div class="nav-btn">☰</div>
-<div class="nav-btn">＋</div>
-<div class="nav-btn">👤</div>
-</div>
-
-</div>
-
-<script>
-
-const ctx = document.getElementById('gastosChart');
-
-new Chart(ctx,{
-type:'pie',
-data:{
-labels:['Streaming','Lazer','Transporte'],
-datasets:[{
-data:[3000,1500,500],
-backgroundColor:[
-'#7a4b5d',
-'#ACB6E5',
-'#74ebd5'
-]
-}]
-},
-options:{
-plugins:{
-legend:{
-position:'bottom'
-}
-}
-}
-});
-
-</script>
-
+        function mudarMes(direcao) {
+            mesIndex += direcao;
+            if (mesIndex < 0) mesIndex = meses.length - 1;
+            if (mesIndex >= meses.length) mesIndex = 0;
+            document.getElementById('mesAtual').innerText = meses[mesIndex];
+            // No futuro, aqui você chamaria uma função para atualizar os dados do gráfico e dos cards!
+        }
+    </script>
+    <nav class="bottom-nav">
+    <button class="nav-btn" onclick="toggleViews()">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+        <span>Painel</span>
+    </button>
+    
+    <button class="nav-btn-add" onclick="toggleMenu()">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+    </button>
+    
+    <button class="nav-btn" onclick="window.location.href='../config/perfil.html'">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+        <span>Perfil</span>
+    </button>
+</nav>
 </body>
 </html>

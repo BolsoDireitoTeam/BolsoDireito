@@ -1,70 +1,978 @@
-     body {
-            background: linear-gradient(135deg, #74ebd5 0%, #ACB6E5 100%);
-            font-family: 'Roboto', sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-        }
-        .login-container {
-            background: #fff;
-            padding: 2.5rem 2rem;
-            border-radius: 16px;
-            box-shadow: 0 8px 32px rgba(44, 62, 80, 0.2);
-            width: 350px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        .login-container h2 {
-            margin-bottom: 1.5rem;
-            color: #2c3e50;
-            font-weight: 700;
-        }
-        .login-container form {
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-        }
-        .login-container input[type="text"],
-        .login-container input[type="password"] {
-            padding: 0.75rem;
-            margin-bottom: 1rem;
-            border: 1px solid #ACB6E5;
-            border-radius: 8px;
-            font-size: 1rem;
-            transition: border-color 0.2s;
-        }
-        .login-container input[type="text"]:focus,
-        .login-container input[type="password"]:focus {
-            border-color: #74ebd5;
-            outline: none;
-        }
-        .login-container button {
-            padding: 0.75rem;
-            background: linear-gradient(90deg, #74ebd5 0%, #ACB6E5 100%);
-            border: none;
-            border-radius: 8px;
-            color: #fff;
-            font-size: 1.1rem;
-            font-weight: 700;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-        .login-container button:hover {
-            background: linear-gradient(90deg, #ACB6E5 0%, #74ebd5 100%);
-        }
-        .login-container .signup-link {
-            margin-top: 1rem;
-            font-size: 0.95rem;
-            color: #2c3e50;
-        }
-        .login-container .signup-link a {
-            color: #74ebd5;
-            text-decoration: none;
-            font-weight: 700;
-        }
-        .login-container .signup-link a:hover {
-            text-decoration: underline;
-        }
+/* --- Variáveis Globais de Cor e Estilo --- */
+:root {
+    --primary-color: #74ebd5;
+    --secondary-color: #ACB6E5;
+    --text-dark: #2c3e50;
+    --text-muted: #7f8c8d;
+    --bg-light: #f4f7f6;
+    --white: #ffffff;
+    --shadow-sm: 0 4px 6px rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 10px 30px rgba(44, 62, 80, 0.1);
+    --border-radius: 12px;
+}
+
+/* --- Reset Básico --- */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+    font-family: 'Roboto', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh; /* Garante que ocupe a tela toda no mobile */
+    color: var(--text-dark);
+}
+
+/* --- Container Principal (O "Card" branco) --- */
+.login-container {
+    background: var(--white);
+    width: 90%;
+    max-width: 400px; /* Limita o tamanho em telas grandes */
+    padding: 2.5rem 2rem;
+    border-radius: 20px;
+    box-shadow: var(--shadow-md);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* --- Logo e Título --- */
+.logo {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+    padding: 10px;
+    border-radius: 14px;
+    margin-bottom: 1rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.logo svg {
+    stroke: var(--white);
+}
+
+.login-container h2 {
+    margin-bottom: 2rem;
+    color: var(--text-dark);
+    font-weight: 700;
+    letter-spacing: 1px;
+    font-size: 1.5rem;
+}
+
+/* --- Formulário e Inputs --- */
+form {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 1.2rem;
+}
+
+.input-group label {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--text-muted);
+    margin-bottom: 0.4rem;
+    margin-left: 4px;
+}
+
+input[type="text"],
+input[type="password"] {
+    padding: 0.85rem 1rem;
+    background-color: var(--bg-light);
+    border: 1px solid transparent;
+    border-radius: var(--border-radius);
+    font-size: 1rem;
+    color: var(--text-dark);
+    transition: all 0.3s ease;
+}
+
+input[type="text"]:focus,
+input[type="password"]:focus {
+    border-color: var(--primary-color);
+    background-color: var(--white);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(116, 235, 213, 0.2);
+}
+
+/* --- Botão Principal --- */
+.btn-primary {
+    padding: 0.9rem;
+    margin-top: 1rem;
+    background: var(--text-dark);
+    border: none;
+    border-radius: var(--border-radius);
+    color: var(--white);
+    font-size: 1.05rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.1s ease;
+}
+
+.btn-primary:hover {
+    background: #1a252f;
+}
+
+.btn-primary:active {
+    transform: scale(0.98);
+}
+
+/* --- Links de Rodapé --- */
+.signup-link {
+    margin-top: 1.5rem;
+    font-size: 0.9rem;
+    color: var(--text-muted);
+}
+
+.signup-link a {
+    color: var(--text-dark);
+    text-decoration: none;
+    font-weight: 700;
+    margin-left: 4px;
+    border-bottom: 2px solid var(--primary-color);
+    padding-bottom: 2px;
+    transition: color 0.2s ease;
+}
+
+.signup-link a:hover {
+    color: var(--primary-color);
+}
+
+/* =========================================
+   ESTILOS DO DASHBOARD / ÁREA INTERNA
+========================================= */
+
+.dashboard-body {
+    align-items: flex-start; /* Diferente do login, o painel começa do topo */
+    background: var(--bg-light); /* Fundo cinza bem claro para os cards brilharem */
+}
+
+.app-container {
+    width: 100%;
+    max-width: 480px; /* Limite amigável para telas de celular/tablets */
+    margin: 0 auto;
+    padding: 2rem 1.5rem 6rem 1.5rem; /* Padding inferior grande para a navbar não cobrir conteúdo */
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+/* --- Cabeçalho do App --- */
+.dash-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.dash-header .greeting {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.dash-header h2 {
+    font-size: 1.6rem;
+    color: var(--text-dark);
+    font-weight: 700;
+}
+
+/* --- Card de Saldo Principal --- */
+.balance-card {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+    padding: 1.8rem 1.5rem;
+    border-radius: 20px;
+    color: var(--white);
+    box-shadow: 0 10px 25px rgba(116, 235, 213, 0.3);
+}
+
+.balance-card p {
+    font-size: 0.95rem;
+    opacity: 0.9;
+    margin-bottom: 0.3rem;
+    font-weight: 500;
+}
+
+.balance-card h3 {
+    font-size: 2.2rem;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+}
+
+/* --- Seções de Gráficos --- */
+.dashboard-section {
+    background: var(--white);
+    padding: 1.5rem;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-sm);
+}
+
+.dashboard-section h4 {
+    color: var(--text-dark);
+    font-size: 1.1rem;
+    margin-bottom: 1.2rem;
+}
+
+.chart-container {
+    position: relative;
+    height: 220px; /* Altura fixa para manter a proporção no mobile */
+    width: 100%;
+}
+
+/* --- Navegação Inferior (Bottom Nav Fixa) --- */
+.bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    max-width: 480px;
+    background: var(--white);
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 0.6rem 1rem 1.2rem 1rem;
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.06);
+    border-top-left-radius: 24px;
+    border-top-right-radius: 24px;
+    z-index: 1000;
+}
+
+.nav-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    font-family: 'Roboto', sans-serif;
+    font-size: 0.75rem;
+    gap: 0.4rem;
+    transition: color 0.3s ease;
+}
+
+.nav-btn.active, .nav-btn:hover {
+    color: var(--text-dark);
+    font-weight: 700;
+}
+
+/* Botão Flutuante Central (+) */
+.nav-btn-add {
+    background: var(--text-dark);
+    color: var(--white);
+    border-radius: 50%;
+    width: 55px;
+    height: 55px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transform: translateY(-25px); /* Joga o botão para cima, fora da barra */
+    box-shadow: 0 8px 15px rgba(44, 62, 80, 0.25);
+    border: 4px solid var(--bg-light); /* Cria um contorno integrado ao fundo */
+    cursor: pointer;
+    transition: transform 0.2s ease, background 0.3s ease;
+}
+
+.nav-btn-add:hover {
+    background: var(--primary-color);
+}
+
+.nav-btn-add:active {
+    transform: translateY(-25px) scale(0.95);
+}
+
+/* =========================================
+   ESTILOS DA VIEW MENSAL
+========================================= */
+
+/* --- Seletor de Mês --- */
+.month-selector {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--white);
+    padding: 1rem 1.5rem;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-sm);
+    margin-bottom: 0.5rem;
+}
+
+.month-selector h2 {
+    font-size: 1.2rem;
+    color: var(--text-dark);
+    font-weight: 700;
+    letter-spacing: 1px;
+    margin: 0;
+}
+
+.arrow-btn {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem;
+    border-radius: 50%;
+    transition: background 0.2s ease, color 0.2s ease;
+}
+
+.arrow-btn:hover {
+    background: var(--bg-light);
+    color: var(--text-dark);
+}
+
+/* --- Grid de Estatísticas --- */
+.stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-top: 0.5rem;
+}
+
+.stat-card {
+    background: var(--white);
+    padding: 1.2rem 1rem;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-sm);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    border: 1px solid rgba(172, 182, 229, 0.2);
+}
+
+.stat-title {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 0.5rem;
+}
+
+.stat-value {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--text-dark);
+}
+
+.stat-subtitle {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin-top: 0.2rem;
+}
+
+/* Utilitários de Cor para Textos */
+.text-success {
+    color: #27ae60 !important;
+}
+
+.text-danger {
+    color: #e74c3c !important;
+}
+
+/* =========================================
+   ESTILOS DO MENU DE AÇÃO (BOTTOM SHEET)
+========================================= */
+
+.action-sheet-overlay {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(44, 62, 80, 0.5);
+    backdrop-filter: blur(2px);
+    z-index: 999;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+}
+
+.action-sheet-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.action-sheet {
+    position: fixed;
+    bottom: -100%; /* Começa escondido para baixo */
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    max-width: 480px;
+    background: var(--white);
+    border-top-left-radius: 24px;
+    border-top-right-radius: 24px;
+    padding: 2rem 1.5rem;
+    z-index: 1000;
+    transition: bottom 0.3s ease-in-out;
+    box-shadow: 0 -10px 25px rgba(0,0,0,0.1);
+}
+
+.action-sheet.active {
+    bottom: 0; /* Desliza para cima quando ativado */
+}
+
+.action-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+.action-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 1.2rem 1rem;
+    background: var(--bg-light);
+    border: 1px solid transparent;
+    border-radius: 16px;
+    color: var(--text-dark);
+    font-weight: 500;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.action-btn svg {
+    margin-bottom: 0.6rem;
+    stroke: var(--text-muted);
+}
+
+.action-btn:hover, .action-btn:active {
+    background: var(--white);
+    border-color: var(--primary-color);
+    box-shadow: var(--shadow-sm);
+    color: var(--primary-color);
+}
+
+.action-btn:hover svg, .action-btn:active svg {
+    stroke: var(--primary-color);
+}
+
+/* =========================================
+   ESTILOS DA ÁREA DO USUÁRIO / CONFIGURAÇÕES
+========================================= */
+
+/* --- Cabeçalho de Perfil (Avatar + Nome) --- */
+.profile-header {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+    padding: 1rem 0;
+}
+
+.profile-avatar-container {
+    position: relative;
+    width: 80px;
+    height: 80px;
+}
+
+.profile-avatar {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid var(--primary-color);
+    box-shadow: var(--shadow-sm);
+}
+
+.edit-avatar-badge {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    background: var(--text-dark);
+    color: var(--white);
+    border-radius: 50%;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    border: 2px solid var(--bg-light);
+}
+
+.profile-info h2 {
+    font-size: 1.4rem;
+    color: var(--text-dark);
+    margin-bottom: 0.3rem;
+}
+
+.profile-info p {
+    font-weight: 700;
+    font-size: 1.1rem;
+}
+
+/* --- Menu de Opções (user.html) --- */
+.profile-menu {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.menu-btn-wide {
+    width: 100%;
+    padding: 1.2rem;
+    background: var(--white);
+    border: 1px solid rgba(172, 182, 229, 0.3);
+    border-radius: var(--border-radius);
+    color: var(--text-dark);
+    font-size: 1.05rem;
+    font-weight: 500;
+    text-align: center;
+    box-shadow: var(--shadow-sm);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.menu-btn-wide:hover, .menu-btn-wide:active {
+    background: var(--bg-light);
+    border-color: var(--primary-color);
+    transform: translateY(-2px);
+}
+
+/* --- Cabeçalho com Botão Voltar --- */
+.dash-header-back {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.back-btn {
+    background: none;
+    border: none;
+    color: var(--text-dark);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* --- Inputs de Edição (Com ícone de lápis) --- */
+.edit-section {
+    margin-bottom: 2rem;
+}
+
+.edit-section h3 {
+    font-size: 1.2rem;
+    color: var(--text-dark);
+    margin-bottom: 1rem;
+}
+
+.edit-input-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+.edit-input-wrapper input {
+    width: 100%;
+    padding-right: 2.5rem; /* Espaço para o ícone */
+}
+
+.edit-icon {
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-muted);
+    cursor: pointer;
+}
+
+/* --- Botão Adicionar Inline --- */
+.btn-add-inline {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 0.5rem;
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    margin-top: 0.5rem;
+    transition: color 0.2s ease;
+}
+
+.btn-add-inline:hover {
+    color: var(--primary-color);
+}
+
+.btn-add-inline svg {
+    background: var(--text-dark);
+    color: var(--white);
+    border-radius: 50%;
+    padding: 2px;
+}
+
+/* =========================================
+   ESTILOS DO TECLADO DE VALORES (CALCULADORA)
+========================================= */
+
+.calc-screen-container {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    padding-bottom: 2rem;
+}
+
+/* --- Visor --- */
+.calc-display {
+    background: var(--bg-light);
+    border-radius: var(--border-radius);
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    box-shadow: inset 0 2px 5px rgba(0,0,0,0.05);
+    border: 1px solid rgba(172, 182, 229, 0.3);
+}
+
+.calc-equation {
+    font-size: 1.2rem;
+    color: var(--text-muted);
+    min-height: 1.5rem;
+    margin-bottom: 0.5rem;
+    letter-spacing: 1px;
+    word-wrap: break-word;
+    max-width: 100%;
+}
+
+.calc-result {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--text-dark);
+}
+
+/* --- Teclado (Grid) --- */
+.calc-keypad {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.8rem;
+    flex-grow: 1; /* Faz o teclado preencher o espaço vazio na tela */
+    margin-bottom: 1.5rem;
+}
+
+.calc-btn {
+    background: var(--white);
+    border: 1px solid rgba(172, 182, 229, 0.4);
+    border-radius: var(--border-radius);
+    font-size: 1.6rem;
+    font-family: 'Roboto', sans-serif;
+    color: var(--text-dark);
+    font-weight: 500;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: all 0.1s ease;
+}
+
+.calc-btn:active {
+    background: var(--bg-light);
+    transform: scale(0.95);
+}
+
+/* Botões de Operação (Cor Secundária) */
+.op-btn {
+    background: var(--bg-light);
+    color: var(--text-dark);
+    font-weight: 700;
+}
+
+.op-btn:active {
+    background: #e0e6ed;
+}
+
+/* Botão Confirmar Gigante */
+.confirm-value-btn {
+    width: 100%;
+    padding: 1.2rem;
+    font-size: 1.2rem;
+    margin-top: auto; /* Empurra para o fundo caso a tela seja longa */
+}
+
+/* =========================================
+   ESTILOS DE SELEÇÃO (CATEGORIAS E TIPO)
+========================================= */
+
+.selection-header {
+    text-align: center;
+    margin-bottom: 2rem;
+    padding: 1.5rem;
+    background: var(--text-dark);
+    color: var(--white);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-md);
+}
+
+.selection-header h3 {
+    font-size: 1.1rem;
+    font-weight: 500;
+    opacity: 0.9;
+}
+
+.selection-header h2 {
+    font-size: 2rem;
+    margin-top: 0.5rem;
+    color: var(--primary-color);
+}
+
+.selection-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+/* Botões gigantes para Crédito e Débito */
+.type-btn {
+    padding: 2.5rem 1rem;
+    font-size: 1.6rem;
+    font-weight: 700;
+    border-radius: var(--border-radius);
+    border: 2px solid transparent;
+    background: var(--white);
+    color: var(--text-dark);
+    box-shadow: var(--shadow-sm);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.type-btn span {
+    font-size: 0.9rem;
+    font-weight: 400;
+    color: var(--text-muted);
+}
+
+.type-btn:hover, .type-btn:active {
+    border-color: var(--primary-color);
+    background: var(--bg-light);
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-md);
+}
+
+/* Cores indicativas (opcional, mas ajuda na UX) */
+.type-btn.credit { color: #e74c3c; border-bottom: 4px solid #e74c3c; }
+.type-btn.debit { color: #27ae60; border-bottom: 4px solid #27ae60; }
+
+/* =========================================
+   ESTILOS DE IMPORTAÇÃO (CSV E TUTORIAL)
+========================================= */
+
+/* --- Dropdown Tutorial (Accordion) --- */
+.accordion-container {
+    margin-bottom: 2rem;
+}
+
+.accordion-btn {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.2rem;
+    background: var(--white);
+    border: 1px solid rgba(172, 182, 229, 0.4);
+    border-radius: var(--border-radius);
+    color: var(--text-dark);
+    font-weight: 500;
+    font-size: 1rem;
+    cursor: pointer;
+    box-shadow: var(--shadow-sm);
+    transition: all 0.3s ease;
+}
+
+.accordion-btn svg {
+    transition: transform 0.3s ease;
+    color: var(--primary-color);
+}
+
+.accordion-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-out, padding 0.3s ease;
+    background: var(--white);
+    border-radius: 0 0 var(--border-radius) var(--border-radius);
+    padding: 0 1.2rem;
+    margin-top: -5px; /* Sobe um pouco para grudar no botão */
+    box-shadow: var(--shadow-sm);
+}
+
+.accordion-content.active {
+    max-height: 300px;
+    padding: 1.5rem 1.2rem 1rem 1.2rem;
+    border: 1px solid rgba(172, 182, 229, 0.4);
+    border-top: none;
+}
+
+.accordion-content p {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    margin-bottom: 0.6rem;
+    line-height: 1.4;
+}
+
+.accordion-content strong {
+    color: var(--text-dark);
+}
+
+/* --- Área de Upload de Arquivo --- */
+.upload-area {
+    border: 2px dashed rgba(172, 182, 229, 0.8);
+    border-radius: var(--border-radius);
+    padding: 2.5rem 1rem;
+    text-align: center;
+    background: var(--white);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+}
+
+.upload-area:hover, .upload-area:active {
+    border-color: var(--primary-color);
+    background: #f0fdfa;
+}
+
+.upload-area svg {
+    color: var(--secondary-color);
+    transition: color 0.3s ease;
+}
+
+.upload-area:hover svg, .upload-area:active svg {
+    color: var(--primary-color);
+}
+
+.upload-area p {
+    color: var(--text-dark);
+    font-weight: 500;
+}
+
+/* --- Feedback do Arquivo --- */
+.file-feedback {
+    margin-top: 1rem;
+    padding: 1rem;
+    background: #f0fdfa; /* Verde bem claro para indicar sucesso */
+    border-radius: var(--border-radius);
+    color: var(--text-dark);
+    font-weight: 500;
+    font-size: 0.95rem;
+    border: 1px solid var(--primary-color);
+}
+
+
+/* =========================================
+   ESTILOS DE GERENCIAMENTO DE CATEGORIAS
+========================================= */
+
+/* --- Caixa de Inserção --- */
+.add-category-box {
+    display: flex;
+    gap: 0.8rem;
+    margin-bottom: 1rem;
+}
+
+.add-category-box input {
+    flex-grow: 1;
+    padding: 1rem 1.2rem;
+    border: 1px solid rgba(172, 182, 229, 0.4);
+    border-radius: var(--border-radius);
+    background: var(--white);
+    font-size: 1rem;
+    color: var(--text-dark);
+    box-shadow: var(--shadow-sm);
+    transition: border-color 0.3s ease;
+}
+
+.add-category-box input:focus {
+    border-color: var(--primary-color);
+    outline: none;
+}
+
+.add-category-box button {
+    background: var(--text-dark);
+    color: var(--white);
+    border: none;
+    border-radius: var(--border-radius);
+    padding: 0 1.2rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: var(--shadow-sm);
+    transition: all 0.2s ease;
+}
+
+.add-category-box button:hover, .add-category-box button:active {
+    background: var(--primary-color);
+    transform: scale(0.95);
+}
+
+/* --- Lista Dinâmica --- */
+.category-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+}
+
+.category-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.2rem;
+    background: var(--white);
+    border: 1px solid rgba(172, 182, 229, 0.3);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-sm);
+    transition: all 0.2s ease;
+}
+
+.category-item:hover {
+    border-color: var(--primary-color);
+    transform: translateX(2px);
+}
+
+.category-name {
+    font-weight: 500;
+    color: var(--text-dark);
+    font-size: 1.05rem;
+}
+
+.cat-action-btn {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    padding: 0.4rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.cat-action-btn:hover, .cat-action-btn:active {
+    color: #e74c3c; /* Vermelho alerta para exclusão */
+    background: #fdf2f2;
+}

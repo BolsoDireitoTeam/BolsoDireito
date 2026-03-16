@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bolso Direito - Tipo de Gasto</title>
+    <link href="https://fonts.googleapis.com/css?family=Roboto:400,500,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../static/styles/style.css">
+</head>
+<body class="dashboard-body">
+
+    <div class="app-container">
+        
+        <header class="dash-header-back">
+            <button class="back-btn" onclick="history.back()">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+            </button>
+            <h2 id="categoriaDisplay">Categoria</h2>
+        </header>
+
+        <h4 style="margin-bottom: 1.5rem; margin-top: 1rem; color: var(--text-dark); text-align: center;">Como você pagou?</h4>
+
+        <div class="selection-list">
+            <button class="type-btn credit" onclick="finalizarGasto('Crédito')">
+                Crédito
+                <span>Vai para a Fatura</span>
+            </button>
+            
+            <button class="type-btn debit" onclick="finalizarGasto('Débito')">
+                Débito
+                <span>Sai do Saldo Atual</span>
+            </button>
+        </div>
+
+    </div>
+
+    <script>
+        // Lê a categoria salva na tela anterior para colocar no topo
+        document.addEventListener('DOMContentLoaded', () => {
+            const categoria = localStorage.getItem('categoriaTemporaria');
+            if(categoria) {
+                document.getElementById('categoriaDisplay').innerText = categoria;
+            } else {
+                history.back(); // Volta se houver erro
+            }
+        });
+
+        // Consolida tudo e finaliza
+        function finalizarGasto(tipoPagamento) {
+            const valor = localStorage.getItem('valorTemporario');
+            const categoria = localStorage.getItem('categoriaTemporaria');
+
+            // --- Lógica de Back-End Simulada ---
+            // Aqui, no futuro, você criaria um Objeto 'Gasto' e jogaria no Extrato ou Fatura.
+            const novoGasto = {
+                id: Date.now(),
+                valor: parseFloat(valor),
+                categoria: categoria,
+                tipo: tipoPagamento,
+                data: new Date().toISOString()
+            };
+
+            console.log("Gasto Registrado no Banco:", novoGasto);
+            
+            // Dá o feedback de sucesso para o usuário
+            alert(`✅ Gasto registrado!\n\nValor: R$ ${novoGasto.valor.toFixed(2)}\nCategoria: ${categoria}\nPagamento: ${tipoPagamento}`);
+
+            // Limpa as variáveis temporárias da memória
+            localStorage.removeItem('valorTemporario');
+            localStorage.removeItem('categoriaTemporaria');
+
+            // Redireciona de volta para o painel principal
+            window.location.href = '../dashboard/overview.html';
+        }
+    </script>
+</body>
+</html>

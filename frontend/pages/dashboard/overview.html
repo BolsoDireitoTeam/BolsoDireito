@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bolso Direito - Overview</title>
+    <link href="https://fonts.googleapis.com/css?family=Roboto:400,500,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../static/styles/style.css">
+    
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="dashboard-body">
+
+    <div class="app-container">
+        <header class="dash-header">
+            <div>
+                <p class="greeting">Olá, Usuário!</p>
+                <h2>Visão Geral</h2>
+            </div>
+        </header>
+
+        <section class="balance-card">
+            <p>Saldo Disponível</p>
+            <h3>R$ 3.250,00</h3>
+        </section>
+
+        <section class="dashboard-section">
+            <h4>Despesas por Mês</h4>
+            <div class="chart-container">
+                <canvas id="barChart"></canvas>
+            </div>
+        </section>
+
+        <section class="dashboard-section">
+            <h4>Gastos por Categoria</h4>
+            <div class="chart-container">
+                <canvas id="pieChart"></canvas>
+            </div>
+        </section>
+    </div>
+
+    <div id="footer-placeholder"></div>
+
+    <script src="../../utils.js"></script>
+    <script>
+        // Configuração Global de Fonte para os gráficos
+        Chart.defaults.font.family = "'Roboto', sans-serif";
+        Chart.defaults.color = "#7f8c8d";
+
+        // Gráfico de Barras (Despesas Mensais)
+        const barCtx = document.getElementById('barChart').getContext('2d');
+        new Chart(barCtx, {
+            type: 'bar',
+            data: {
+                labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul'],
+                datasets: [{
+                    label: 'Gastos',
+                    data: [1200, 950, 950, 450, 1100, 950, 500],
+                    backgroundColor: '#ACB6E5', // Cor secundária
+                    borderRadius: 4,
+                    barPercentage: 0.6
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false }
+                },
+                scales: {
+                    y: { beginAtZero: true, display: false },
+                    x: { grid: { display: false } }
+                }
+            }
+        });
+
+        // Gráfico de Pizza/Donut (Categorias)
+        const pieCtx = document.getElementById('pieChart').getContext('2d');
+        new Chart(pieCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Moradia', 'Alimentação', 'Transporte', 'Lazer'],
+                datasets: [{
+                    data: [1500, 800, 300, 400],
+                    backgroundColor: ['#2c3e50', '#74ebd5', '#ACB6E5', '#f4f7f6'],
+                    borderWidth: 0,
+                    hoverOffset: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: '65%',
+                plugins: {
+                    legend: {
+                        position: 'right',
+                        labels: { boxWidth: 12, padding: 15 }
+                    }
+                }
+            }
+        });
+    </script>
+    <nav class="bottom-nav">
+    <button class="nav-btn" onclick="toggleViews()">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+        <span>Painel</span>
+    </button>
+    
+    <button class="nav-btn-add" onclick="toggleMenu()">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+    </button>
+    
+    <button class="nav-btn" onclick="window.location.href='../config/perfil.html'">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+        <span>Perfil</span>
+    </button>
+</nav>
+</body>
+</html>

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bolso Direito - Selecionar Categoria</title>
+    <link href="https://fonts.googleapis.com/css?family=Roboto:400,500,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../static/styles/style.css">
+</head>
+<body class="dashboard-body">
+
+    <div class="app-container">
+        
+        <header class="dash-header-back">
+            <button class="back-btn" onclick="history.back()">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+            </button>
+            <h2>Novo Gasto</h2>
+        </header>
+
+        <div class="selection-header">
+            <h3>Valor do Gasto</h3>
+            <h2 id="valorDisplay">R$ 0,00</h2>
+        </div>
+
+        <h4 style="margin-bottom: 1rem; color: var(--text-dark);">Selecione a Categoria:</h4>
+
+        <div class="selection-list">
+            <button class="menu-btn-wide" onclick="selecionarCategoria('Lazer')">Lazer</button>
+            <button class="menu-btn-wide" onclick="selecionarCategoria('Transporte')">Transporte</button>
+            <button class="menu-btn-wide" onclick="selecionarCategoria('Saúde')">Saúde</button>
+            <button class="menu-btn-wide" onclick="selecionarCategoria('Alimentação')">Alimentação</button>
+            <button class="menu-btn-wide" onclick="selecionarCategoria('Outros')">Outros</button>
+        </div>
+
+    </div>
+
+    <script>
+        // Ao carregar a página, busca o valor que a calculadora salvou
+        document.addEventListener('DOMContentLoaded', () => {
+            const valor = localStorage.getItem('valorTemporario');
+            if(valor) {
+                // Formata o número (ex: 123.98) para R$ 123,98
+                document.getElementById('valorDisplay').innerText = "R$ " + parseFloat(valor).toFixed(2).replace('.', ',');
+            } else {
+                // Se alguém entrar nessa tela sem passar pela calculadora, avisa e volta
+                alert("Nenhum valor foi definido. Voltando para o teclado...");
+                window.location.href = 'teclado-valores.html?tipo=gasto';
+            }
+        });
+
+        // Salva a categoria e vai para a última etapa
+        function selecionarCategoria(categoria) {
+            localStorage.setItem('categoriaTemporaria', categoria);
+            window.location.href = 'escolher-tipo-gasto.html';
+        }
+    </script>
+</body>
+</html>

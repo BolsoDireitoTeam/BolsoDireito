@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bolso Direito - Perfil do Usuário</title>
+    <link href="https://fonts.googleapis.com/css?family=Roboto:400,500,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../static/styles/style.css">
+</head>
+<body class="dashboard-body">
+
+    <div class="app-container">
+        
+        <div class="profile-header">
+            <div class="profile-avatar-container">
+                <img src="https://via.placeholder.com/150" alt="Foto de Perfil" class="profile-avatar" id="userAvatar">
+            </div>
+            <div class="profile-info">
+                <h2>Ronilson Silva</h2>
+                <p class="text-success">Saldo: R$ 999,00</p>
+            </div>
+        </div>
+
+        <div class="profile-menu">
+            <button class="menu-btn-wide" onclick="window.location.href='editar-dados-cadastrais.html'">
+                Atualizar Dados Cadastrais
+            </button>
+            <button class="menu-btn-wide" onclick="window.location.href='editar-dados-financeiros.html'">
+                Atualizar Dados Financeiros
+            </button>
+            <button class="menu-btn-wide" style="color: #e74c3c; margin-top: 2rem;" onclick="window.location.href='../login/login.html'">
+                Sair da Conta
+            </button>
+        </div>
+
+    </div>
+
+    <div id="footer-placeholder"></div>
+    <script src="../../utils.js"></script>
+</body>
+</html>

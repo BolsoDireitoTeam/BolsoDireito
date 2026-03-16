@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bolso Direito - Teclado de Valores</title>
+    <link href="https://fonts.googleapis.com/css?family=Roboto:400,500,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../static/styles/style.css">
+</head>
+<body class="dashboard-body" style="background: var(--white);"> <div class="app-container calc-screen-container">
+        
+        <header class="dash-header-back">
+            <button class="back-btn" onclick="history.back()">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+            </button>
+            <h2 id="tituloTeclado">Digitar Valor</h2>
+        </header>
+
+        <div class="calc-display">
+            <div class="calc-equation" id="visorEquacao"></div>
+            <div class="calc-result" id="visorResultado">R$ 0,00</div>
+        </div>
+
+        <div class="calc-keypad">
+            <button class="calc-btn" onclick="inserir('1')">1</button>
+            <button class="calc-btn" onclick="inserir('2')">2</button>
+            <button class="calc-btn" onclick="inserir('3')">3</button>
+            <button class="calc-btn op-btn" onclick="apagar()"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 4H8l-7 8 7 8h13a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"></path><line x1="18" y1="9" x2="12" y2="15"></line><line x1="12" y1="9" x2="18" y2="15"></line></svg></button>
+
+            <button class="calc-btn" onclick="inserir('4')">4</button>
+            <button class="calc-btn" onclick="inserir('5')">5</button>
+            <button class="calc-btn" onclick="inserir('6')">6</button>
+            <button class="calc-btn op-btn" onclick="inserir('+')">+</button>
+
+            <button class="calc-btn" onclick="inserir('7')">7</button>
+            <button class="calc-btn" onclick="inserir('8')">8</button>
+            <button class="calc-btn" onclick="inserir('9')">9</button>
+            <button class="calc-btn op-btn" onclick="inserir('-')">-</button>
+
+            <button class="calc-btn" onclick="inserir(',')">,</button>
+            <button class="calc-btn" onclick="inserir('0')">0</button>
+            <button class="calc-btn op-btn" onclick="calcular()">=</button>
+            <button class="calc-btn op-btn" onclick="limpar()">C</button>
+        </div>
+
+        <button class="btn-primary confirm-value-btn" onclick="confirmarValor()">
+            Confirmar Valor
+        </button>
+
+    </div>
+
+    <script>
+        let expressao = "";
+        const visorEquacao = document.getElementById('visorEquacao');
+        const visorResultado = document.getElementById('visorResultado');
+
+        // Pega parâmetros da URL (ex: ?tipo=ganho) para mudar o título dinamicamente
+        const urlParams = new URLSearchParams(window.location.search);
+        const tipo = urlParams.get('tipo');
+        if(tipo === 'ganho') document.getElementById('tituloTeclado').innerText = 'Adicionar Ganho';
+        if(tipo === 'gasto') document.getElementById('tituloTeclado').innerText = 'Adicionar Gasto';
+
+        function formatarMoeda(valor) {
+            return "R$ " + valor.toFixed(2).replace('.', ',');
+        }
+
+        function atualizarVisor() {
+            visorEquacao.innerText = expressao === "" ? "0" : expressao;
+            try {
+                // Troca vírgula por ponto para o JavaScript conseguir calcular
+                let expressaoMath = expressao.replace(/,/g, '.');
+                
+                // Evita erro de sintaxe se a expressão terminar com operador
+                if (/[+\-]$/.test(expressaoMath)) {
+                    expressaoMath = expressaoMath.slice(0, -1);
+                }
+
+                if(expressaoMath !== "") {
+                    // Avalia a string como matemática
+                    const resultado = eval(expressaoMath);
+                    visorResultado.innerText = formatarMoeda(resultado);
+                } else {
+                    visorResultado.innerText = "R$ 0,00";
+                }
+            } catch (e) {
+                // Se der erro matemático temporário (ex: 10++), mantém o resultado anterior
+            }
+        }
+
+        function inserir(caractere) {
+            // Regra simples para evitar operadores duplicados
+            const ultimoChar = expressao.slice(-1);
+            if (['+', '-'].includes(caractere) && ['+', '-'].includes(ultimoChar)) {
+                return; 
+            }
+            expressao += caractere;
+            atualizarVisor();
+        }
+
+        function apagar() {
+            expressao = expressao.slice(0, -1);
+            atualizarVisor();
+        }
+
+        function limpar() {
+            expressao = "";
+            atualizarVisor();
+        }
+
+        function calcular() {
+            try {
+                let expressaoMath = expressao.replace(/,/g, '.');
+                let resultado = eval(expressaoMath);
+                // Transforma o resultado na nova expressão para continuar a conta
+                expressao = resultado.toString().replace('.', ',');
+                atualizarVisor();
+            } catch (e) {
+                alert("Expressão inválida");
+            }
+        }
+
+        function confirmarValor() {
+            // Calcula o valor final garantido
+            let expressaoMath = expressao.replace(/,/g, '.');
+            if (/[+\-]$/.test(expressaoMath)) expressaoMath = expressaoMath.slice(0, -1);
+            
+            let valorFinal = expressaoMath === "" ? 0 : eval(expressaoMath);
+
+            if(valorFinal <= 0) {
+                alert("O valor deve ser maior que zero!");
+                return;
+            }
+
+            // AQUI OCORRE A MÁGICA:
+            // Salva o valor no localStorage para a próxima tela pegar e processar
+            localStorage.setItem('valorTemporario', valorFinal);
+            
+            alert("Valor R$ " + valorFinal.toFixed(2) + " confirmado com sucesso!\n\n(No app real, isso avançará para escolher a categoria).");
+            window.location.href = 'escolher-categoria.html';
+        }
+    </script>
+</body>
+</html>
