@@ -972,3 +972,285 @@ body.calc-body {
     border-top: 1px solid rgba(172,182,229,.35);
     margin: 1.5rem 0;
 }
+
+/* =====================================================
+   FASE 4 — EXTRATO LIST
+   ===================================================== */
+
+.extrato-section-title {
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: var(--bd-dark);
+    margin: 0 0 .8rem;
+}
+
+#listaExtrato {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: .6rem;
+}
+
+.extrato-item {
+    display: flex;
+    align-items: center;
+    gap: .9rem;
+    background: var(--bd-white);
+    border-radius: var(--bd-radius);
+    padding: .9rem 1rem;
+    box-shadow: var(--bd-shadow-sm);
+    border-left: 4px solid transparent;
+    transition: box-shadow .2s ease;
+}
+
+.extrato-item:hover { box-shadow: var(--bd-shadow-md); }
+.extrato-item.ganho { border-left-color: #27ae60; }
+.extrato-item.gasto { border-left-color: #e74c3c; }
+
+.extrato-icon {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.extrato-item.ganho .extrato-icon { background: #eafaf1; color: #27ae60; }
+.extrato-item.gasto .extrato-icon { background: #fdf2f2; color: #e74c3c; }
+
+.extrato-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: .15rem;
+    min-width: 0;
+}
+
+.extrato-nome {
+    font-weight: 600;
+    font-size: .95rem;
+    color: var(--bd-dark);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.extrato-data {
+    font-size: .78rem;
+    color: var(--bd-muted);
+}
+
+.extrato-meta {
+    font-size: .72rem;
+    color: var(--bd-muted);
+    display: inline-block;
+}
+
+.categoria-tag {
+    background: var(--bd-light);
+    border-radius: 4px;
+    padding: .1rem .35rem;
+    margin-left: .3rem;
+}
+
+.extrato-valor {
+    font-weight: 700;
+    font-size: 1rem;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.extrato-item.ganho .extrato-valor { color: #27ae60; }
+.extrato-item.gasto .extrato-valor { color: #e74c3c; }
+
+.extrato-vazio {
+    text-align: center;
+    padding: 2rem 1rem;
+    color: var(--bd-muted);
+    background: var(--bd-white);
+    border-radius: var(--bd-radius);
+    box-shadow: var(--bd-shadow-sm);
+    font-size: .95rem;
+    line-height: 1.6;
+}
+
+.extrato-rodape {
+    text-align: center;
+    font-size: .85rem;
+    color: var(--bd-muted);
+    padding: .5rem;
+}
+
+/* =====================================================
+   FASE 4 — ALERTAS DE RISCO / ATENÇÃO
+   ===================================================== */
+
+#alertas-container {
+    display: flex;
+    flex-direction: column;
+    gap: .6rem;
+}
+
+.alerta-banner {
+    display: flex;
+    align-items: flex-start;
+    gap: .8rem;
+    padding: .9rem 1rem;
+    border-radius: var(--bd-radius);
+    animation: slideDown .3s ease;
+}
+
+@keyframes slideDown {
+    from { opacity: 0; transform: translateY(-8px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+.alerta-risco {
+    background: #fdf2f2;
+    border: 1px solid #f5c6cb;
+    border-left: 4px solid #e74c3c;
+}
+
+.alerta-atencao {
+    background: #fffbec;
+    border: 1px solid #ffeeba;
+    border-left: 4px solid #f39c12;
+}
+
+.alerta-icon {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+    margin-top: .1rem;
+}
+
+.alerta-risco   .alerta-icon { color: #e74c3c; }
+.alerta-atencao .alerta-icon { color: #f39c12; }
+
+.alerta-texto {
+    display: flex;
+    flex-direction: column;
+    gap: .2rem;
+    font-size: .85rem;
+    line-height: 1.45;
+}
+
+.alerta-risco   .alerta-texto { color: #721c24; }
+.alerta-atencao .alerta-texto { color: #856404; }
+
+.alerta-texto strong { display: block; font-size: .9rem; margin-bottom: .1rem; }
+
+/* =====================================================
+   FASE 4 — SALDO (estados de cor)
+   ===================================================== */
+
+.saldo-positivo { color: var(--bd-white) !important; }
+.saldo-negativo { color: #ff6b6b !important; }
+.saldo-zero     { color: rgba(255,255,255,.7) !important; }
+
+/* =====================================================
+   FASE 4 — TOAST de Feedback
+   ===================================================== */
+
+#toast-container {
+    position: fixed;
+    top: 1.2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: .5rem;
+    pointer-events: none;
+    width: 90%;
+    max-width: 400px;
+}
+
+.bd-toast {
+    padding: .85rem 1.3rem;
+    border-radius: 999px;
+    font-size: .9rem;
+    font-weight: 600;
+    color: var(--bd-white);
+    box-shadow: 0 4px 15px rgba(0,0,0,.15);
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: opacity .25s ease, transform .25s ease;
+    pointer-events: auto;
+    text-align: center;
+}
+
+.bd-toast.visible { opacity: 1; transform: translateY(0); }
+.bd-toast-success { background: #27ae60; }
+.bd-toast-error   { background: #e74c3c; }
+.bd-toast-info    { background: var(--bd-dark); }
+
+/* =====================================================
+   FASE 4 — CAMPO DE NOME (Teclado + Tipo de Gasto)
+   ===================================================== */
+
+.nome-input-wrapper {
+    padding: 0 0 1rem;
+}
+
+.nome-input-wrapper label {
+    display: block;
+    font-size: .8rem;
+    font-weight: 600;
+    color: var(--bd-muted);
+    text-transform: uppercase;
+    letter-spacing: .5px;
+    margin-bottom: .4rem;
+}
+
+.nome-input-wrapper input,
+.parcelas-wrapper input {
+    width: 100%;
+    padding: .85rem 1rem;
+    border: 1px solid rgba(172,182,229,.5);
+    border-radius: var(--bd-radius);
+    font-size: 1rem;
+    color: var(--bd-dark);
+    background: var(--bd-white);
+    font-family: 'Roboto', sans-serif;
+    transition: border-color .2s ease;
+    box-shadow: var(--bd-shadow-sm);
+}
+
+.nome-input-wrapper input:focus,
+.parcelas-wrapper input:focus {
+    border-color: var(--bd-primary);
+    outline: none;
+}
+
+.parcelas-wrapper {
+    padding: .8rem 0 0;
+    display: none; /* controlado pelo app.js */
+}
+
+.parcelas-wrapper label {
+    display: block;
+    font-size: .8rem;
+    font-weight: 600;
+    color: var(--bd-muted);
+    text-transform: uppercase;
+    letter-spacing: .5px;
+    margin-bottom: .4rem;
+}
+
+/* type-btn estado selecionado */
+.type-btn.selected {
+    border-color: var(--bd-primary) !important;
+    background: var(--bd-light) !important;
+    transform: scale(.98);
+}
+
+/* Botão salvar gasto */
+.btn-salvar-gasto {
+    margin-top: 1.5rem;
+}

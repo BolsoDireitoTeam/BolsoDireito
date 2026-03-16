@@ -8,7 +8,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="../../static/styles/style.css">
 </head>
-<body class="app-body">
+<body class="app-body" data-page="escolher-tipo">
 
     <div class="app-shell">
         <header class="app-header-back">
@@ -22,47 +22,54 @@
             <h2 id="categoriaDisplay">Categoria</h2>
         </header>
 
+        <!-- Campo de Nome do Gasto -->
+        <div class="nome-input-wrapper" style="padding: 0 0 .8rem;">
+            <label for="inputNomeGasto">Descrição (opcional)</label>
+            <input type="text" id="inputNomeGasto" placeholder="Ex: Mercado, Uber, Netflix..." autocomplete="off">
+        </div>
+
         <h4 class="text-center mt-2 mb-4" style="color: var(--bd-dark);">Como você pagou?</h4>
 
         <div class="selection-list">
-            <button class="type-btn credit" id="btn-credito" onclick="finalizarGasto('Crédito')">
+            <button class="type-btn credit" id="btn-credito">
                 Crédito
                 <span>Vai para a Fatura</span>
             </button>
-            <button class="type-btn debit" id="btn-debito" onclick="finalizarGasto('Débito')">
+            <button class="type-btn debit" id="btn-debito">
                 Débito
                 <span>Sai do Saldo Atual</span>
             </button>
         </div>
+
+        <!-- Campo de parcelas (visivel apenas para Crédito) -->
+        <div class="parcelas-wrapper" id="campoParcelas">
+            <label for="inputParcelas">Número de Parcelas (1 a 36)</label>
+            <input type="number" id="inputParcelas" min="1" max="36" value="1" placeholder="Ex: 3">
+        </div>
+
+        <!-- Botão principal de confirmação -->
+        <button class="bd-btn-primary btn-salvar-gasto" id="btn-salvar-gasto">
+            Confirmar Gasto
+        </button>
     </div>
 
+    <!-- JS Stack: ordem obrigatória -->
+    <script src="../../static/js/database.js"></script>
+    <script src="../../static/js/engine.js"></script>
+    <script src="../../static/js/ui.js"></script>
     <script>
+        // Exibe a categoria no título e o valor no cabeçalho (leitura simples do localStorage)
         document.addEventListener('DOMContentLoaded', () => {
             const cat = localStorage.getItem('categoriaTemporaria');
-            if (cat) document.getElementById('categoriaDisplay').innerText = cat;
-            else history.back();
+            if (cat) document.getElementById('categoriaDisplay').textContent = cat;
+            const val = localStorage.getItem('valorTemporario');
+            if (val) {
+                const el = document.getElementById('valorDisplay');
+                if (el) el.textContent = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(val);
+            }
         });
-
-        function finalizarGasto(tipo) {
-            const valor    = localStorage.getItem('valorTemporario');
-            const categoria = localStorage.getItem('categoriaTemporaria');
-
-            const novoGasto = {
-                id: Date.now(),
-                valor: parseFloat(valor),
-                categoria,
-                tipo,
-                data: new Date().toISOString()
-            };
-
-            console.log('Gasto registrado:', novoGasto);
-            alert(`✅ Gasto registrado!\n\nValor: R$ ${novoGasto.valor.toFixed(2)}\nCategoria: ${categoria}\nPagamento: ${tipo}`);
-
-            localStorage.removeItem('valorTemporario');
-            localStorage.removeItem('categoriaTemporaria');
-            window.location.href = '../dashboard/overview.html';
-        }
     </script>
+    <script src="../../static/js/app.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

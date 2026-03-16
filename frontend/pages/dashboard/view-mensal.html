@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="../../static/styles/style.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
-<body class="app-body">
+<body class="app-body" data-page="view-mensal">
 
     <div class="app-shell">
 
@@ -39,21 +39,21 @@
         <section class="stats-grid">
             <div class="stat-card">
                 <span class="stat-title">Economizou</span>
-                <span class="stat-value text-bd-success">R$ 700,00</span>
+                <span class="stat-value" id="stat-economizou">—</span>
             </div>
             <div class="stat-card">
                 <span class="stat-title">Gasto Total</span>
-                <span class="stat-value text-bd-danger">R$ 5.000,00</span>
+                <span class="stat-value" id="stat-gasto-total">—</span>
             </div>
             <div class="stat-card">
                 <span class="stat-title">Maior Despesa</span>
-                <span class="stat-value">R$ 1.000,00</span>
-                <span class="stat-subtitle">(Alimentação)</span>
+                <span class="stat-value" id="stat-maior-despesa">—</span>
+                <span class="stat-subtitle" id="stat-maior-cat"></span>
             </div>
             <div class="stat-card">
                 <span class="stat-title">Balanço do Mês</span>
-                <span class="stat-value">Positivo</span>
-                <span class="stat-subtitle text-bd-success">+ 14%</span>
+                <span class="stat-value" id="stat-balanco">—</span>
+                <span class="stat-subtitle" id="stat-balanco-pct"></span>
             </div>
         </section>
 
@@ -137,48 +137,12 @@
         </button>
     </nav>
 
+    <!-- JS Stack: ordem obrigatória -->
+    <script src="../../static/js/database.js"></script>
+    <script src="../../static/js/engine.js"></script>
+    <script src="../../static/js/ui.js"></script>
+    <script src="../../static/js/app.js"></script>
     <script src="../../utils.js"></script>
-    <script>
-        Chart.defaults.font.family = "'Roboto', sans-serif";
-
-        new Chart(document.getElementById('gastosMensaisChart').getContext('2d'), {
-            type: 'pie',
-            data: {
-                labels: ['Streaming', 'Lazer', 'Transporte', 'Alimentação'],
-                datasets: [{
-                    data: [300, 1500, 500, 2700],
-                    backgroundColor: ['#7f8c8d', '#ACB6E5', '#74ebd5', '#2c3e50'],
-                    borderWidth: 2,
-                    borderColor: '#ffffff'
-                }]
-            },
-            options: {
-                responsive: true, maintainAspectRatio: false,
-                plugins: {
-                    legend: { position: 'bottom', labels: { padding: 20, usePointStyle: true } }
-                }
-            }
-        });
-
-        const meses = ['JANEIRO','FEVEREIRO','MARÇO','ABRIL','MAIO','JUNHO',
-                        'JULHO','AGOSTO','SETEMBRO','OUTUBRO','NOVEMBRO','DEZEMBRO'];
-        let mesIndex = new Date().getMonth();
-        document.getElementById('mesAtual').innerText = meses[mesIndex];
-
-        function mudarMes(dir) {
-            mesIndex = (mesIndex + dir + 12) % 12;
-            document.getElementById('mesAtual').innerText = meses[mesIndex];
-        }
-
-        function toggleMenu() {
-            document.getElementById('actionSheet').classList.toggle('active');
-            document.getElementById('menuOverlay').classList.toggle('active');
-        }
-
-        function toggleViews() {
-            window.location.href = 'overview.html';
-        }
-    </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
