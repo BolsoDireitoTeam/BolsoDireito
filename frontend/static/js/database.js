@@ -480,6 +480,52 @@ function getTotalFatura(mesAno) {
 }
 
 /**
+ * Retorna todas as chaves de faturas existentes ordenadas cronologicamente.
+ * @returns {string[]} ex: ["2026-04", "2026-05"]
+ */
+function getFaturasMeses() {
+    return Object.keys(_state.faturas).sort();
+}
+
+// ─────────────────────────────────────────────────────────────
+//  BRIDGES INTERNAS — Usadas exclusivamente pelo engine.js
+//  Prefixo _ indica que NÃO são para uso direto pelo código de UI.
+// ─────────────────────────────────────────────────────────────
+
+/**
+ * [Engine Bridge] Define o saldo diretamente.
+ * Usado pelo motor financeiro após consolidação da virada de mês.
+ * @param {number} novoSaldo
+ */
+function _setSaldo(novoSaldo) {
+    _state.saldo = Number(novoSaldo.toFixed(2));
+    salvarEstado();
+}
+
+/**
+ * [Engine Bridge] Insere um lançamento no início do Extrato.
+ * @param {object} lancamento — objeto Ganho ou Gasto já construído
+ */
+function _adicionarAoExtrato(lancamento) {
+    _state.extrato.unshift(lancamento);
+    salvarEstado();
+}
+
+/**
+ * [Engine Bridge] Remove (consome) a fatura de um mês do objeto faturas,
+ * retornando os itens que estavam nela. Após a virada, esses itens
+ * já foram contabilizados no Saldo e podem ser descartados do pendente.
+ * @param {string} mesAno — "YYYY-MM"
+ * @returns {Array} itens que estavam na fatura (ou [] se vazia)
+ */
+function _consumirFatura(mesAno) {
+    const itens = _state.faturas[mesAno] ?? [];
+    delete _state.faturas[mesAno];
+    salvarEstado();
+    return itens;
+}
+
+/**
  * Retorna o Extrato completo (cópia).
  * @returns {Array}
  */
@@ -544,10 +590,17 @@ const BolsoDB = {
     getExtrato,
     getFatura,
     getTotalFatura,
+    getFaturasMeses,
 
     // ── Constantes Úteis ───────────────────────────────
     CATEGORIAS,
     TIPOS_GASTO,
+
+    // ── Engine Bridges (uso exclusivo do engine.js) ────
+    _setSaldo,
+    _adicionarAoExtrato,
+    _consumirFatura,
+    _calcularMesFatura,  // re-exposta para engine.js usar no cálculo de alertas
 };
 
 
