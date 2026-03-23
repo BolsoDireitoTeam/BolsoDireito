@@ -1,0 +1,15 @@
+# Os comentários começam com '#'
+# O formato base é: [Caminho/Padrão do Arquivo] [Revisores]
+
+# 1. Regra Global (Fallback)
+# O asterisco significa que QUALQUER pull request aberto, em qualquer arquivo, 
+# solicitará automaticamente a revisão das pessoas listadas.
+* @eduardavergueiro @MatheusKubrusly @PedroMagno-prog @VictorFurrer
+# (Se a equipe usar o recurso de Organizações do GitHub, você pode marcar o time todo:)
+# * @BolsoDireitoTeam
+
+# 2. Regras por Diretório
+# Se a regra global notificar todos, você pode sobrescrevê-la para pastas específicas.
+# Alterações na documentação notificam apenas os responsáveis pelas métricas/textos:
+documentation/  @eduardavergueiro @MatheusKubrusly @PedroMagno-prog @VictorFurrer
+
