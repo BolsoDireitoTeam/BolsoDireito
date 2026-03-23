@@ -21,8 +21,8 @@ function toggleViews() {
     const path = window.location.pathname;
     if (path.includes('overview.html')) {
         window.location.href = 'view-mensal.html';
-    } else if (path.includes('view-mensal.html') || path.includes('view-anual.html')) {
-        window.location.href = 'overview.html';
+    } else if (path.includes('view-mensal.html') ) {
+        window.location.href = 'view-anual.html';
     } else {
         window.location.href = '../dashboard/overview.html';
     }
