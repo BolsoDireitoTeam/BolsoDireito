@@ -6,7 +6,7 @@ flowchart LR
   end
 
   %% Fronteira do sistema
-  subgraph SYS["BolsoDireito"]
+  subgraph SYS[" "]
     direction LR
 
     subgraph USERAREA["Casos de uso do Usuario"]
@@ -15,7 +15,6 @@ flowchart LR
       UDF["Manter Dados Financeiros"]
       UMF["Manter Metas Financeiras"]
       UTR["Manter Transacoes"]
-      UBC["Consultar dados Bancarios"]
       UPU["Manter cadastro de Perfil de Usuario"]
 
       subgraph DET["Casos de uso de transacao e relatorio"]
@@ -23,22 +22,25 @@ flowchart LR
         REGM["Registrar gasto"]
         REGW["Registrar gasto via WhatsApp"]
         REGT["Registrar gastos por .txt"]
+        REXT["Registrar gasto via fatura/extrato bancario"]
         CATG["Categorizar gasto"]
         FILT["Filtrar gastos"]
         FILC["Filtrar gastos por categoria"]
         FILP["Filtrar gastos por periodo"]
-        RPDF["Emitir relatorio de gastos em PDF"]
+        RBC["Consultar dados Bancarios"]
+        RPDF["Emitir relatorio de gastos"]
+        RDASH["Emitir dashboard de gastos"]
       end
     end
 
     subgraph ADMINAREA["Casos de uso do Administrador"]
       direction TB
-      ACI["Consultar Carteira de Investimentos de Usuario"]
-      ADF["Consultar Dados Financeiros de Usuario"]
-      AMF["Consultar Meta Financeira de Usuario"]
-      ATR["Consultar Transacao de Usuario"]
+      ACI["Gerenciar Carteira de Investimentos dos Usuarios"]
+      ADF["Gerenciar Dados Financeiros dos Usuarios"]
+      AMF["Gerenciar Metas Financeiras dos Usuarios"]
+      ATR["Gerenciar Transacoes dos Usuarios"]
       ABC["Manter Bancos"]
-      APU["Manter cadastro de Perfil de Usuario"]
+      APU["Gerenciar Perfis de Usuario"]
     end
   end
 
@@ -53,7 +55,6 @@ flowchart LR
   U --- UDF
   U --- UMF
   U --- UTR
-  U --- UBC
   U --- UPU
 
   A --- ACI
@@ -67,10 +68,13 @@ flowchart LR
   U --- REGM
   U --- CATG
   U --- FILT
+  U --- RBC
   U --- RPDF
+  U --- RDASH
 
   REGW -.->|extends| REGM
   REGT -.->|extends| REGM
+  REXT -.->|extends| REGM
 
   FILC -.->|extends| FILT
   FILP -.->|extends| FILT
@@ -78,13 +82,13 @@ flowchart LR
   %% Estilo
   classDef papeisUsuario fill:#f0f0f0,stroke:#222,stroke-width:2px,color:#111;
   classDef crud fill:#f8f8dc,stroke:#222,stroke-width:1.5px,color:#111;
-  classDef consulta fill:#e3eef5,stroke:#222,stroke-width:1.5px,color:#111;
+  classDef gerencia fill:#e3eef5,stroke:#222,stroke-width:1.5px,color:#111;
   classDef transacao fill:#9ea0ff,stroke:#222,stroke-width:1.5px,color:#111;
   classDef relatorio fill:#d3d3d3,stroke:#222,stroke-width:1.5px,color:#111;
   classDef invisivel fill:transparent,stroke:transparent,color:transparent;
 
   class U,A papeisUsuario;
-  class UCI,UDF,UMF,UTR,UPU,ABC,APU crud;
-  class UBC,ACI,ADF,AMF,ATR consulta;
-  class REGM,REGW,REGT,CATG,FILT,FILC,FILP transacao;
-  class RPDF relatorio;
+  class UCI,UDF,UMF,UTR,UPU,ABC crud;
+  class APU,ACI,ADF,AMF,ATR gerencia;
+  class RBC,REGM,REGW,REGT,CATG,FILT,FILC,FILP,REXT transacao;
+  class RPDF,RDASH relatorio;
