@@ -1,11 +1,26 @@
 # Diagrama de Casos de Uso - BolsoDireito
 
+## Matriz Perfil vs Funcionalidade
+
+| Perfil de usuario vs Funcionalidade | Manter cadastro de Perfil de Usuario | Gerenciar Perfis de Usuario | Registrar gasto | Categorizar gasto | Filtrar gastos | Emitir relatorio de gastos | Manter Carteira de Investimentos | Manter Metas Financeiras | Manter Transacoes | Consultar dados Bancarios | Emitir dashboard de gastos | Gerenciar Carteira de Investimentos dos Usuarios | Gerenciar Dados Financeiros dos Usuarios | Gerenciar Metas Financeiras dos Usuarios | Gerenciar Transacoes dos Usuarios | Manter Bancos |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Usuario (plano gratuito) | ✓ | ✗ | ✓ | ✓ | ✓ | ✓ | ✗ | ✗ | ✓ | ✓ | ✗ | ✗ | ✗ | ✗ | ✗ | ✗ |
+| Usuario (plano pago) | ✓ | ✗ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ | ✗ | ✗ | ✗ | ✗ |
+| Administrador do sistema | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+
+**Legenda:**
+- ✓: Usuário tem acesso
+- ✗: Usuário não tem acesso
+
+## Diagrama de Casos de Uso em Mermaid
+
 ```mermaid
 flowchart LR
   %% Coluna esquerda
   subgraph LEFT[" "]
     direction TB
-    U["Usuario"]
+    UGF["Usuario (plano gratuito)"]
+    UPG["Usuario (plano pago)"]
   end
 
   %% Fronteira do sistema
@@ -53,13 +68,19 @@ flowchart LR
     A["Administrador do Sistema"]
   end
 
-  %% Associacoes principais
-  U --- UCI
-  U --- UDF
-  U --- UMF
-  U --- UTR
-  U --- UPU
+  %% Associacoes - Usuario (plano gratuito)
+  UGF --- UDF
+  UGF --- UTR
+  UGF --- UPU
 
+  %% Associacoes - Usuario (plano pago)
+  UPG --- UCI
+  UPG --- UDF
+  UPG --- UMF
+  UPG --- UTR
+  UPG --- UPU
+
+  %% Associacoes - Administrador
   A --- ACI
   A --- ADF
   A --- AMF
@@ -68,12 +89,21 @@ flowchart LR
   A --- APU
 
   %% Casos detalhados do usuario
-  U --- REGM
-  U --- CATG
-  U --- FILT
-  U --- RBC
-  U --- RPDF
-  U --- RDASH
+  UGF --- REGM
+  UGF --- CATG
+  UGF --- FILT
+  UGF --- RBC
+  UGF --- RPDF
+
+  UPG --- REGM
+  UPG --- CATG
+  UPG --- FILT
+  UPG --- RBC
+  UPG --- RPDF
+  UPG --- RDASH
+
+  %% Heranca de funcionalidades de usuario
+  A -.->|herda funcionalidades de usuario| UPG
 
   REGW -.->|extends| REGM
   REGT -.->|extends| REGM
@@ -83,16 +113,38 @@ flowchart LR
   FILP -.->|extends| FILT
 
   %% Estilo
-  classDef papeisUsuario fill:#f0f0f0,stroke:#222,stroke-width:2px,color:#111;
+  classDef usuarioGratuito fill:#dcfce7,stroke:#16a34a,stroke-width:2px,color:#111;
+  classDef usuarioPago fill:#dbeafe,stroke:#1d4ed8,stroke-width:2px,color:#111;
+  classDef admin fill:#fee2e2,stroke:#b91c1c,stroke-width:2px,color:#111;
   classDef crud fill:#f8f8dc,stroke:#222,stroke-width:1.5px,color:#111;
   classDef gerencia fill:#e3eef5,stroke:#222,stroke-width:1.5px,color:#111;
   classDef transacao fill:#9ea0ff,stroke:#222,stroke-width:1.5px,color:#111;
   classDef relatorio fill:#d3d3d3,stroke:#222,stroke-width:1.5px,color:#111;
   classDef invisivel fill:transparent,stroke:transparent,color:transparent;
 
-  class U,A papeisUsuario;
+  class UGF usuarioGratuito;
+  class UPG usuarioPago;
+  class A admin;
   class UCI,UDF,UMF,UTR,UPU,ABC crud;
   class APU,ACI,ADF,AMF,ATR gerencia;
   class RBC,REGM,REGW,REGT,CATG,FILT,FILC,FILP,REXT transacao;
   class RPDF,RDASH relatorio;
+
+  %% Cores das associacoes por perfil de usuario
+  linkStyle 0,1,2,14,15,16,17,18 stroke:#16a34a,stroke-width:2.5px;
+  linkStyle 3,4,5,6,7,19,20,21,22,23,24 stroke:#1d4ed8,stroke-width:2.5px;
+  linkStyle 8,9,10,11,12,13 stroke:#b91c1c,stroke-width:2.5px;
+  linkStyle 25,26,27,28,29 stroke:#64748b,stroke-width:1.8px,stroke-dasharray:5 5;
+  linkStyle 30 stroke:#b91c1c,stroke-width:2px,stroke-dasharray:6 4;
 ```
+
+**Legenda:**
+- Verde: ator e associacoes do Usuario (plano gratuito)
+- Azul escuro: ator e associacoes do Usuario (plano pago)
+- Vermelho: ator e associacoes do Administrador do Sistema
+- Bege: casos de uso de CRUD
+- Azul acinzentado: casos de uso de gerencia (apenas administrador)
+- Lilas: casos de uso de transacao/registro
+- Cinza: casos de uso de relatorio
+- Linha tracejada cinza: relacao de extensao entre casos de uso
+- Linha tracejada vermelha: heranca de funcionalidades do Administrador em relacao ao Usuario (plano pago)
