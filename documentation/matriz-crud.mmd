@@ -1,8 +1,7 @@
 flowchart LR
   %% Papeis
   subgraph PAP["Papeis"]
-    UGF["Usuario (plano gratuito)"]
-    UPG["Usuario (plano pago)"]
+    U["Usuario"]
     A["Administrador do Sistema"]
   end
 
@@ -16,41 +15,41 @@ flowchart LR
     PU["PerfilUsuario"]
   end
 
-  %% Permissoes - Usuario (plano gratuito)
-
-  UGF -->|C,R,U,D| DF
-  UGF -->|C,R,U,D| TR
-  UGF -->|R| BC
-  UGF -->|C,R,U,D| PU
-
-  %% Permissoes - Usuario (plano pago)
-  UPG -->|C,R,U,D| CI
-  UPG -->|C,R,U,D| DF
-  UPG -->|C,R,U,D| MF
-  UPG -->|C,R,U,D| TR
-  UPG -->|R| BC
-  UPG -->|C,R,U,D| PU
+  %% Permissoes - Usuario
+  U -->|C,R,U,D| CI
+  U -->|C,R,U,D| DF
+  U -->|C,R,U,D| MF
+  U -->|C,R,U,D| TR
+  U -->|R| BC
+  U -->|C,R,U,D| PU
 
   %% Permissoes - Administrador do Sistema
-  A -->|C,R,U,D| CI
-  A -->|C,R,U,D| DF
-  A -->|C,R,U,D| MF
-  A -->|C,R,U,D| TR
+  A -->|R| CI
+  A -->|R| DF
+  A -->|R| MF
+  A -->|R| TR
   A -->|C,R,U,D| BC
   A -->|C,R,U,D| PU
 
   %% Estilo visual
-  classDef usuarioGratuito fill:#e0f2fe,stroke:#0284c7,stroke-width:2px,color:#111;
-  classDef usuarioPago fill:#dbeafe,stroke:#1d4ed8,stroke-width:2px,color:#111;
+  classDef usuario fill:#dbeafe,stroke:#1d4ed8,stroke-width:2px,color:#111;
   classDef admin fill:#fee2e2,stroke:#b91c1c,stroke-width:2px,color:#111;
   classDef entidade fill:#f8fafc,stroke:#475569,stroke-width:1.5px,color:#111;
 
-  class UGF usuarioGratuito;
-  class UPG usuarioPago;
+  class U usuario;
   class A admin;
   class CI,DF,MF,TR,BC,PU entidade;
 
-  %% Link colors
-  linkStyle 0,1,2,3 stroke:#0284c7,stroke-width:2px;
-  linkStyle 4,5,6,7,8,9 stroke:#1d4ed8,stroke-width:2px;
-  linkStyle 10,11,12,13,14,15 stroke:#dc2626,stroke-width:3px;
+  %% Links 0-5: Usuario | Links 6-11: Administrador
+  linkStyle 0 stroke:#2563eb,stroke-width:3px;
+  linkStyle 1 stroke:#2563eb,stroke-width:3px;
+  linkStyle 2 stroke:#2563eb,stroke-width:3px;
+  linkStyle 3 stroke:#2563eb,stroke-width:3px;
+  linkStyle 4 stroke:#2563eb,stroke-width:3px;
+  linkStyle 5 stroke:#2563eb,stroke-width:3px;
+  linkStyle 6 stroke:#dc2626,stroke-width:3px;
+  linkStyle 7 stroke:#dc2626,stroke-width:3px;
+  linkStyle 8 stroke:#dc2626,stroke-width:3px;
+  linkStyle 9 stroke:#dc2626,stroke-width:3px;
+  linkStyle 10 stroke:#dc2626,stroke-width:3px;
+  linkStyle 11 stroke:#dc2626,stroke-width:3px;
