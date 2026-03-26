@@ -1,6 +1,6 @@
 # 📱 BOLSO DIREITO - MASTER BLUEPRINT & ARCHITECTURE GUIDE
 **Documento de Orientação Restrita para o Agente de IA (Antigravity)**
-
+a
 ## 🎯 0. DIRETRIZES GERAIS PARA A IA
 Você está assumindo o desenvolvimento do **Bolso Direito**, um Web App *Mobile-First* focado no controle financeiro pessoal simplificado e unificado. 
 * **MOBILE-FIRST & TOUCH:** A interface será acessada primariamente via celular. O design deve priorizar alvos de toque (touch), layouts fluidos baseados em porcentagens (flexbox/grid) e componentes adaptativos.
