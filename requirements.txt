@@ -1,0 +1,12 @@
+# Node.js é um compilador JavaScript que permite rodar JS fora do navegador
+# Deve-se instalar o Node.js para rodar o projeto React localmente
+# O node inclui o npm (Node Package Manager) que é necessário para instalar as dependências do projeto
+
+# Requisitos para o projeto React
+npx create-react-app nomedoapp
+
+# Biblioteca para roteamento do projeto (app/rota)
+npm install react-router-dom
+
+# Para iniciar o server local
+npm start
