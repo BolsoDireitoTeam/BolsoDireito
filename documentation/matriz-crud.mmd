@@ -1,45 +1,55 @@
----
-id: 60946071-05c6-4ff9-acd9-e9b7f3b7696c
----
 flowchart LR
-  %% Modulos
-  subgraph MOD[Modulos]
-    M_LOGIN[Login e Cadastro]
-    M_PROFILE[Perfil]
-    M_TRANS[Transacoes]
-    M_UPLOAD[Upload]
-    M_DASH[Dashboard]
-    M_CONFIG[Configuracoes]
+  %% Papeis
+  subgraph PAP["Papeis"]
+    U["Usuario"]
+    A["Administrador do Sistema"]
   end
 
   %% Entidades
-  subgraph ENT[Entidades]
-    E_USER[Usuario]
-    E_CAD[Dados Cadastrais]
-    E_FIN[Dados Financeiros]
-    E_CAT[Categoria]
-    E_TRX[Transacao]
-    E_APORTE[Aporte]
-    E_EXT[Extrato]
-    E_FAT[Fatura]
-    E_DASH[Indicadores Dashboard]
+  subgraph ENT["Entidades"]
+    CI["CarteiraInvestimentos"]
+    DF["DadosFinanceiros"]
+    MF["MetaFinanceira"]
+    TR["Transacao"]
+    BC["Banco"]
+    PU["PerfilUsuario"]
   end
 
-  %% Relacoes CRUD
-  M_LOGIN -->|C,R| E_USER
+  %% Permissoes - Usuario
+  U -->|C,R,U,D| CI
+  U -->|C,R,U,D| DF
+  U -->|C,R,U,D| MF
+  U -->|C,R,U,D| TR
+  U -->|R| BC
+  U -->|C,R,U,D| PU
 
-  M_PROFILE -->|R,U| E_CAD
-  M_PROFILE -->|R,U| E_FIN
+  %% Permissoes - Administrador do Sistema
+  A -->|R| CI
+  A -->|R| DF
+  A -->|R| MF
+  A -->|R| TR
+  A -->|C,R,U,D| BC
+  A -->|C,R,U,D| PU
 
-  M_TRANS -->|C,R,U,D| E_TRX
-  M_TRANS -->|R| E_CAT
+  %% Estilo visual
+  classDef usuario fill:#dbeafe,stroke:#1d4ed8,stroke-width:2px,color:#111;
+  classDef admin fill:#fee2e2,stroke:#b91c1c,stroke-width:2px,color:#111;
+  classDef entidade fill:#f8fafc,stroke:#475569,stroke-width:1.5px,color:#111;
 
-  M_UPLOAD -->|C,R| E_EXT
-  M_UPLOAD -->|C,R| E_FAT
+  class U usuario;
+  class A admin;
+  class CI,DF,MF,TR,BC,PU entidade;
 
-  M_DASH -->|R| E_TRX
-  M_DASH -->|R| E_APORTE
-  M_DASH -->|R| E_DASH
-
-  M_CONFIG -->|C,R,U,D| E_CAT
-  M_CONFIG -->|C,R,U,D| E_APORTE
+  %% Links 0-5: Usuario | Links 6-11: Administrador
+  linkStyle 0 stroke:#2563eb,stroke-width:3px;
+  linkStyle 1 stroke:#2563eb,stroke-width:3px;
+  linkStyle 2 stroke:#2563eb,stroke-width:3px;
+  linkStyle 3 stroke:#2563eb,stroke-width:3px;
+  linkStyle 4 stroke:#2563eb,stroke-width:3px;
+  linkStyle 5 stroke:#2563eb,stroke-width:3px;
+  linkStyle 6 stroke:#dc2626,stroke-width:3px;
+  linkStyle 7 stroke:#dc2626,stroke-width:3px;
+  linkStyle 8 stroke:#dc2626,stroke-width:3px;
+  linkStyle 9 stroke:#dc2626,stroke-width:3px;
+  linkStyle 10 stroke:#dc2626,stroke-width:3px;
+  linkStyle 11 stroke:#dc2626,stroke-width:3px;
