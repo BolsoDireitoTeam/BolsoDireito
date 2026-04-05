@@ -9,13 +9,13 @@ https://link.excalidraw.com/l/AaVqH1mqaR6/245qM1E3E5x
 ```
 BolsoDireito/
 ├── frontend/
-    ├── static/             # Imagens, logos do projeto
-    │   ├── common/             
+    ├── static/             
+    │   ├── common/         # Imagens, logos do projeto    
     │   └── styles/         # Seus arquivos CSS globais (se não usar apenas Bootstrap)
     │       └── style.css
-    ├── components/         # Pedaços de UI reutilizáveis
-    │   ├── common/         # Botões genéricos, inputs, modais
-    │   └── layout/         # O seu footer.html, navbar, etc.
+    ├── components/         # Pedaços de UI reutilizáveis, footer.html, navbar, botões genéricos, inputs
+    │   ├── footer.html    
+    │   └── teclado_numerico.html
     ├── pages/              # As telas completas
     │   ├── login/          # login, criar-conta html's
     │   │   ├── criar-conta.html
@@ -24,6 +24,10 @@ BolsoDireito/
     │   │   ├── view-anual.html
     │   │   ├── view-mensal.html
     │   │   └── overview.html
+    │   ├── transacoes/      
+    │   │   ├── escolher-categoria.html
+    │   │   ├── escolher-tipo-gasto.html
+    │   │   └── teclado-valores.html
     │   ├── profile/        # profile-config e aporte html's
     │   │   ├── profile-config.html
     │   │   └── aporte-config.html
@@ -37,7 +41,7 @@ BolsoDireito/
     ├── utils/              # Funções auxiliares (ex:formatarMoeda)
     ├── App.jsx             # Componente raiz que gerencia as rotas
     ├── main.jsx            # Ponto de entrada do React
-    └── package.json            # Dependências do projeto Front-end
+    └── package.json        # Dependências do projeto Front-end
 
 └── backend/     # Node.js
     ├── src/
@@ -47,9 +51,10 @@ BolsoDireito/
     │   │   ├── FaturaController.js
     │   │   └── UsuarioController.js
     │   ├── models/             # Representação do seu Diagrama de Classes
-    │   │   ├── Gasto.js        # id, valor, data, categoria, estabelecimento
+    │   │   ├── Movimento.js    # id, valor, data, categoria, estabelecimento
     │   │   ├── Fatura.js       
-    │   │   └── Usuario.js      
+    │   │   ├── Extrato.js       
+    │   │   └── Usuario.js      # movimento mensal
     │   ├── routes/             # Endpoints da sua API (ex: POST /gastos, GET /fatura)
     │   │   ├── gastoRoutes.js
     │   │   └── usuarioRoutes.js
