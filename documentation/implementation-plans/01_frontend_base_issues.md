@@ -12,6 +12,12 @@
 > [!IMPORTANT]
 > **Integração Mandatória do Excalidraw:** No início da execução de cada nova Tarefa, o assistente deverá obrigatoriamente fazer a leitura do arquivo `documentation/esboco-telas/BrainstormPrincipal.excalidraw` utilizando de suas ferramentas de extração antes de gerar para mimetizar os elementos visuais desenhados pela equipe nas novas view components.
 
+> [!IMPORTANT]
+> **Padrão UX Global: "Footer Action Exclusive"**
+> Todas as operações de *Adição* (Novo Gasto, Nova Meta, Novo Investimento) estão estritamente banidas de residirem como botões soltos nos Cabeçalhos ou Corpos das páginas isoladas. 
+> **Toda criação originar-se-á exclusivamente do Botão "+" central do Footer (Bottom-Nav Action Sheet)**.  
+> As páginas contextuais (como a listagem de Transações, Metas, etc) servirão unicamente para visibilidade analítica e comportarão unicamente as funções granulares do CRUD (como `Editar` e `Deletar` o item específico). Essa regra garantirá consistência arquitetônica para todos os módulos sucessivos.
+
 ---
 
 ## Issue #1: Refinamento da Navegação Principal (Hub)
@@ -21,10 +27,10 @@
 
 ---
 
-## Issue #2: Módulo Complementar - Extrato Completo
-**Descrição:** O usuário precisa visualizar uma Timeline do seu dinheiro, portanto faremos a tela principal do Extrato.
-* **Arquivos Afetados:** `[NEW] frontend/pages/transacoes/extrato.html`
-* **Tarefas da Issue:** Criar HTML da lista de movimentações (Renda/Gasto) baseada num mock visual e Chips de filtragem temporal simulados.
+## Issue #2: Módulo da Entidade "Transação"
+**Descrição:** Construção da interface raiz para a entidade de **Transação** registrada na Matriz de Casos de Uso. Esta será a listagem oficial vinculada ao usuário para apresentar sua timeline de rendas e gastos.
+* **Arquivos Afetados:** `[NEW] frontend/pages/transacoes/lista-transacoes.html` (antigo extrato).
+* **Tarefas da Issue:** Criar HTML da lista de transações baseada num mock visual temporal e incorporar controles de filtragem/gestão da entidade.
 
 ---
 
@@ -62,7 +68,57 @@
 
 ---
 
+## Issue #7: Refatoração do Overview como Dashboard Analítico Global
+**Descrição:** Adequar a tela de `overview.html` para cumprir seu papel puramente analítico, servindo como um resumo de métricas principais do perfil. Ela reunirá widgets sintéticos de Metas Principais, Transações Recentes e Visão de Investimentos, perdendo qualquer estado que permita aos usuários "alterar dados diretamente através da aba". O papel de modificação ficará a cargo exclusivo do rodapé e das abas contextualizadas (ex: lista-transacoes.html, lista-metas.html, etc). 
+* **Arquivos Afetados:** `[MODIFY] frontend/pages/dashboard/overview.html` e script associado.
+* **Tarefas da Issue:** 
+  - Limpar formulários ou links mutadores diretos na view de Overview;
+  - Consolidar leitura do ecossistema DB (`BolsoDB`) focando especificamente em dados estritamente em **Read-Only** integrando múltiplas entidades (Transações Top 5, 2 Metas ativas, Resumo de Investimentos).
+
+---
+
+## Issue #8: Migração Arquitetural para Módulos ECMAScript (ES Modules)
+**Descrição:** Substituição sumária do padrão defasado de cascata global no HTML. Migraremos a base de inteligência do BolsoDireito Vanilla para o suporte moderno e nativo de Sandboxing e Exportações pontuais (ES Modules). O objetivo é prever colisões futuras no ecossistema através de arquitetura fechada e encapsulamento em importações exclusivas sob um nó pai de execução.
+* **Arquivos Afetados:** Todo a pasta de Javascript local: `[MODIFY] frontend/static/js/*.js` e documentos Raízes HTML.
+* **Tarefas da Issue:** 
+  - Implementar o paradigma `export const` / `function` delimitando quem pode possuir acesso ao ecossistema do `BolsoDB` e aos Helpers de renderização;
+  - Adaptar Scripts folha do modelo atual para buscarem suas dependências com a keyword `import { } from [...]`;
+  - Limpar severamente a pilha de `<script>` engalfinhadas nos documentos HTMLs (`overview.html`, `lista-transacoes.html`, etc), limitando sua chamada nativa à estrutura de Root Module isolada `<script type="module" src="...">`.
+
+---
+
+## Issue #9: Componentização Avançada via HTTP Fetch (External HTML)
+**Descrição:** Atualização da atual tática de componentização. Para fins de garantir que a estilização e tags HTML não poluam os documentos Javascript puros, os templates injetados de Header/Footer em `app.js` que se encontram em _string literals_ serão extraídos de volta para o arquivo físico base de `frontend/components/footer.html`. O sistema utilizará `fetch` nativamente para processar a requisição e parsear o HTML injetável, tratando dinamicamente suas classes "active" dos modais durante a manipulação da resposta.
+* **Atenção Técnica:** Como essa leitura de disco em navegador disparará bloqueios automáticos de política **CORS**, seu desenvolvimento exigirá rodar o projeto num Web Server local padrão (ex: Extensão Live Server, `python -m http.server`, Express etc) e não mais nos dois cliques do arquivo "file:///".
+* **Arquivos Afetados:** `[MODIFY] frontend/static/js/app.js` (Bloco do Layout Engine) e `[MODIFY] frontend/components/footer.html`.
+* **Tarefas da Issue:** 
+  - Retornar o layout central para o `footer.html`.
+  - Transcrever a injeção via Strings para a chamada async paralelisadora (ex: `await fetch('components/footer.html')`).
+  - **Dinamização do Acoplamento de Estados HTML (Highlight Tracking):** Como a string de Template Literal do Javascript `${}` será perdida ao realizar a leitura literal do arquivo disco por requisição, o HTML chegará inerentemente morto (estático). O executor responsável pelo Inject Element (`<bd-footer>`) deve gerar uma árvore virtual (como `parser.parseFromString`), escutar seu respectivo atributo de Aba Ativada e instanciar programaticamente a injeção de estilo classe `.active` no Node Botão referente ao contexto ANTES de renderizar brutalmente a string manipulada no DOM.
+
+---
+
+## Issue #10: Automatização da Virada de Mês e Consumo de Faturas de Crédito
+**Descrição:** Substituir o gatilho manual da rotina `virar_mes()` por um motor automatizado assíncrono que valide a data de vencimento da fatura do cartão registrada no banco de dados, protegendo o sistema com lacres contra repetições mensais da cobrança (idempotência). Essa inovação fará com que o aplicativo consiga interagir autonomamente abatendo e consolidando as pendências de crédito no prazo correto.
+* **Arquivos Afetados:** `[MODIFY] frontend/static/js/engine.js`, `[MODIFY] frontend/static/js/database.js` e interface de Configurações.
+* **Tarefas da Issue:** 
+  - Estruturar a nova lógica de `diaVencimentoCartao` global no `_state`.
+  - Criar check de data automatizado durante os instantes de entrada do App.
+  - Eliminar ou blindar o acionamento de repetições destrutivas manuais.
+
+---
+
+## Issue #11: Agendamento de Despesas/Receitas com Datas Customizadas (Sub-Issue #10)
+**Descrição:** Em ramificação com a autonomia principal, prover arquitetura para que cada Gasto (ex: Aluguel) ou Ganho (ex: Salário) recorrente do usuário possua seu próprio "Dia" configurado, executando autonomamente em momentos separados do cartão.
+* **Arquivos Afetados:** `[MODIFY] frontend/static/js/engine.js` e `[MODIFY] frontend/static/js/database.js`.
+* **Tarefas da Issue:** 
+  - Expandir objetos de Entidade base no DB para o campo de Date.
+  - Configurar loop de verificação mestre que monitore todas as datas isoladas no lugar de rodá-las simultaneamente numa tacada só.
+
+---
+
 ## Verification Plan
 1. O assistente reportará a "Conclusão da Issue #N".
 2. O usuário abrirá o arquivo alterado gerado pelo fluxo em seu editor / Local Server.
 3. Se houver falhas no padrão CSS ou na usabilidade, o usuário reportará nesta issue. Se estiver bom, aprovará o envio para a próxima Issue sequencial.
+
