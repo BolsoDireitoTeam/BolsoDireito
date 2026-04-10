@@ -117,6 +117,15 @@
 
 ---
 
+## Issue #12: Implementação do Modelo Freemium e Módulo de Assinaturas
+**Descrição:** Estruturação visual e lógica que separa o acesso de usuários Gratuitos e Pagos. Sabendo que toda a base do sistema será construída paralelamente, nesta Issue implementaremos efetivamente as travas (paywalls) e identificadores visuais do plano escolhido sobrepondo as funcionalidades Premium (Metas, Carteira de Investimentos e Dashboards Avançados). Podemos, inclusive, pensar em formas de anúncio para o plano gratuito, os quais poderão ser exibidos durante a sua navegação no sistema.
+* **Arquivos Afetados:** Componentes globais de inibição (Modais) e módulo de Configurações da Conta (`usuario.html`).
+* **Tarefas da Issue:** 
+  - Desenvolver elementos visuais de Upgrade e indicação do "Plano Atual" ativo na tela de Perfil;
+  - Bloquear / exibir _overlays_ nas páginas exclusivas caso a sessão ativa detecte uma permissão gratuita.
+
+---
+
 ## Verification Plan
 1. O assistente reportará a "Conclusão da Issue #N".
 2. O usuário abrirá o arquivo alterado gerado pelo fluxo em seu editor / Local Server.

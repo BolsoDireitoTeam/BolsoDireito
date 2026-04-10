@@ -5,7 +5,8 @@ flowchart LR
   %% Coluna esquerda
   subgraph LEFT[" "]
     direction TB
-    U["Usuario"]
+    UG["Usuário (plano gratuito)"]
+    UP["Usuário (plano pago)"]
   end
 
   %% Fronteira do sistema
@@ -27,6 +28,7 @@ flowchart LR
         REGT["Registrar gastos por .txt"]
         REXT["Registrar gasto via fatura/extrato bancario"]
         CATG["Categorizar gasto"]
+        AUTM["Configurar Automações e Vencimentos"]
         FILT["Filtrar gastos"]
         FILC["Filtrar gastos por categoria"]
         FILP["Filtrar gastos por periodo"]
@@ -54,12 +56,17 @@ flowchart LR
   end
 
   %% Associacoes principais
-  U --- UCI
-  U --- UDF
-  U --- UMF
-  U --- UTR
-  U --- UPU
+  UG --- UDF
+  UG --- UTR
+  UG --- UPU
+  
+  %% Permissoes premium (pago herda de gratuito)
+  UP -.->|herda| UG
+  UP --- UCI
+  UP --- UMF
 
+  %% Administrador
+  A -.->|herda| UP
   A --- ACI
   A --- ADF
   A --- AMF
@@ -67,13 +74,16 @@ flowchart LR
   A --- ABC
   A --- APU
 
-  %% Casos detalhados do usuario
-  U --- REGM
-  U --- CATG
-  U --- FILT
-  U --- RBC
-  U --- RPDF
-  U --- RDASH
+  %% Casos detalhados do usuario gratuito
+  UG --- REGM
+  UG --- CATG
+  UG --- AUTM
+  UG --- FILT
+  UG --- RBC
+  UG --- RPDF
+  
+  %% Casos detalhados do usuario premium
+  UP --- RDASH
 
   REGW -.->|extends| REGM
   REGT -.->|extends| REGM
@@ -90,9 +100,9 @@ flowchart LR
   classDef relatorio fill:#d3d3d3,stroke:#222,stroke-width:1.5px,color:#111;
   classDef invisivel fill:transparent,stroke:transparent,color:transparent;
 
-  class U,A papeisUsuario;
+  class UG,UP,A papeisUsuario;
   class UCI,UDF,UMF,UTR,UPU,ABC crud;
   class APU,ACI,ADF,AMF,ATR gerencia;
-  class RBC,REGM,REGW,REGT,CATG,FILT,FILC,FILP,REXT transacao;
+  class RBC,REGM,REGW,REGT,CATG,FILT,FILC,FILP,REXT,AUTM transacao;
   class RPDF,RDASH relatorio;
 ```

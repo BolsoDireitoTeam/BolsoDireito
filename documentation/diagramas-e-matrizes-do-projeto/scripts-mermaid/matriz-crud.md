@@ -4,8 +4,9 @@
 
 | Papel de usuario | CarteiraInvestimentos | DadosFinanceiros | MetaFinanceira | Transacao | Banco | PerfilUsuario |
 | --- | --- | --- | --- | --- | --- | --- |
-| Usuario | Create, Read, Update, Delete | Create, Read, Update, Delete | Create, Read, Update, Delete | Create, Read, Update, Delete | Read | Create, Read, Update, Delete |
-| Administrador do Sistema | Read | Read | Read | Read | Create, Read, Update, Delete | Create, Read, Update, Delete |
+| Usuário (plano gratuito) | - | Create, Read, Update, Delete | - | Create, Read, Update, Delete | Read | Create, Read, Update, Delete |
+| Usuário (plano pago) | Create, Read, Update, Delete | Create, Read, Update, Delete | Create, Read, Update, Delete | Create, Read, Update, Delete | Read | Create, Read, Update, Delete |
+| Administrador do Sistema | Create, Read, Update, Delete | Create, Read, Update, Delete | Create, Read, Update, Delete | Create, Read, Update, Delete | Create, Read, Update, Delete | Create, Read, Update, Delete |
 
 ## Representacao em Mermaid
 
@@ -13,7 +14,8 @@
 flowchart LR
   %% Papeis
   subgraph PAP["Papeis"]
-    U["Usuario"]
+    UG["Usuário (plano gratuito)"]
+    UP["Usuário (plano pago)"]
     A["Administrador do Sistema"]
   end
 
@@ -27,44 +29,60 @@ flowchart LR
     PU["PerfilUsuario"]
   end
 
-  %% Permissoes - Usuario
-  U -->|C,R,U,D| CI
-  U -->|C,R,U,D| DF
-  U -->|C,R,U,D| MF
-  U -->|C,R,U,D| TR
-  U -->|R| BC
-  U -->|C,R,U,D| PU
+  %% Permissoes - Usuario Gratuito
+  UG -->|C,R,U,D| DF
+  UG -->|C,R,U,D| TR
+  UG -->|R| BC
+  UG -->|C,R,U,D| PU
+
+  %% Permissoes - Usuario Pago
+  UP -->|C,R,U,D| CI
+  UP -->|C,R,U,D| DF
+  UP -->|C,R,U,D| MF
+  UP -->|C,R,U,D| TR
+  UP -->|R| BC
+  UP -->|C,R,U,D| PU
 
   %% Permissoes - Administrador do Sistema
-  A -->|R| CI
-  A -->|R| DF
-  A -->|R| MF
-  A -->|R| TR
+  A -->|C,R,U,D| CI
+  A -->|C,R,U,D| DF
+  A -->|C,R,U,D| MF
+  A -->|C,R,U,D| TR
   A -->|C,R,U,D| BC
   A -->|C,R,U,D| PU
 
   %% Estilo visual
-  classDef usuario fill:#dbeafe,stroke:#1d4ed8,stroke-width:2px,color:#111;
+  classDef usufree fill:#dcfce7,stroke:#16a34a,stroke-width:2px,color:#111;
+  classDef usupago fill:#f3e8ff,stroke:#9333ea,stroke-width:2px,color:#111;
   classDef admin fill:#fee2e2,stroke:#b91c1c,stroke-width:2px,color:#111;
   classDef entidade fill:#f8fafc,stroke:#475569,stroke-width:1.5px,color:#111;
 
-  class U usuario;
+  class UG usufree;
+  class UP usupago;
   class A admin;
   class CI,DF,MF,TR,BC,PU entidade;
 
-  %% Links 0-5: Usuario | Links 6-11: Administrador
-  linkStyle 0 stroke:#2563eb,stroke-width:3px;
-  linkStyle 1 stroke:#2563eb,stroke-width:3px;
-  linkStyle 2 stroke:#2563eb,stroke-width:3px;
-  linkStyle 3 stroke:#2563eb,stroke-width:3px;
-  linkStyle 4 stroke:#2563eb,stroke-width:3px;
-  linkStyle 5 stroke:#2563eb,stroke-width:3px;
-  linkStyle 6 stroke:#dc2626,stroke-width:3px;
-  linkStyle 7 stroke:#dc2626,stroke-width:3px;
-  linkStyle 8 stroke:#dc2626,stroke-width:3px;
-  linkStyle 9 stroke:#dc2626,stroke-width:3px;
-  linkStyle 10 stroke:#dc2626,stroke-width:3px;
-  linkStyle 11 stroke:#dc2626,stroke-width:3px;
+  %% Links 0-3: Usuario Gratuito
+  linkStyle 0 stroke:#16a34a,stroke-width:2px;
+  linkStyle 1 stroke:#16a34a,stroke-width:2px;
+  linkStyle 2 stroke:#16a34a,stroke-width:2px;
+  linkStyle 3 stroke:#16a34a,stroke-width:2px;
+
+  %% Links 4-9: Usuario Pago
+  linkStyle 4 stroke:#9333ea,stroke-width:2px;
+  linkStyle 5 stroke:#9333ea,stroke-width:2px;
+  linkStyle 6 stroke:#9333ea,stroke-width:2px;
+  linkStyle 7 stroke:#9333ea,stroke-width:2px;
+  linkStyle 8 stroke:#9333ea,stroke-width:2px;
+  linkStyle 9 stroke:#9333ea,stroke-width:2px;
+
+  %% Links 10-15: Administrador do Sistema
+  linkStyle 10 stroke:#b91c1c,stroke-width:2px;
+  linkStyle 11 stroke:#b91c1c,stroke-width:2px;
+  linkStyle 12 stroke:#b91c1c,stroke-width:2px;
+  linkStyle 13 stroke:#b91c1c,stroke-width:2px;
+  linkStyle 14 stroke:#b91c1c,stroke-width:2px;
+  linkStyle 15 stroke:#b91c1c,stroke-width:2px;
 ```
 
 ## Legenda
@@ -73,5 +91,6 @@ flowchart LR
 - R: Read (Ler)
 - U: Update (Atualizar)
 - D: Delete (Excluir)
-- Azul: permissoes do Usuario
+- Verde: permissoes do Usuário (plano gratuito)
+- Roxo: permissoes do Usuário (plano pago)
 - Vermelho: permissoes do Administrador do Sistema
