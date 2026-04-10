@@ -974,17 +974,17 @@ body.calc-body {
 }
 
 /* =====================================================
-   FASE 4 — EXTRATO LIST
+   FASE 4 — TRANSAÇÕES LIST
    ===================================================== */
 
-.extrato-section-title {
+.transacoes-section-title {
     font-size: 1.05rem;
     font-weight: 600;
     color: var(--bd-dark);
     margin: 0 0 .8rem;
 }
 
-#listaExtrato {
+#listaTransacoes {
     list-style: none;
     padding: 0;
     margin: 0;
@@ -993,7 +993,7 @@ body.calc-body {
     gap: .6rem;
 }
 
-.extrato-item {
+.transacao-item {
     display: flex;
     align-items: center;
     gap: .9rem;
@@ -1005,11 +1005,11 @@ body.calc-body {
     transition: box-shadow .2s ease;
 }
 
-.extrato-item:hover { box-shadow: var(--bd-shadow-md); }
-.extrato-item.ganho { border-left-color: #27ae60; }
-.extrato-item.gasto { border-left-color: #e74c3c; }
+.transacao-item:hover { box-shadow: var(--bd-shadow-md); }
+.transacao-item.ganho { border-left-color: #27ae60; }
+.transacao-item.gasto { border-left-color: #e74c3c; }
 
-.extrato-icon {
+.transacao-icon {
     width: 34px;
     height: 34px;
     border-radius: 50%;
@@ -1019,10 +1019,10 @@ body.calc-body {
     flex-shrink: 0;
 }
 
-.extrato-item.ganho .extrato-icon { background: #eafaf1; color: #27ae60; }
-.extrato-item.gasto .extrato-icon { background: #fdf2f2; color: #e74c3c; }
+.transacao-item.ganho .transacao-icon { background: #eafaf1; color: #27ae60; }
+.transacao-item.gasto .transacao-icon { background: #fdf2f2; color: #e74c3c; }
 
-.extrato-info {
+.transacao-info {
     flex: 1;
     display: flex;
     flex-direction: column;
@@ -1030,7 +1030,7 @@ body.calc-body {
     min-width: 0;
 }
 
-.extrato-nome {
+.transacao-nome {
     font-weight: 600;
     font-size: .95rem;
     color: var(--bd-dark);
@@ -1039,12 +1039,12 @@ body.calc-body {
     text-overflow: ellipsis;
 }
 
-.extrato-data {
+.transacao-data {
     font-size: .78rem;
     color: var(--bd-muted);
 }
 
-.extrato-meta {
+.transacao-meta {
     font-size: .72rem;
     color: var(--bd-muted);
     display: inline-block;
@@ -1057,17 +1057,17 @@ body.calc-body {
     margin-left: .3rem;
 }
 
-.extrato-valor {
+.transacao-valor {
     font-weight: 700;
     font-size: 1rem;
     white-space: nowrap;
     flex-shrink: 0;
 }
 
-.extrato-item.ganho .extrato-valor { color: #27ae60; }
-.extrato-item.gasto .extrato-valor { color: #e74c3c; }
+.transacao-item.ganho .transacao-valor { color: #27ae60; }
+.transacao-item.gasto .transacao-valor { color: #e74c3c; }
 
-.extrato-vazio {
+.transacao-vazia {
     text-align: center;
     padding: 2rem 1rem;
     color: var(--bd-muted);
@@ -1078,7 +1078,7 @@ body.calc-body {
     line-height: 1.6;
 }
 
-.extrato-rodape {
+.transacao-rodape {
     text-align: center;
     font-size: .85rem;
     color: var(--bd-muted);

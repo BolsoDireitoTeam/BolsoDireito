@@ -49,7 +49,7 @@ const TIPOS_GASTO = Object.freeze(['debito', 'credito']);
  * Estrutura:
  * {
  *   saldo         : number   — saldo disponível atual
- *   extrato       : Ganho[]|Gasto[]  — histórico de todas as movimentações efetivadas
+ *   transacoes    : Ganho[]|Gasto[]  — histórico de todas as movimentações efetivadas
  *   faturas       : { "YYYY-MM": Gasto[] }  — gastos no crédito, indexados por mês de vencimento
  *   ganhosMensais : Ganho[]  — renda recorrente mensal (salário, freelances fixos, etc.)
  *   gastosMensais : Gasto[]  — despesas recorrentes mensais (aluguel, streaming, etc.)
@@ -58,7 +58,7 @@ const TIPOS_GASTO = Object.freeze(['debito', 'credito']);
 function criarAppStateVazio() {
     return {
         saldo: 0,
-        extrato: [],
+        transacoes: [],
         faturas: {},
         ganhosMensais: [],
         gastosMensais: [],
@@ -104,7 +104,7 @@ function criarGanho({ nome, valor, data }) {
 
     return {
         id: gerarId(),
-        tipo: 'ganho',                           // identificador de tipo para o Extrato
+        tipo: 'ganho',                           // identificador de tipo para as Transações
         nome: nome.trim(),
         data: data ?? new Date().toISOString().slice(0, 10), // "YYYY-MM-DD"
         valor: Number(valor.toFixed(2)),
@@ -151,7 +151,7 @@ function criarGasto({ nome, valor, categoria, tipo, parcelas = 1, data }) {
 
     return {
         id: gerarId(),
-        tipo: 'gasto',                            // identificador de tipo para o Extrato
+        tipo: 'gasto',                            // identificador de tipo para as Transações
         subtipo: tipo,                            // 'debito' | 'credito'
         nome: nome.trim(),
         data: data ?? new Date().toISOString().slice(0, 10),
@@ -186,11 +186,17 @@ function salvarEstado() {
  */
 function carregarEstado() {
     try {
+
         const raw = localStorage.getItem(STORAGE_KEY);
-        if (raw) {
+        //console.log(raw); // Por algum motivo, teremos acesso aos dados antigos que utilizamos para preenchimento do app, por que isso acontece?
+        // Caso já tenhamos utiizado alguma vez da URL que estamos utilando para subir o servidor para a página, os dados que utilizarmos serão atrelados a esta URL e, portanto, ao acessar a página novamente, teremos acesso aos dados que utilizamos anteriormente.
+        // O localStorage é um recurso do navegador que permite armazenar dados localmente no dispositivo do usuário. Ele é específico para cada domínio (URL) e para cada navegador. Ou seja, caso troquemos de navegador mesmo mantendo a URL, nós não teremos acesso aos dados que utilizamos anteriormente.
+
+        if (raw) { //Se salvarEstado() já tiver sido executado, esta chave existirá no localStorage. Caso contrário, "raw" será igua a null.
             const parsed = JSON.parse(raw);
             // Mescla com o estado vazio para garantir que todas as chaves existam
             // (útil em upgrades futuros quando novas chaves forem adicionadas).
+            // Ao fazer isso, mesmo que "parsed" já tenha uma variável que foi definida anteriormente, ele irá sobrescrever o valor dela. Portanto, caso o atributo já tenha sido definido e conseguiu ser recuperado pela busca no localStorage, iremos conseguir sobrescrever o valor default com este valor que foi recuperado.
             _state = { ...criarAppStateVazio(), ...parsed };
             console.info('[DB] Estado carregado do localStorage com sucesso.');
         } else {
@@ -229,7 +235,7 @@ function resetarEstado() {
 
 /**
  * Registra um novo Ganho avulso (não recorrente):
- *  - Adiciona ao Extrato.
+ *  - Adiciona às Transações.
  *  - Incrementa o Saldo imediatamente.
  *  - Persiste no localStorage.
  *
@@ -238,7 +244,7 @@ function resetarEstado() {
  */
 function adicionarGanho(params) {
     const ganho = criarGanho(params);
-    _state.extrato.unshift(ganho);   // insere no início (mais recente primeiro)
+    _state.transacoes.unshift(ganho);   // insere no início (mais recente primeiro)
     _state.saldo = Number((_state.saldo + ganho.valor).toFixed(2));
     salvarEstado();
     console.log(`[DB] ✅ Ganho adicionado: +R$${ganho.valor} — "${ganho.nome}". Saldo atual: R$${_state.saldo}`);
@@ -246,17 +252,17 @@ function adicionarGanho(params) {
 }
 
 /**
- * Remove um Ganho avulso do Extrato pelo ID e estorna o valor do Saldo.
+ * Remove um Ganho avulso das Transações pelo ID e estorna o valor do Saldo.
  * @param {string} id
  * @returns {boolean} true se encontrado e removido, false caso contrário.
  */
 function removerGanho(id) {
-    const idx = _state.extrato.findIndex(e => e.id === id && e.tipo === 'ganho');
+    const idx = _state.transacoes.findIndex(e => e.id === id && e.tipo === 'ganho');
     if (idx === -1) {
         console.warn(`[DB] Ganho com id "${id}" não encontrado.`);
         return false;
     }
-    const [ganho] = _state.extrato.splice(idx, 1);
+    const [ganho] = _state.transacoes.splice(idx, 1);
     _state.saldo = Number((_state.saldo - ganho.valor).toFixed(2));
     salvarEstado();
     console.log(`[DB] 🗑️  Ganho removido: -R$${ganho.valor} (estorno). Saldo atual: R$${_state.saldo}`);
@@ -308,7 +314,7 @@ function _calcularMesFatura(dataBase, offsetMeses) {
     const d = new Date(dataBase + 'T00:00:00'); // garante UTC para evitar offset de timezone
     d.setMonth(d.getMonth() + offsetMeses);
     const yyyy = d.getFullYear();
-    const mm   = String(d.getMonth() + 1).padStart(2, '0');
+    const mm = String(d.getMonth() + 1).padStart(2, '0');
     return `${yyyy}-${mm}`;
 }
 
@@ -318,7 +324,7 @@ function _calcularMesFatura(dataBase, offsetMeses) {
  * Comportamentos por subtipo:
  *  — DÉBITO:
  *    → Desconta o valor total do Saldo imediatamente.
- *    → Adiciona ao Extrato.
+ *    → Adiciona às Transações.
  *
  *  — CRÉDITO:
  *    → Cria uma entrada de parcela para cada mês futuro
@@ -334,7 +340,7 @@ function adicionarGasto(params) {
     if (gasto.subtipo === 'debito') {
 
         // ── DÉBITO ───────────────────────────────────────────
-        _state.extrato.unshift(gasto);
+        _state.transacoes.unshift(gasto);
         _state.saldo = Number((_state.saldo - gasto.valor).toFixed(2));
         salvarEstado();
         console.log(`[DB] ✅ Gasto (Débito) adicionado: -R$${gasto.valor} — "${gasto.nome}". Saldo atual: R$${_state.saldo}`);
@@ -354,13 +360,13 @@ function adicionarGasto(params) {
             }
 
             _state.faturas[mesFatura].push({
-                gastoId     : gasto.id,          // referência ao gasto original
-                nome        : gasto.nome,
-                categoria   : gasto.categoria,
-                parcela      : i,                 // número da parcela (1, 2, 3 …)
+                gastoId: gasto.id,          // referência ao gasto original
+                nome: gasto.nome,
+                categoria: gasto.categoria,
+                parcela: i,                 // número da parcela (1, 2, 3 …)
                 totalParcelas: gasto.parcelas,
-                valorParcela : gasto.valorParcela,
-                dataCompra   : gasto.data,
+                valorParcela: gasto.valorParcela,
+                dataCompra: gasto.data,
                 mesFatura,
             });
         }
@@ -376,18 +382,18 @@ function adicionarGasto(params) {
 }
 
 /**
- * Remove um Gasto de Débito do Extrato e estorna o valor do Saldo.
+ * Remove um Gasto de Débito das Transações e estorna o valor do Saldo.
  * Para gastos de Crédito, use removerGastoCredito().
  * @param {string} id
  * @returns {boolean}
  */
 function removerGastoDebito(id) {
-    const idx = _state.extrato.findIndex(e => e.id === id && e.tipo === 'gasto' && e.subtipo === 'debito');
+    const idx = _state.transacoes.findIndex(e => e.id === id && e.tipo === 'gasto' && e.subtipo === 'debito');
     if (idx === -1) {
-        console.warn(`[DB] Gasto Débito com id "${id}" não encontrado no Extrato.`);
+        console.warn(`[DB] Gasto Débito com id "${id}" não encontrado nas Transações.`);
         return false;
     }
-    const [gasto] = _state.extrato.splice(idx, 1);
+    const [gasto] = _state.transacoes.splice(idx, 1);
     _state.saldo = Number((_state.saldo + gasto.valor).toFixed(2));
     salvarEstado();
     console.log(`[DB] 🗑️  Gasto Débito removido: +R$${gasto.valor} (estorno). Saldo atual: R$${_state.saldo}`);
@@ -503,11 +509,11 @@ function _setSaldo(novoSaldo) {
 }
 
 /**
- * [Engine Bridge] Insere um lançamento no início do Extrato.
+ * [Engine Bridge] Insere um lançamento no início das Transações.
  * @param {object} lancamento — objeto Ganho ou Gasto já construído
  */
-function _adicionarAoExtrato(lancamento) {
-    _state.extrato.unshift(lancamento);
+function _adicionarATransacao(lancamento) {
+    _state.transacoes.unshift(lancamento);
     salvarEstado();
 }
 
@@ -526,11 +532,11 @@ function _consumirFatura(mesAno) {
 }
 
 /**
- * Retorna o Extrato completo (cópia).
+ * Retorna as Transações completas (cópia).
  * @returns {Array}
  */
-function getExtrato() {
-    return [..._state.extrato];
+function getTransacoes() {
+    return [..._state.transacoes];
 }
 
 /**
@@ -564,10 +570,10 @@ function initDB() {
  * Todas as funções que o restante do app (e os testes no console) devem usar
  * estão expostas aqui. Variáveis internas (_state, etc.) ficam encapsuladas.
  */
-const BolsoDB = {
+const BolsoDB = { //Este objeto está sendo declarado dentro de um contexto local, por conta da declaração com "const", logo, ele não será atributo do objeto global "window".
     // ── Setup ──────────────────────────────────────────
-    init       : initDB,
-    reset      : resetarEstado,
+    init: initDB,
+    reset: resetarEstado,
     getEstado,
 
     // ── Ganhos avulsos ─────────────────────────────────
@@ -587,7 +593,7 @@ const BolsoDB = {
 
     // ── Leituras ───────────────────────────────────────
     getSaldo,
-    getExtrato,
+    getTransacoes,
     getFatura,
     getTotalFatura,
     getFaturasMeses,
@@ -598,11 +604,10 @@ const BolsoDB = {
 
     // ── Engine Bridges (uso exclusivo do engine.js) ────
     _setSaldo,
-    _adicionarAoExtrato,
+    _adicionarATransacao,
     _consumirFatura,
     _calcularMesFatura,  // re-exposta para engine.js usar no cálculo de alertas
 };
-
 
 // ─────────────────────────────────────────────────────────────
 //  🧪 EXEMPLOS DE TESTE (Console)
@@ -635,7 +640,7 @@ BolsoDB.executarTestes = function () {
     console.group('📋 1. Adicionar Ganho Avulso');
     const ganho1 = BolsoDB.adicionarGanho({ nome: 'Salário Março', valor: 3500 });
     console.assert(BolsoDB.getSaldo() === 3500, 'Saldo deve ser 3500 após ganho');
-    console.assert(BolsoDB.getExtrato().length === 1, 'Extrato deve ter 1 item');
+    console.assert(BolsoDB.getTransacoes().length === 1, 'Transações devem ter 1 item');
     console.log('Ganho criado:', ganho1);
     console.groupEnd();
 
@@ -643,7 +648,7 @@ BolsoDB.executarTestes = function () {
     console.group('📋 2. Adicionar Gasto Débito');
     const gasto1 = BolsoDB.adicionarGasto({ nome: 'Supermercado', valor: 250, categoria: 'Alimentação', tipo: 'debito' });
     console.assert(BolsoDB.getSaldo() === 3250, 'Saldo deve ser 3250 após débito');
-    console.assert(BolsoDB.getExtrato().length === 2, 'Extrato deve ter 2 itens');
+    console.assert(BolsoDB.getTransacoes().length === 2, 'Transações devem ter 2 itens');
     console.log('Gasto Débito criado:', gasto1);
     console.groupEnd();
 

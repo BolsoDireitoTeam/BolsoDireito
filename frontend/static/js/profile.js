@@ -4,11 +4,16 @@
  */
 
 document.addEventListener("DOMContentLoaded", () => {  //Este evento apenas será lançado após o carregamento completo do HTML
-    // 1. Simulamos um usuário salvo na base/Sessão (Mock Data)
+    // Certificando inicialização do DB para consultar saldo real
+    if (typeof BolsoDB !== 'undefined') {
+        BolsoDB.init();
+    }
+
+    // 1. Mantemos o nome e avatar mockado, e deixamos o saldo reativo!
     const mockUserData = {
-        nomeCompleto: "Matheus",
+        nomeCompleto: "Matheus Ku",
         idFotoPerfil: "MK",
-        saldo: 12450.32,
+        saldo: (typeof BolsoDB !== 'undefined') ? BolsoDB.getSaldo() : 0,
         isAdmin: true
     };
 

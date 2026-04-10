@@ -41,8 +41,8 @@ function _dataFormatada(iso) {
  */
 function _nomeMes(mesAno) {
     const [yyyy, mm] = mesAno.split('-').map(Number);
-    const nomes = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho',
-                   'Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+    const nomes = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
+        'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
     return `${nomes[mm - 1]} de ${yyyy}`;
 }
 
@@ -51,8 +51,9 @@ function _nomeMes(mesAno) {
  * @returns {string}
  */
 function _mesAtual() {
-    const d = new Date();
-    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+    const d = new Date(); // Este construtor é capaz de acessar a data e hora local referente ao momento de execução do código nodispositivo.
+    const string_retorno = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`; // Date.getMonth() retorna o mês como número inteiro entre 0 e 11. Por isso, soma-se 1 para obter o mês correto.
+    return string_retorno;
 }
 
 // ─────────────────────────────────────────────────────────────
@@ -93,73 +94,73 @@ function renderSaldo() {
 
     // Feedback visual de estado do saldo
     el.classList.remove('saldo-positivo', 'saldo-negativo', 'saldo-zero');
-    if (saldo > 0)      el.classList.add('saldo-positivo');
+    if (saldo > 0) el.classList.add('saldo-positivo');
     else if (saldo < 0) el.classList.add('saldo-negativo');
-    else                el.classList.add('saldo-zero');
+    else el.classList.add('saldo-zero');
 }
 
 // ─────────────────────────────────────────────────────────────
-//  EXTRATO
+//  TRANSAÇÕES
 // ─────────────────────────────────────────────────────────────
 
 /**
- * Renderiza os itens do Extrato em #listaExtrato.
+ * Renderiza os itens de Transações em #listaTransacoes.
  * @param {number} [limite=20] — máximo de itens a exibir na lista
  */
-function renderExtrato(limite = 20) {
-    const container = document.getElementById('listaExtrato');
+function renderTransacoes(limite = 20) {
+    const container = document.getElementById('listaTransacoes');
     if (!container) return;
 
-    const itens = BolsoDB.getExtrato().slice(0, limite);
+    const itens = BolsoDB.getTransacoes().slice(0, limite);
     container.innerHTML = '';
 
     if (itens.length === 0) {
         container.innerHTML = `
-            <li class="extrato-vazio">
-                <p>Nenhuma movimentação registrada ainda.</p>
+            <li class="transacao-vazia">
+                <p>Nenhuma movimentação registrada ainda.</p>>
                 <p>Toque em <strong>+</strong> para adicionar seu primeiro ganho ou gasto.</p>
             </li>`;
         return;
     }
 
     for (const item of itens) {
-        const isGanho   = item.tipo === 'ganho';
+        const isGanho = item.tipo === 'ganho';
         const isCredito = item.tipo === 'gasto' && item.subtipo === 'credito';
-        const isFatura  = item.origem === 'fatura';
+        const isFatura = item.origem === 'fatura';
 
-        const sinal  = isGanho ? '+' : '−';
+        const sinal = isGanho ? '+' : '−';
         const classe = isGanho ? 'ganho' : 'gasto';
-        const icon   = isGanho ? _ICON_GANHO : (isCredito || isFatura) ? _ICON_CREDITO : _ICON_GASTO;
+        const icon = isGanho ? _ICON_GANHO : (isCredito || isFatura) ? _ICON_CREDITO : _ICON_GASTO;
 
         // Legenda extra de parcela/origem
         let meta = '';
-        if (item.origem === 'mensal') meta = `<span class="extrato-meta">Recorrente</span>`;
-        if (item.origem === 'fatura') meta = `<span class="extrato-meta">Fatura ${item.mesVirada ?? ''}</span>`;
+        if (item.origem === 'mensal') meta = `<span class="transacao-meta">Recorrente</span>`;
+        if (item.origem === 'fatura') meta = `<span class="transacao-meta">Fatura ${item.mesVirada ?? ''}</span>`;
         if (item.subtipo === 'credito' && !isFatura) {
-            meta = `<span class="extrato-meta">Crédito ${item.parcelas}x</span>`;
+            meta = `<span class="transacao-meta">Crédito ${item.parcelas}x</span>`;
         }
         if (item.categoria) {
-            meta += `<span class="extrato-meta categoria-tag">${item.categoria}</span>`;
+            meta += `<span class="transacao-meta categoria-tag">${item.categoria}</span>`;
         }
 
         const li = document.createElement('li');
-        li.className = `extrato-item ${classe}`;
+        li.className = `transacao-item ${classe}`;
         li.innerHTML = `
-            <span class="extrato-icon">${icon}</span>
-            <div class="extrato-info">
-                <span class="extrato-nome">${item.nome}</span>
-                <span class="extrato-data">${_dataFormatada(item.data)}</span>
+            <span class="transacao-icon">${icon}</span>
+            <div class="transacao-info">
+                <span class="transacao-nome">${item.nome}</span>
+                <span class="transacao-data">${_dataFormatada(item.data)}</span>
                 ${meta}
             </div>
-            <span class="extrato-valor">${sinal} ${_moeda(item.valor)}</span>`;
+            <span class="transacao-valor">${sinal} ${_moeda(item.valor)}</span>`;
         container.appendChild(li);
     }
 
     // Rodapé se há mais itens do que o limite
-    const total = BolsoDB.getExtrato().length;
+    const total = BolsoDB.getTransacoes().length;
     if (total > limite) {
         const rodape = document.createElement('li');
-        rodape.className = 'extrato-rodape';
+        rodape.className = 'transacao-rodape';
         rodape.textContent = `+ ${total - limite} movimentações anteriores`;
         container.appendChild(rodape);
     }
@@ -206,25 +207,25 @@ function renderAlertas() {
 
 /**
  * Constrói os dados para o gráfico de barras (Despesas por Mês).
- * Agrega os gastos do Extrato por mês (últimos 6 meses).
+ * Agrega os gastos das Transacoes por mês (últimos 6 meses).
  * @returns {{ labels: string[], data: number[] }}
  */
 function _dadosGraficoBarras() {
-    const extrato = BolsoDB.getExtrato();
-    const meses   = [];
-    const agora   = new Date();
+    const transacoes = BolsoDB.getTransacoes();
+    const meses = [];
+    const agora = new Date();
 
     // Gera os últimos 7 meses (incluindo o atual)
     for (let i = 6; i >= 0; i--) {
         const d = new Date(agora.getFullYear(), agora.getMonth() - i, 1);
-        const key    = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
-        const label  = d.toLocaleDateString('pt-BR', { month: 'short' })
-                        .replace('.', '').toUpperCase();
+        const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+        const label = d.toLocaleDateString('pt-BR', { month: 'short' })
+            .replace('.', '').toUpperCase();
         meses.push({ key, label });
     }
 
     const data = meses.map(({ key }) => {
-        const total = extrato
+        const total = transacoes
             .filter(e => e.tipo === 'gasto' && e.data && e.data.startsWith(key))
             .reduce((acc, e) => acc + e.valor, 0);
         return Number(total.toFixed(2));
@@ -239,9 +240,9 @@ function _dadosGraficoBarras() {
  * @returns {{ labels: string[], data: number[] }}
  */
 function _dadosGraficoPizza() {
-    const extrato   = BolsoDB.getExtrato();
-    const mesAtual  = _mesAtual();
-    const gastosMes = extrato.filter(
+    const transacoes = BolsoDB.getTransacoes();
+    const mesAtual = _mesAtual();
+    const gastosMes = transacoes.filter(
         e => e.tipo === 'gasto' && e.data && e.data.startsWith(mesAtual) && e.categoria
     );
 
@@ -251,7 +252,7 @@ function _dadosGraficoPizza() {
     }
 
     const labels = Object.keys(mapa);
-    const data   = labels.map(l => Number(mapa[l].toFixed(2)));
+    const data = labels.map(l => Number(mapa[l].toFixed(2)));
     return { labels, data };
 }
 
@@ -267,14 +268,14 @@ function renderGraficoBarras(chartRef) {
     const { labels, data } = _dadosGraficoBarras();
 
     if (chartRef) {
-        chartRef.data.labels       = labels;
-        chartRef.data.datasets[0]  = { ...chartRef.data.datasets[0], data };
+        chartRef.data.labels = labels;
+        chartRef.data.datasets[0] = { ...chartRef.data.datasets[0], data };
         chartRef.update();
         return chartRef;
     }
 
     Chart.defaults.font.family = "'Roboto', sans-serif";
-    Chart.defaults.color       = '#7f8c8d';
+    Chart.defaults.color = '#7f8c8d';
 
     return new Chart(canvas.getContext('2d'), {
         type: 'bar',
@@ -312,15 +313,15 @@ function renderGraficoPizza(chartRef) {
     const CORES = ['#2c3e50', '#74ebd5', '#ACB6E5', '#f4f7f6', '#e74c3c', '#f39c12', '#27ae60', '#8e44ad', '#3498db'];
 
     if (chartRef) {
-        chartRef.data.labels                 = labels;
-        chartRef.data.datasets[0].data       = data;
+        chartRef.data.labels = labels;
+        chartRef.data.datasets[0].data = data;
         chartRef.data.datasets[0].backgroundColor = CORES.slice(0, labels.length);
         chartRef.update();
         return chartRef;
     }
 
     Chart.defaults.font.family = "'Roboto', sans-serif";
-    Chart.defaults.color       = '#7f8c8d';
+    Chart.defaults.color = '#7f8c8d';
 
     return new Chart(canvas.getContext('2d'), {
         type: 'doughnut',
@@ -352,11 +353,11 @@ function renderGraficoPizza(chartRef) {
  * @param {string} mesAno — "YYYY-MM"
  */
 function renderStatsMensais(mesAno) {
-    const extrato = BolsoDB.getExtrato();
-    const estado  = BolsoDB.getEstado();
+    const transacoes = BolsoDB.getTransacoes();
+    const estado = BolsoDB.getEstado();
 
     // Filtra apenas movimentações do mês alvo
-    const doMes = extrato.filter(e => e.data && e.data.startsWith(mesAno));
+    const doMes = transacoes.filter(e => e.data && e.data.startsWith(mesAno));
 
     const totalGanhos = doMes
         .filter(e => e.tipo === 'ganho')
@@ -374,23 +375,23 @@ function renderStatsMensais(mesAno) {
     const balancoPct = totalGanhos > 0 ? ((economizou / totalGanhos) * 100).toFixed(0) : 0;
 
     // Injeta nos elementos (cria os IDs nos stats-card span.stat-value)
-    _setText('stat-economizou',    _moeda(Math.abs(economizou)));
-    _setText('stat-gasto-total',   _moeda(totalGastos));
+    _setText('stat-economizou', _moeda(Math.abs(economizou)));
+    _setText('stat-gasto-total', _moeda(totalGastos));
     _setText('stat-maior-despesa', maiorGasto ? _moeda(maiorGasto.valor) : '—');
-    _setText('stat-maior-cat',     maiorGasto?.categoria ?? '—');
-    _setText('stat-balanco',       economizou >= 0 ? 'Positivo' : 'Negativo');
-    _setText('stat-balanco-pct',   `${economizou >= 0 ? '+' : ''}${balancoPct}%`);
+    _setText('stat-maior-cat', maiorGasto?.categoria ?? '—');
+    _setText('stat-balanco', economizou >= 0 ? 'Positivo' : 'Negativo');
+    _setText('stat-balanco-pct', `${economizou >= 0 ? '+' : ''}${balancoPct}%`);
 
     // Cores condicionais
     const elEcon = document.getElementById('stat-economizou');
     if (elEcon) {
         elEcon.classList.toggle('text-bd-success', economizou >= 0);
-        elEcon.classList.toggle('text-bd-danger',  economizou < 0);
+        elEcon.classList.toggle('text-bd-danger', economizou < 0);
     }
     const elPct = document.getElementById('stat-balanco-pct');
     if (elPct) {
         elPct.classList.toggle('text-bd-success', economizou >= 0);
-        elPct.classList.toggle('text-bd-danger',  economizou < 0);
+        elPct.classList.toggle('text-bd-danger', economizou < 0);
     }
 }
 
@@ -411,10 +412,10 @@ function _setText(id, texto) {
  */
 function renderOverview(charts = {}) {
     renderSaldo();
-    renderExtrato();
+    renderTransacoes();
     renderAlertas();
-    const barChart  = renderGraficoBarras(charts.barChart  ?? null);
-    const pieChart  = renderGraficoPizza(charts.pieChart   ?? null);
+    const barChart = renderGraficoBarras(charts.barChart ?? null);
+    const pieChart = renderGraficoPizza(charts.pieChart ?? null);
     return { barChart, pieChart };
 }
 
@@ -424,13 +425,13 @@ function renderOverview(charts = {}) {
 
 const UI = {
     renderSaldo,
-    renderExtrato,
+    renderTransacoes,
     renderAlertas,
     renderGraficoBarras,
     renderGraficoPizza,
     renderStatsMensais,
     renderOverview,
     // helpers reutilizáveis pelo app.js
-    moeda  : _moeda,
+    moeda: _moeda,
     mesAtual: _mesAtual,
 };

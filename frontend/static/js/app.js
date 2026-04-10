@@ -15,17 +15,21 @@
 // ─────────────────────────────────────────────────────────────
 
 document.addEventListener('DOMContentLoaded', () => {
-    // Inicializa o banco de dados local (carrega do localStorage)
+    // 1 - Injeta Layouts Universais (Custom Elements)
+    _injectFooter();
+
+    // 2 - Inicializa o banco de dados local (carrega do localStorage)
     BolsoDB.init();
 
-    // Detecta qual página está ativa
-    const page = document.body.dataset.page ?? '';
+    // 3 - Detecta qual página está ativa
+    const page = document.body.dataset.page ?? ''; //estamos tentando acessar o atributo "data-page" do objeto "body" e, caso ele não exista, atribuímos o valor "".
 
-    switch (page) {
-        case 'overview':          initOverview();          break;
-        case 'view-mensal':       initViewMensal();        break;
-        case 'teclado-valores':   initTecladoValores();    break;
-        case 'escolher-tipo':     initEscolherTipo();      break;
+    switch (page) { // String vazia "" é convertida para "false" no contexto de uma estrutura condicional
+        // Apenas precisamos nos preocupar caso alguma destas páginas esteja ativa, posto que daí teremos que destacar o ícone presente no rodapé da página.
+        case 'overview': initOverview(); break;
+        case 'view-mensal': initViewMensal(); break;
+        case 'teclado-valores': initTecladoValores(); break;
+        case 'escolher-tipo': initEscolherTipo(); break;
         default: break;
     }
 });
@@ -42,9 +46,9 @@ function initOverview() {
     const btnVirarMes = document.getElementById('btn-virar-mes');
     if (btnVirarMes) {
         btnVirarMes.addEventListener('click', () => {
-            const agora    = new Date();
-            const mesAlvo  = `${agora.getFullYear()}-${String(agora.getMonth() + 1).padStart(2, '0')}`;
-            const nomeMes  = agora.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
+            const agora = new Date();
+            const mesAlvo = `${agora.getFullYear()}-${String(agora.getMonth() + 1).padStart(2, '0')}`;
+            const nomeMes = agora.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
 
             if (!confirm(`Confirmar virada do mês de ${nomeMes}?\n\nEsta ação irá:\n• Creditar seus Ganhos Mensais\n• Debitar seus Gastos Mensais\n• Cobrar a Fatura do mês no seu Saldo`)) {
                 return;
@@ -87,8 +91,8 @@ function initViewMensal() {
     let mesIndex = hoje.getMonth(); // 0-indexed
 
     const MESES_LABELS = [
-        'JANEIRO','FEVEREIRO','MARÇO','ABRIL','MAIO','JUNHO',
-        'JULHO','AGOSTO','SETEMBRO','OUTUBRO','NOVEMBRO','DEZEMBRO'
+        'JANEIRO', 'FEVEREIRO', 'MARÇO', 'ABRIL', 'MAIO', 'JUNHO',
+        'JULHO', 'AGOSTO', 'SETEMBRO', 'OUTUBRO', 'NOVEMBRO', 'DEZEMBRO'
     ];
 
     function _mesAnoStr() {
@@ -125,7 +129,7 @@ function initViewMensal() {
 
 function initTecladoValores() {
     const params = new URLSearchParams(window.location.search);
-    const tipo   = params.get('tipo'); // 'ganho' | 'gasto'
+    const tipo = params.get('tipo'); // 'ganho' | 'gasto'
 
     // Título dinâmico
     const titulo = document.getElementById('tituloTeclado');
@@ -157,7 +161,7 @@ function initTecladoValores() {
 
         if (tipo === 'ganho') {
             // ── GANHO: captura nome e salva direto ──────────
-            const inputNome  = document.getElementById('inputNomeGanho');
+            const inputNome = document.getElementById('inputNomeGanho');
             const nome = inputNome?.value.trim() || `Ganho em ${new Date().toLocaleDateString('pt-BR')}`;
 
             try {
@@ -181,7 +185,7 @@ function initTecladoValores() {
 // ─────────────────────────────────────────────────────────────
 
 function initEscolherTipo() {
-    const valor    = parseFloat(localStorage.getItem('valorTemporario') ?? '0');
+    const valor = parseFloat(localStorage.getItem('valorTemporario') ?? '0');
     const categoria = localStorage.getItem('categoriaTemporaria') ?? '';
 
     if (!valor || !categoria) {
@@ -198,8 +202,8 @@ function initEscolherTipo() {
     if (valorEl) valorEl.textContent = UI.moeda(valor);
 
     // Controla visibilidade do campo de parcelas
-    const btnCredito  = document.getElementById('btn-credito');
-    const btnDebito   = document.getElementById('btn-debito');
+    const btnCredito = document.getElementById('btn-credito');
+    const btnDebito = document.getElementById('btn-debito');
     const campoParcelas = document.getElementById('campoParcelas');
 
     if (btnCredito && campoParcelas) {
@@ -223,11 +227,11 @@ function initEscolherTipo() {
     if (!btnSalvar) return;
 
     btnSalvar.addEventListener('click', () => {
-        const inputNome     = document.getElementById('inputNomeGasto');
+        const inputNome = document.getElementById('inputNomeGasto');
         const inputParcelas = document.getElementById('inputParcelas');
         const tipoSelecionado = btnCredito?.classList.contains('selected') ? 'credito' : 'debito';
 
-        const nome     = inputNome?.value.trim() || `${categoria} em ${new Date().toLocaleDateString('pt-BR')}`;
+        const nome = inputNome?.value.trim() || `${categoria} em ${new Date().toLocaleDateString('pt-BR')}`;
         const parcelas = tipoSelecionado === 'credito' ? parseInt(inputParcelas?.value ?? '1', 10) : 1;
 
         if (tipoSelecionado === 'credito' && (isNaN(parcelas) || parcelas < 1 || parcelas > 36)) {
@@ -256,8 +260,98 @@ function initEscolherTipo() {
 }
 
 // ─────────────────────────────────────────────────────────────
-//  HELPERS DE UI GLOBAL
+//  HELPERS DE UI E COMPONENTIZAÇÃO DE LAYOUT GLOBAL
 // ─────────────────────────────────────────────────────────────
+
+/**
+ * Injeta o Action Sheet e o Bottom Nav em tags <bd-footer>
+ */
+function _injectFooter() {
+    const bdFooterTag = document.querySelector('bd-footer');
+    if (!bdFooterTag) return;
+
+    // Identifica a página atual (overview, transacoes, perfil, configuracao)
+    const activePage = bdFooterTag.getAttribute('active-page') || '';
+
+    // Template fixo contendo Overlay + FormSheet + NavGlobal
+    const htmlString = `
+    <!-- Action Sheet Overlay -->
+    <div class="action-sheet-overlay" id="menuOverlay" onclick="typeof toggleMenu === 'function' ? toggleMenu() : _fecharActionSheet()"></div>
+
+    <!-- Action Sheet Form -->
+    <div class="action-sheet" id="actionSheet">
+        <h3 style="margin-bottom: 24px; text-align: center; color: #333; font-size: 1.1rem;">O que deseja registrar?</h3>
+        <div class="action-grid">
+            <button class="action-btn" id="btn-novo-ganho" onclick="window.location.href='../transacoes/teclado-valores.html?tipo=ganho'">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
+                Novo Ganho
+            </button>
+            <button class="action-btn" id="btn-novo-gasto" onclick="window.location.href='../transacoes/teclado-valores.html?tipo=gasto'">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
+                Novo Gasto
+            </button>
+            <button class="action-btn" id="btn-importar-extrato" onclick="window.location.href='../upload/extrato-upload.html'">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                    <polyline points="17 8 12 3 7 8"></polyline>
+                    <line x1="12" y1="3" x2="12" y2="15"></line>
+                </svg>
+                Importar Extrato
+            </button>
+            <button class="action-btn" id="btn-importar-fatura" onclick="window.location.href='../upload/fatura-upload.html'">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="2" y="5" width="20" height="14" rx="2"></rect>
+                    <line x1="2" y1="10" x2="22" y2="10"></line>
+                </svg>
+                Importar Fatura
+            </button>
+            ${activePage === 'overview' ? `
+            <button class="action-btn" id="btn-virar-mes" style="grid-column: 1 / -1;">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="23 4 23 10 17 10"/>
+                    <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>
+                </svg>
+                Virar Mês
+            </button>
+            ` : ''}
+        </div>
+    </div>
+
+    <!-- Bottom Nav Engine -->
+    <nav class="bottom-nav">
+        <button class="nav-btn ${activePage === 'overview' ? 'active' : ''}" id="nav-painel" onclick="window.location.href='../dashboard/overview.html'">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="3" width="7" height="7"></rect>
+                <rect x="14" y="3" width="7" height="7"></rect>
+                <rect x="14" y="14" width="7" height="7"></rect>
+                <rect x="3" y="14" width="7" height="7"></rect>
+            </svg>
+            <span>Painel</span>
+        </button>
+
+        <button class="nav-btn-add" id="nav-add" onclick="typeof toggleMenu === 'function' ? toggleMenu() : alert('Action Menu requisitado')" aria-label="Adicionar">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+        </button>
+
+        <button class="nav-btn ${activePage === 'perfil' ? 'active' : ''}" id="nav-perfil" onclick="window.location.href='../profile/usuario.html'">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+            <span>Perfil</span>
+        </button>
+    </nav>`;
+
+    bdFooterTag.innerHTML = htmlString;
+}
 
 /**
  * Fecha o action sheet e seu overlay.

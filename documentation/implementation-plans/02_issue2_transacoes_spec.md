@@ -39,7 +39,15 @@ Criaremos o arquivo principal `frontend/pages/transacoes/lista-transacoes.html` 
 
 ## Revisão Histórica Pós-MVP: Integração e Reatividade (Fase Dinâmica)
 Após a versão estática inicial, definiram-se os seguintes complementos essenciais de arquitetura:
-1. **Diferenciação Funcional.** A tela de \`overview\` terá papel resumido. Operações de CRUD só existem de fato em \`lista-transacoes.html\`.
-2. **Reatividade Core:** O código Javascript englobado em \`database.js\` e \`ui.js\` deve controlar o \`lista-transacoes.html\`, substituindo mocks fixos por dados iterados via DB.
-3. **Fluidez de Casos de Uso:** Funcionalidades vitais do fluxo (\`Registrar Gasto\`, \`Excluir Gasto\` e \`Filtragem Temporal\`) deverão refletir reações de estado instantâneas na própria árvore de interface.
-4. **Acoplamento Multi-Viewer:** O saldo renderizado pela classe de \`profile.js\` precisará ser modificado para referenciar nativamente o real total unificado exposto pela aplicação de transações.
+1. **Diferenciação Funcional.** A tela de `overview` terá papel resumido. Operações de CRUD só existem de fato em `lista-transacoes.html`.
+2. **Reatividade Core:** O código Javascript englobado em `database.js` e `ui.js` deve controlar o `lista-transacoes.html`, substituindo mocks fixos por dados iterados via DB.
+3. **Fluidez de Casos de Uso:** Funcionalidades vitais do fluxo (`Registrar Gasto`, `Excluir Gasto` e `Filtragem Temporal`) deverão refletir reações de estado instantâneas na própria árvore de interface.
+4. **Acoplamento Multi-Viewer:** O saldo renderizado pela classe de `profile.js` precisará ser modificado para referenciar nativamente o real total unificado exposto pela aplicação de transações.
+
+---
+
+## 5. Processo de Implementação: Operação Editar (Update)
+Para garantir a amplitude completa do ciclo CRUD sendo implementado para a entidade Transações e para proteger a integridade contábil do sistema na interface:
+1. **Modal de Edição Dedicado:** Criaremos um Modal de preenchimento ágil acionado diretamente da `lista-transacoes.html`, portando os inputs em HTML Native (Nome e Valor).
+2. **Atualização Segura por Delta (`database.js`):** A função base iterará o `update` aplicando a diferença ("delta" = Novo Valor - Valor Antigo). Caso haja mutação de valor em um Ganho/Receita, o Sistema ajustará o global do Saldo atrelado.
+3. **Trava Fiduciária para "Compras no Crédito":** Quando a transação for identificada como do tipo `credito`, a opção de edição limitará-se apenas aos campos de "Título" e "Categoria", sendo a interface do Valor bloqueada (*Disabled*). A alteração financeira de uma despesa alocada em Fatura e com as parcelas já divididas precisará ser estornada (Deletada) e refeita pelo usuário, livrando a consistência da Fase Beta de perigosos loops lógicos de Faturas passadas e futuras.

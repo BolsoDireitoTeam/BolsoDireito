@@ -19,7 +19,7 @@
  */
 function _mesAno(data = new Date()) {
     const yyyy = data.getFullYear();
-    const mm   = String(data.getMonth() + 1).padStart(2, '0');
+    const mm = String(data.getMonth() + 1).padStart(2, '0');
     return `${yyyy}-${mm}`;
 }
 
@@ -62,13 +62,13 @@ function _fmt(v) {
  * um alerta de ATENÇÃO é emitido para uma fatura futura.
  * Padrão: 70% — "você está gastando muita parte da sua renda no crédito."
  */
-const LIMITE_ATENCAO_PCT  = 0.70;
+const LIMITE_ATENCAO_PCT = 0.70;
 
 /**
  * Percentual a partir do qual um alerta de RISCO é emitido.
  * Padrão: 100% — a fatura futura supera a capacidade de pagamento.
  */
-const LIMITE_RISCO_PCT    = 1.00;
+const LIMITE_RISCO_PCT = 1.00;
 
 // ─────────────────────────────────────────────────────────────
 //  FUNÇÃO PRINCIPAL — virar_mes()
@@ -78,11 +78,11 @@ const LIMITE_RISCO_PCT    = 1.00;
  * Motor central de consolidação mensal do Bolso Direito.
  *
  * Executa, nesta ordem:
- *  1. Soma os Ganhos Mensais ao Saldo e registra cada um no Extrato.
- *  2. Subtrai os Gastos Mensais do Saldo e registra cada um no Extrato.
+ *  1. Soma os Ganhos Mensais ao Saldo e registra cada um nas Transações.
+ *  2. Subtrai os Gastos Mensais do Saldo e registra cada um nas Transações.
  *  3. Consome a Fatura do mês-alvo (totaliza todas as parcelas de crédito
  *     que vencem naquele mês), desconta do Saldo em bloco e registra
- *     um único lançamento consolidado no Extrato.
+ *     um único lançamento consolidado nas Transações.
  *
  * @param {object} [opcoes]
  * @param {string} [opcoes.mesAlvo]  — "YYYY-MM" do mês a virar.
@@ -105,13 +105,13 @@ function virar_mes({ mesAlvo, dataRef } = {}) {
         throw new Error('[Engine] BolsoDB não encontrado. Carregue database.js antes de engine.js.');
     }
 
-    const hoje       = dataRef ?? new Date();
-    const mesVirada  = mesAlvo  ?? _mesAno(hoje);
-    const dataStr    = _dataISO(hoje);
+    const hoje = dataRef ?? new Date();
+    const mesVirada = mesAlvo ?? _mesAno(hoje);
+    const dataStr = _dataISO(hoje);
 
-    const saldoAntes  = BolsoDB.getSaldo();
+    const saldoAntes = BolsoDB.getSaldo();
     const lancamentos = [];  // lançamentos gerados nesta virada, para o relatório
-    let   saldoAtual  = saldoAntes;
+    let saldoAtual = saldoAntes;
 
     console.group(`\n🔄 ===== virar_mes() — ${mesVirada} =====`);
     console.log(`📌 Saldo de entrada: ${_fmt(saldoAntes)}`);
@@ -119,7 +119,7 @@ function virar_mes({ mesAlvo, dataRef } = {}) {
     // ─────────────────────────────────────────────────────
     //  PASSO 1 — Creditar Ganhos Mensais
     // ─────────────────────────────────────────────────────
-    const estado = BolsoDB.getEstado();
+    const estado = BolsoDB.getEstado(); // Aqui teríamos a referência a variável "_state", só que em forma de objeto!
     let totalGanhos = 0;
 
     if (estado.ganhosMensais.length === 0) {
@@ -128,17 +128,17 @@ function virar_mes({ mesAlvo, dataRef } = {}) {
         console.group('💰 Passo 1 — Crédito de Ganhos Mensais');
         for (const template of estado.ganhosMensais) {
             const lancamento = {
-                id          : _gerarIdEngine(),
-                tipo        : 'ganho',
-                origem      : 'mensal',          // marcador de origem para o Extrato
-                nome        : template.nome,
-                data        : dataStr,
-                valor       : template.valor,
+                id: _gerarIdEngine(),
+                tipo: 'ganho',
+                origem: 'mensal',          // marcador de origem para a listagem
+                nome: template.nome,
+                data: dataStr,
+                valor: template.valor,
                 mesVirada,
             };
             saldoAtual = Number((saldoAtual + lancamento.valor).toFixed(2));
             totalGanhos = Number((totalGanhos + lancamento.valor).toFixed(2));
-            BolsoDB._adicionarAoExtrato(lancamento);
+            BolsoDB._adicionarATransacao(lancamento);
             lancamentos.push(lancamento);
             console.log(`  ✅ +${_fmt(lancamento.valor)} — "${lancamento.nome}"`);
         }
@@ -157,19 +157,19 @@ function virar_mes({ mesAlvo, dataRef } = {}) {
         console.group('🏠 Passo 2 — Débito de Gastos Mensais');
         for (const template of estado.gastosMensais) {
             const lancamento = {
-                id          : _gerarIdEngine(),
-                tipo        : 'gasto',
-                subtipo     : 'debito',
-                origem      : 'mensal',
-                nome        : template.nome,
-                data        : dataStr,
-                valor       : template.valor,
-                categoria   : template.categoria,
+                id: _gerarIdEngine(),
+                tipo: 'gasto',
+                subtipo: 'debito',
+                origem: 'mensal',
+                nome: template.nome,
+                data: dataStr,
+                valor: template.valor,
+                categoria: template.categoria,
                 mesVirada,
             };
             saldoAtual = Number((saldoAtual - lancamento.valor).toFixed(2));
             totalGastos = Number((totalGastos + lancamento.valor).toFixed(2));
-            BolsoDB._adicionarAoExtrato(lancamento);
+            BolsoDB._adicionarATransacao(lancamento);
             lancamentos.push(lancamento);
             console.log(`  ✅ -${_fmt(lancamento.valor)} — "${lancamento.nome}" (${lancamento.categoria})`);
         }
@@ -183,7 +183,7 @@ function virar_mes({ mesAlvo, dataRef } = {}) {
     console.group(`💳 Passo 3 — Fatura de ${mesVirada}`);
 
     const itensFatura = BolsoDB._consumirFatura(mesVirada);
-    let totalFatura   = 0;
+    let totalFatura = 0;
 
     if (itensFatura.length === 0) {
         console.log('  ℹ️  Nenhuma parcela de crédito vencendo neste mês.');
@@ -194,22 +194,22 @@ function virar_mes({ mesAlvo, dataRef } = {}) {
             itensFatura.reduce((acc, p) => acc + p.valorParcela, 0).toFixed(2)
         );
 
-        // Gera um ÚNICO lançamento consolidado no Extrato representando toda a fatura.
+        // Gera um ÚNICO lançamento consolidado nas Transações representando toda a fatura.
         const lancamentoFatura = {
-            id          : _gerarIdEngine(),
-            tipo        : 'gasto',
-            subtipo     : 'credito',
-            origem      : 'fatura',
-            nome        : `Fatura ${_exibirMes(mesVirada)}`,
-            data        : dataStr,
-            valor       : totalFatura,
-            categoria   : 'Outros',              // categoria genérica para o bloco da fatura
-            parcelas    : itensFatura,           // detalhe completo das parcelas para drill-down (Fase 4)
+            id: _gerarIdEngine(),
+            tipo: 'gasto',
+            subtipo: 'credito',
+            origem: 'fatura',
+            nome: `Fatura ${_exibirMes(mesVirada)}`,
+            data: dataStr,
+            valor: totalFatura,
+            categoria: 'Outros',              // categoria genérica para o bloco da fatura
+            parcelas: itensFatura,           // detalhe completo das parcelas para drill-down (Fase 4)
             mesVirada,
         };
 
         saldoAtual = Number((saldoAtual - totalFatura).toFixed(2));
-        BolsoDB._adicionarAoExtrato(lancamentoFatura);
+        BolsoDB._adicionarATransacao(lancamentoFatura);
         lancamentos.push(lancamentoFatura);
 
         console.log(`  📋 ${itensFatura.length} parcela(s) consumida(s):`);
@@ -230,12 +230,12 @@ function virar_mes({ mesAlvo, dataRef } = {}) {
     //  RELATÓRIO DA VIRADA
     // ─────────────────────────────────────────────────────
     const resultado = {
-        mesAlvo     : mesVirada,
+        mesAlvo: mesVirada,
         saldoAntes,
         totalGanhos,
         totalGastos,
         totalFatura,
-        saldoDepois : saldoAtual,
+        saldoDepois: saldoAtual,
         lancamentos,
     };
 
@@ -279,32 +279,32 @@ function virar_mes({ mesAlvo, dataRef } = {}) {
  */
 function calcularAlertas() {
     const estado = BolsoDB.getEstado();
-    const meses  = BolsoDB.getFaturasMeses();
+    const meses = BolsoDB.getFaturasMeses();
 
     // Capacidade de pagamento = saldo atual + total de todos os ganhos mensais
     const totalGanhosMensais = estado.ganhosMensais.reduce((acc, g) => acc + g.valor, 0);
-    const capacidade         = Number((estado.saldo + totalGanhosMensais).toFixed(2));
+    const capacidade = Number((estado.saldo + totalGanhosMensais).toFixed(2));
 
     const alertas = [];
 
     for (const mes of meses) {
         const totalFatura = BolsoDB.getTotalFatura(mes);
-        const percentual  = capacidade > 0 ? totalFatura / capacidade : Infinity;
+        const percentual = capacidade > 0 ? totalFatura / capacidade : Infinity;
 
         let nivel, mensagem;
 
         if (percentual >= LIMITE_RISCO_PCT) {
-            nivel    = 'risco';
+            nivel = 'risco';
             mensagem = `🔴 RISCO: A fatura de ${_exibirMes(mes)} (${_fmt(totalFatura)}) `
-                     + `supera ${(percentual * 100).toFixed(0)}% da sua capacidade de pagamento (${_fmt(capacidade)}).`;
+                + `supera ${(percentual * 100).toFixed(0)}% da sua capacidade de pagamento (${_fmt(capacidade)}).`;
         } else if (percentual >= LIMITE_ATENCAO_PCT) {
-            nivel    = 'atencao';
+            nivel = 'atencao';
             mensagem = `🟡 ATENÇÃO: A fatura de ${_exibirMes(mes)} (${_fmt(totalFatura)}) `
-                     + `representa ${(percentual * 100).toFixed(0)}% da sua capacidade (${_fmt(capacidade)}).`;
+                + `representa ${(percentual * 100).toFixed(0)}% da sua capacidade (${_fmt(capacidade)}).`;
         } else {
-            nivel    = 'ok';
+            nivel = 'ok';
             mensagem = `🟢 OK: Fatura de ${_exibirMes(mes)} (${_fmt(totalFatura)}) `
-                     + `representa ${(percentual * 100).toFixed(0)}% da sua capacidade.`;
+                + `representa ${(percentual * 100).toFixed(0)}% da sua capacidade.`;
         }
 
         alertas.push({ mesAno: mes, totalFatura, capacidade, percentual, nivel, mensagem });
@@ -348,8 +348,8 @@ function _gerarIdEngine() {
  */
 function _exibirMes(mesAno) {
     const [yyyy, mm] = mesAno.split('-').map(Number);
-    const nomes = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho',
-                   'Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+    const nomes = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
+        'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
     return `${nomes[mm - 1]}/${yyyy}`;
 }
 
@@ -417,12 +417,12 @@ BolsoEngine.simularFase3 = function () {
     // Usamos data fixa de compra = 2026-03-16 para que as parcelas
     // caiam exatamente em Abril/2026 e Maio/2026.
     const gastoCredito = BolsoDB.adicionarGasto({
-        nome      : 'Smart TV 55"',
-        valor     : 2400,
-        categoria : 'Lazer',
-        tipo      : 'credito',
-        parcelas  : 2,
-        data      : '2026-03-16',
+        nome: 'Smart TV 55"',
+        valor: 2400,
+        categoria: 'Lazer',
+        tipo: 'credito',
+        parcelas: 2,
+        data: '2026-03-16',
     });
 
     console.log(`\n  Gasto criado: ${_fmt(gastoCredito.valor)} em 2x de ${_fmt(gastoCredito.valorParcela)}`);
@@ -455,7 +455,7 @@ BolsoEngine.simularFase3 = function () {
     const saldoEsperado1 = 2000 + 3500 - 1200 - 1200;
     console.assert(resultado1.saldoDepois === saldoEsperado1,
         `❌ Saldo incorreto! Esperado R$ ${saldoEsperado1.toFixed(2)}, obtido R$ ${resultado1.saldoDepois.toFixed(2)}`);
-    console.log(`\n  ✅ Extrato após 1ª virada: ${BolsoDB.getExtrato().length} lançamento(s)`);
+    console.log(`\n  ✅ Lançamentos após 1ª virada: ${BolsoDB.getTransacoes().length} lançamento(s)`);
     console.log(`  ✅ Faturas restantes: ${JSON.stringify(Object.keys(BolsoDB.getEstado().faturas))}`);
     console.groupEnd();
 
@@ -483,14 +483,14 @@ BolsoEngine.simularFase3 = function () {
     const saldoEsperado2 = saldoEsperado1 + 3500 - 1200 - 1200;
     console.assert(resultado2.saldoDepois === saldoEsperado2,
         `❌ Saldo incorreto! Esperado R$ ${saldoEsperado2.toFixed(2)}, obtido R$ ${resultado2.saldoDepois.toFixed(2)}`);
-    console.log(`\n  ✅ Extrato total: ${BolsoDB.getExtrato().length} lançamento(s)`);
+    console.log(`\n  ✅ Lançamentos finais totais: ${BolsoDB.getTransacoes().length} lançamento(s)`);
     console.log(`  ✅ Faturas pendentes: ${JSON.stringify(Object.keys(BolsoDB.getEstado().faturas))} (esperado: [])`);
     console.groupEnd();
 
-    // ── 6. Extrato Final Completo ──────────────────────
-    console.group('\n📋 6. Extrato Final (do mais recente ao mais antigo)');
-    const extrato = BolsoDB.getExtrato();
-    extrato.forEach((e, i) => {
+    // ── 6. Transações Finais Completas ──────────────────────
+    console.group('\n📋 6. Transações Finais (da mais recente à mais antiga)');
+    const transacoes = BolsoDB.getTransacoes();
+    transacoes.forEach((e, i) => {
         const sinal = (e.tipo === 'ganho') ? '+' : '-';
         const origem = e.origem ? ` [${e.origem}]` : '';
         console.log(`  ${i + 1}. ${sinal}${_fmt(e.valor)} — "${e.nome}"${origem} (${e.data})`);
