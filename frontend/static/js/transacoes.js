@@ -88,7 +88,6 @@ function renderizarTransacoes() {
 
     // Transações reais unificadas
     const transacoesTotais = BolsoDB.getTransacoes();
-    console.log(BolsoDB.getFatura('2026-05'));
 
     // 1º Passo: Aplica o filtro de Data (Mês) e Categoria em cima do Array Total
     let doMes = transacoesTotais.filter(e => e.data && e.data.startsWith(stateFiltroMes));
@@ -151,11 +150,16 @@ function renderizarTransacoes() {
         // Puxa svg com shape generico
         const svgIcon = isGanho ?
             `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>` :
-            `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>`;
+            `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line></svg>`;
 
-        // Atribuição da operação de Exclusão "Fluidez de Caso de Uso" (Aprovado em Issue 2)
+        // Atribuição da operação de Exclusão e Edição 
+        // Estas funções serão atribuídas ao atributo onClick de cada Transação que for exibida
+        // O acionamento da deleção/edição será feito mediante ao clique
         const deleteHandler = isGanho ? `removerTransacao('${item.id}', 'ganho')` : `removerTransacao('${item.id}', 'gasto')`;
+        const editHandler = `abrirModalEdicao('${item.id}')`;
 
+        // Aqui estamos adicionando cada transação individual a nossa lista de transações, a qual é descrita dentro do arquivo lista-transacoes.html.
+        // Preste muita atenção às variáveis que são passadas como argumentos dos atributos de cada tag que está sendo construída dentro da string abaixo.
         const li = document.createElement('li');
         li.style.cssText = `border-left: 4px solid ${corHex}; background: #fff; padding: 12px; border-radius: 8px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 1px 4px rgba(0,0,0,0.05);`;
         li.innerHTML = `
@@ -171,17 +175,25 @@ function renderizarTransacoes() {
             </div>
             <div class="d-flex align-items-center gap-2">
                 <div style="font-weight:bold; color:${corHex}; font-size: 0.95rem; text-align: right;">${sinal} ${UI.moeda(item.valor)}</div>
-                <!-- Deletar Exclusivo em Telas Viewers -->
-                <button class="btn btn-sm btn-link text-danger p-0 m-0 opacity-75" onclick="${deleteHandler}" title="Excluir lançamentos">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
-                </button>
+                <!-- Editar e Deletar Exclusivos em Telas Viewers -->
+                <div class="d-flex align-items-center gap-2 ms-1">
+                    <!-- Botão de Editar -->
+                    <button class="btn btn-sm btn-link text-primary p-0 m-0 opacity-75" onclick="${editHandler}" data-bs-toggle="modal" data-bs-target="#modalEditar" title="Editar lançamento">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                    </button> 
+                    <!-- Botão de Deletar -->
+                    <button class="btn btn-sm btn-link text-danger p-0 m-0 opacity-75" onclick="${deleteHandler}" title="Excluir lançamento">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+                    </button>
+                </div>
             </div>
         `;
         listContainer.appendChild(li);
     }
 }
 
-// Exportação global (para inline html click events)
+// Exportação global (para inline html onClick events)
+// Ao definirmos estas funções globalmente, podemos chamá-las diretamente no HTML sem precisar nos preocupar com escopo.
 window.removerTransacao = function (id, type) {
     if (confirm("🚨 Tem certeza que deseja apagar essa transação permanente? Esse valor irá refletir o seu saldo principal.")) {
         if (type === 'gasto') {
@@ -197,5 +209,61 @@ window.removerTransacao = function (id, type) {
         }
         // UI Repaint - Efeito Fluid
         renderizarTransacoes();
+    }
+}
+
+window.abrirModalEdicao = function (id) {
+    const arr = BolsoDB.getTransacoes();
+    const trx = arr.find(e => e.id === id);
+    if (!trx) return;
+
+    // Seta o ID Oculto no html
+    document.getElementById('editTransacaoId').value = id;
+
+    // Popula campos textuais
+    document.getElementById('editTransacaoNome').value = trx.nome;
+    document.getElementById('editTransacaoValor').value = trx.valor.toFixed(2);
+
+    // Tratamento de Categoria visual
+    const seletorCat = document.getElementById('editContainerCategoria');
+    const inputCat = document.getElementById('editTransacaoCategoria');
+    if (trx.tipo === 'ganho') {
+        seletorCat.style.display = 'none';
+    } else {
+        seletorCat.style.display = 'block';
+        inputCat.value = trx.categoria || 'Outros';
+    }
+
+    // Trava Visual de Crédito (Integração com DB)
+    const inputValor = document.getElementById('editTransacaoValor');
+    const avisoCredito = document.getElementById('editAvisoCredito');
+    if (trx.subtipo === 'credito') {
+        inputValor.setAttribute('disabled', 'true');
+        avisoCredito.style.display = 'block';
+    } else {
+        inputValor.removeAttribute('disabled');
+        avisoCredito.style.display = 'none';
+    }
+}
+
+window.salvarEdicaoModal = function () {
+    const id = document.getElementById('editTransacaoId').value;
+    const nome = document.getElementById('editTransacaoNome').value;
+    const valor = parseFloat(document.getElementById('editTransacaoValor').value);
+    const categoria = document.getElementById('editTransacaoCategoria').value;
+
+    if (!nome || isNaN(valor) || valor <= 0) {
+        alert("🚨 Por favor, preencha um título e um valor válido superior a zero!");
+        return;
+    }
+
+    const payload = { nome, valor, categoria };
+
+    // Envia para o motor de estado global (calculo matemático de delta acontece la dentro)
+    if (BolsoDB.editarTransacao(id, payload)) {
+        // UI Repaint - Efeito Fluid instantâneo na listagem
+        renderizarTransacoes();
+    } else {
+        alert("Houve um problema ao editar a transação.");
     }
 }

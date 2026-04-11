@@ -152,6 +152,62 @@
         </div>
     </div>
 
+    <!-- MODAL DE EDIÇÃO DE TRANSAÇÃO -->
+    <div class="modal fade" id="modalEditar" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-sm">
+            <div class="modal-content border-0 shadow" style="border-radius: 16px;">
+                <div class="modal-header border-0 pb-0">
+                    <h5 class="modal-title" style="font-weight: 700; font-size: 1.1rem;">Editar Transação</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body pb-1">
+
+                    <!-- Nós usamos type="hidden" porque o ID não é uma informação legível que o usuário precise ver (ou possa alterar) ali no Modal, mas é vital para as nossas engrenagens de banco de dados (database.js) saberem exatamente em qual gaveta aplicar as atualizações! -->
+                    <!-- Essa técnica é super comum no design de Sistemas Web para transitar variáveis de rastreio entre janelas da interface -->
+                    <input type="hidden" id="editTransacaoId">
+
+                    <div class="mb-3">
+                        <label class="form-label text-muted fw-bold"
+                            style="font-size: 0.8rem; text-transform: uppercase;">Título</label>
+                        <input type="text" class="form-control form-control-sm" id="editTransacaoNome"
+                            style="border-radius: 8px; padding: 10px;">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label text-muted fw-bold"
+                            style="font-size: 0.8rem; text-transform: uppercase;">Valor (R$)</label>
+                        <!-- Ao declararmos o tipo do input como "number", o próprio navegador já realiza um filtro, não permitindo que o usuário entre com valores que não sejam numéricos -->
+                        <input type="number" step="0.01" min="0.01" class="form-control form-control-sm"
+                            id="editTransacaoValor" style="border-radius: 8px; padding: 10px;">
+                        <small class="text-danger mt-1 fw-bold" id="editAvisoCredito"
+                            style="display: none; font-size: 0.70rem;">⚠️ Valores de Crédito (Parcelados) protegidos
+                            contra edição.</small>
+                    </div>
+                    <div class="mb-3" id="editContainerCategoria">
+                        <label class="form-label text-muted fw-bold"
+                            style="font-size: 0.8rem; text-transform: uppercase;">Categoria</label>
+                        <select class="form-select form-select-sm" id="editTransacaoCategoria"
+                            style="border-radius: 8px; padding: 10px;">
+                            <!-- TODO: Posteriormente, muito provavelmente novas categorias serão criadas pelo usuário, portanto, devemos prever uma forma de adicionar as categorias de forma dinâmica -->
+                            <option value="Alimentação">🍔 Alimentação</option>
+                            <option value="Transporte">🚗 Transporte</option>
+                            <option value="Moradia">🏠 Moradia</option>
+                            <option value="Saúde">🏥 Saúde</option>
+                            <option value="Lazer">🎮 Lazer</option>
+                            <option value="Educação">📚 Educação</option>
+                            <option value="Vestuário">👕 Vestuário</option>
+                            <option value="Assinaturas">📺 Assinaturas</option>
+                            <option value="Outros">📦 Outros</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer border-0 pt-0 d-flex justify-content-end">
+                    <button type="button" class="btn btn-success px-4 rounded-pill fw-bold"
+                        onclick="salvarEdicaoModal()" data-bs-dismiss="modal">Salvar Alterações</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Componente Global de Rodapé -->
     <bd-footer active-page="transacoes"></bd-footer>
 
