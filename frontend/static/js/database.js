@@ -459,6 +459,64 @@ function removerGastoMensal(id) {
     return true;
 }
 
+//TODO: Validar a criação de editarTransacao()
+// ─────────────────────────────────────────────────────────────
+//  CRUD — Edição Genérica (Update)
+// ─────────────────────────────────────────────────────────────
+
+/**
+ * Edita propriedades de uma transação existente baseando-se no paradigma do "Delta".
+ * Protege a edição do campo "Valor" para compras no Crédito devido as faturas já projetadas.
+ * @param {string} id - O ID da transação
+ * @param {object} dadosAtualizados - Objeto contendo os campos atualizados: nome, valor, categoria.
+ * @returns {boolean} true se encontrou e atualizou a transação
+ */
+function editarTransacao(id, dadosAtualizados) {
+    const trx = _state.transacoes.find(e => e.id === id);
+    if (!trx) {
+        console.warn(`[DB] Transação com id "${id}" não encontrada para edição.`);
+        return false;
+    }
+
+    const { nome, valor, categoria } = dadosAtualizados;
+    let valorAntigo = trx.valor;
+
+    // Se houver alteração de valor e não for uma transação no crédito (a qual evitamos recalcular agora)
+    if (valor !== undefined && valor !== valorAntigo) {
+        if (trx.subtipo === 'credito') {
+            console.warn(`[DB] Edição de valor negada preventivamente para a transação no crédito ID "${id}".`);
+        } else {
+            const delta = valor - valorAntigo;
+            trx.valor = valor;
+
+            if (trx.tipo === 'ganho') {
+                _state.saldo = Number((_state.saldo + delta).toFixed(2));
+            } else if (trx.tipo === 'gasto' && trx.subtipo === 'debito') {
+                _state.saldo = Number((_state.saldo - delta).toFixed(2));
+            }
+        }
+    }
+
+    if (nome) trx.nome = nome.trim();
+    if (categoria && trx.tipo === 'gasto') trx.categoria = categoria;
+
+    // Ajusta também nas faturas caso seja um item faturado no crédito para mantermos consistência visual do Nome e Categoria
+    if (trx.subtipo === 'credito') {
+        for (const mes in _state.faturas) {
+            _state.faturas[mes].forEach(p => {
+                if (p.gastoId === id) {
+                    if (nome) p.nome = nome.trim();
+                    if (categoria) p.categoria = categoria;
+                }
+            });
+        }
+    }
+
+    salvarEstado();
+    console.log(`[DB] ✏️ Transação "${id}" atualizada com sucesso. Novo saldo contábil: R$${_state.saldo}`);
+    return true;
+}
+
 // ─────────────────────────────────────────────────────────────
 //  LEITURA — Queries Úteis
 // ─────────────────────────────────────────────────────────────
@@ -584,6 +642,7 @@ const BolsoDB = { //Este objeto está sendo declarado dentro de um contexto loca
     adicionarGasto,
     removerGastoDebito,
     removerGastoCredito,
+    editarTransacao,
 
     // ── Recorrentes Mensais ────────────────────────────
     adicionarGanhoMensal,
