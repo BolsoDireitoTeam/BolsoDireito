@@ -1,165 +1,148 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Resumo Mensal</title>
-
-<link href="https://fonts.googleapis.com/css?family=Roboto:400,700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../../static/styles/style.css">
-
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-<style>
-
-.dashboard-container{
-    background:#fff;
-    width:360px;
-    padding:2rem;
-    border-radius:16px;
-    box-shadow:0 8px 32px rgba(44,62,80,0.2);
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-}
-
-.month-header{
-    width:100%;
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    font-weight:700;
-    color:#2c3e50;
-    margin-bottom:1rem;
-}
-
-.month-header span{
-    cursor:pointer;
-}
-
-.chart-container{
-    width:220px;
-    margin:1rem 0;
-}
-
-.stats{
-    width:100%;
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:1rem;
-    margin-top:1rem;
-}
-
-.card{
-    background:#f7f9fc;
-    border-radius:10px;
-    padding:0.8rem;
-    text-align:center;
-    border:1px solid #ACB6E5;
-}
-
-.card-title{
-    font-size:0.8rem;
-    color:#2c3e50;
-}
-
-.card-value{
-    font-size:1.1rem;
-    font-weight:700;
-    margin-top:0.3rem;
-}
-
-.bottom-nav{
-    margin-top:1.5rem;
-    width:100%;
-    display:flex;
-    justify-content:space-around;
-    border-top:1px solid #ddd;
-    padding-top:1rem;
-}
-
-.nav-btn{
-    font-size:1.3rem;
-    cursor:pointer;
-}
-
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bolso Direito - Resumo Mensal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../../static/styles/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
+<body class="app-body" data-page="view-mensal">
 
-<body>
+    <div class="app-shell">
 
-<div class="dashboard-container">
+        <div class="month-selector">
+            <button class="arrow-btn" id="btn-mes-prev" onclick="mudarMes(-1)" aria-label="Mês anterior">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                     stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="15 18 9 12 15 6"></polyline>
+                </svg>
+            </button>
+            <h2 id="mesAtual">MARÇO</h2>
+            <button class="arrow-btn" id="btn-mes-next" onclick="mudarMes(1)" aria-label="Próximo mês">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                     stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+            </button>
+        </div>
 
-<div class="month-header">
-<span>←</span>
-<h3>FEVEREIRO</h3>
-<span>→</span>
-</div>
+        <section class="bd-card">
+            <h4>Distribuição de Gastos</h4>
+            <div class="chart-container">
+                <canvas id="gastosMensaisChart"></canvas>
+            </div>
+        </section>
 
-<div class="chart-container">
-<canvas id="gastosChart"></canvas>
-</div>
+        <section class="stats-grid">
+            <div class="stat-card">
+                <span class="stat-title">Economizou</span>
+                <span class="stat-value" id="stat-economizou">—</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-title">Gasto Total</span>
+                <span class="stat-value" id="stat-gasto-total">—</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-title">Maior Despesa</span>
+                <span class="stat-value" id="stat-maior-despesa">—</span>
+                <span class="stat-subtitle" id="stat-maior-cat"></span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-title">Balanço do Mês</span>
+                <span class="stat-value" id="stat-balanco">—</span>
+                <span class="stat-subtitle" id="stat-balanco-pct"></span>
+            </div>
+        </section>
 
-<div class="stats">
+    </div>
 
-<div class="card">
-<div class="card-title">Economizou</div>
-<div class="card-value">R$700,00</div>
-</div>
+    <!-- Action Sheet Overlay -->
+    <div class="action-sheet-overlay" id="menuOverlay" onclick="toggleMenu()"></div>
 
-<div class="card">
-<div class="card-title">Gasto total</div>
-<div class="card-value">R$5000,00</div>
-</div>
+    <!-- Action Sheet -->
+    <div class="action-sheet" id="actionSheet">
+        <h3>O que deseja registrar?</h3>
+        <div class="action-grid">
+            <button class="action-btn" id="btn-novo-ganho"
+                    onclick="window.location.href='../transacoes/teclado-valores.html?tipo=ganho'">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                     stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
+                Novo Ganho
+            </button>
+            <button class="action-btn" id="btn-novo-gasto"
+                    onclick="window.location.href='../transacoes/teclado-valores.html?tipo=gasto'">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                     stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
+                Novo Gasto
+            </button>
+            <button class="action-btn" id="btn-importar-extrato"
+                    onclick="window.location.href='../upload/extrato-upload.html'">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                     stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                    <polyline points="17 8 12 3 7 8"></polyline>
+                    <line x1="12" y1="3" x2="12" y2="15"></line>
+                </svg>
+                Importar Extrato
+            </button>
+            <button class="action-btn" id="btn-importar-fatura"
+                    onclick="window.location.href='../upload/fatura-upload.html'">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                     stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="2" y="5" width="20" height="14" rx="2"></rect>
+                    <line x1="2" y1="10" x2="22" y2="10"></line>
+                </svg>
+                Importar Fatura
+            </button>
+        </div>
+    </div>
 
-<div class="card">
-<div class="card-title">Maior despesa</div>
-<div class="card-value">Alimentação</div>
-</div>
+    <!-- Bottom Nav -->
+    <nav class="bottom-nav">
+        <button class="nav-btn active" id="nav-painel" onclick="toggleViews()">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="3" width="7" height="7"></rect>
+                <rect x="14" y="3" width="7" height="7"></rect>
+                <rect x="14" y="14" width="7" height="7"></rect>
+                <rect x="3" y="14" width="7" height="7"></rect>
+            </svg>
+            <span>Painel</span>
+        </button>
 
-<div class="card">
-<div class="card-title">Valor</div>
-<div class="card-value">R$1000,00</div>
-</div>
+        <button class="nav-btn-add" id="nav-add" onclick="toggleMenu()" aria-label="Adicionar">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+        </button>
 
-</div>
+        <button class="nav-btn" id="nav-perfil"
+                onclick="window.location.href='../profile/usuario.html'">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+            <span>Perfil</span>
+        </button>
+    </nav>
 
-<div class="bottom-nav">
-<div class="nav-btn">☰</div>
-<div class="nav-btn">＋</div>
-<div class="nav-btn">👤</div>
-</div>
-
-</div>
-
-<script>
-
-const ctx = document.getElementById('gastosChart');
-
-new Chart(ctx,{
-type:'pie',
-data:{
-labels:['Streaming','Lazer','Transporte'],
-datasets:[{
-data:[3000,1500,500],
-backgroundColor:[
-'#7a4b5d',
-'#ACB6E5',
-'#74ebd5'
-]
-}]
-},
-options:{
-plugins:{
-legend:{
-position:'bottom'
-}
-}
-}
-});
-
-</script>
-
+    <!-- JS Stack: ordem obrigatória -->
+    <script src="../../static/js/database.js"></script>
+    <script src="../../static/js/engine.js"></script>
+    <script src="../../static/js/ui.js"></script>
+    <script src="../../static/js/app.js"></script>
+    <script src="../../utils.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
