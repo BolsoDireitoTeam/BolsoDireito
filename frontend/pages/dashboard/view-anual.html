@@ -7,9 +7,11 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="../../static/styles/style.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script type="module" src="../../static/js/app.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </head>
-<body class="app-body">
+<body class="app-body" data-page="view-anual">
 
     <div class="app-shell">
         <header class="app-header">
@@ -18,13 +20,13 @@
                 <h2 id="anoAtual">2025</h2>
             </div>
             <div class="d-flex gap-2">
-                <button class="arrow-btn" id="btn-ano-prev" onclick="mudarAno(-1)" aria-label="Ano anterior">
+                <button class="arrow-btn" id="btn-ano-prev" aria-label="Ano anterior">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                          stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <polyline points="15 18 9 12 15 6"></polyline>
                     </svg>
                 </button>
-                <button class="arrow-btn" id="btn-ano-next" onclick="mudarAno(1)" aria-label="Próximo ano">
+                <button class="arrow-btn" id="btn-ano-next" aria-label="Próximo ano">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                          stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <polyline points="9 18 15 12 9 6"></polyline>
@@ -72,14 +74,13 @@
     </div>
 
     <!-- Action Sheet Overlay -->
-    <div class="action-sheet-overlay" id="menuOverlay" onclick="toggleMenu()"></div>
+    <div class="action-sheet-overlay" id="menuOverlay" data-action="toggle-menu"></div>
 
     <!-- Action Sheet -->
     <div class="action-sheet" id="actionSheet">
         <h3>O que deseja registrar?</h3>
         <div class="action-grid">
-            <button class="action-btn" id="btn-novo-ganho"
-                    onclick="window.location.href='../transacoes/teclado-valores.html?tipo=ganho'">
+            <button class="action-btn" id="btn-novo-ganho" data-href="../transacoes/teclado-valores.html?tipo=ganho">
                 <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                      stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <line x1="12" y1="5" x2="12" y2="19"></line>
@@ -87,16 +88,14 @@
                 </svg>
                 Novo Ganho
             </button>
-            <button class="action-btn" id="btn-novo-gasto"
-                    onclick="window.location.href='../transacoes/teclado-valores.html?tipo=gasto'">
+            <button class="action-btn" id="btn-novo-gasto" data-href="../transacoes/teclado-valores.html?tipo=gasto">
                 <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                      stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <line x1="5" y1="12" x2="19" y2="12"></line>
                 </svg>
                 Novo Gasto
             </button>
-            <button class="action-btn" id="btn-importar-extrato"
-                    onclick="window.location.href='../upload/extrato-upload.html'">
+            <button class="action-btn" id="btn-importar-extrato" data-href="../upload/extrato-upload.html">
                 <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                      stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
@@ -105,8 +104,7 @@
                 </svg>
                 Importar Extrato
             </button>
-            <button class="action-btn" id="btn-importar-fatura"
-                    onclick="window.location.href='../upload/fatura-upload.html'">
+            <button class="action-btn" id="btn-importar-fatura" data-href="../upload/fatura-upload.html">
                 <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                      stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <rect x="2" y="5" width="20" height="14" rx="2"></rect>
@@ -119,7 +117,7 @@
 
     <!-- Bottom Nav -->
     <nav class="bottom-nav">
-        <button class="nav-btn active" id="nav-painel" onclick="toggleViews()">
+        <button class="nav-btn active" id="nav-painel" data-action="toggle-views">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                  stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <rect x="3" y="3" width="7" height="7"></rect>
@@ -130,7 +128,7 @@
             <span>Painel</span>
         </button>
 
-        <button class="nav-btn-add" id="nav-add" onclick="toggleMenu()" aria-label="Adicionar">
+        <button class="nav-btn-add" id="nav-add" data-action="toggle-menu" aria-label="Adicionar">
             <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                  stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                 <line x1="12" y1="5" x2="12" y2="19"></line>
@@ -138,8 +136,7 @@
             </svg>
         </button>
 
-        <button class="nav-btn" id="nav-perfil"
-                onclick="window.location.href='../profile/usuario.html'">
+        <button class="nav-btn" id="nav-perfil" data-href="../profile/usuario.html">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                  stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
@@ -149,41 +146,5 @@
         </button>
     </nav>
 
-    <script src="../../utils.js"></script>
-    <script>
-        Chart.defaults.font.family = "'Roboto', sans-serif";
-        Chart.defaults.color = '#7f8c8d';
-
-        let anoAtual = new Date().getFullYear();
-        document.getElementById('anoAtual').innerText = anoAtual;
-
-        new Chart(document.getElementById('anualChart').getContext('2d'), {
-            type: 'bar',
-            data: {
-                labels: ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'],
-                datasets: [{
-                    label: 'Gastos',
-                    data: [2800, 2600, 3100, 2900, 3200, 2700, 1900, 3000, 3100, 3500, 4000, 5200],
-                    backgroundColor: '#ACB6E5',
-                    borderRadius: 6,
-                    barPercentage: 0.7
-                }]
-            },
-            options: {
-                responsive: true, maintainAspectRatio: false,
-                plugins: { legend: { display: false } },
-                scales: {
-                    y: { beginAtZero: true, display: false },
-                    x: { grid: { display: false } }
-                }
-            }
-        });
-
-        function mudarAno(dir) {
-            anoAtual += dir;
-            document.getElementById('anoAtual').innerText = anoAtual;
-        }
-    </script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
