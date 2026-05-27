@@ -8,6 +8,8 @@
 
 'use strict';
 
+import { BolsoDB } from './database.js';
+
 // ─────────────────────────────────────────────────────────────
 //  HELPERS INTERNOS
 // ─────────────────────────────────────────────────────────────
@@ -362,7 +364,7 @@ function _exibirMes(mesAno) {
  * Contém toda a lógica de negócio financeiro (Fase 3).
  * Requer que BolsoDB (database.js) já tenha sido carregado e iniciado.
  */
-const BolsoEngine = {
+export const BolsoEngine = {
     virar_mes,
     calcularAlertas,
     exibirAlertas,

@@ -2,6 +2,9 @@
 // Javascript de Controle Específico para a Tela "lista-transacoes.html"
 // Integra com ui.js e database.js
 
+import { BolsoDB } from './database.js';
+import { UI } from './ui.js';
+
 // Variáveis de Estado Internos do Filtro
 let stateFiltroMes = "";
 let stateFiltroCategoria = "Todas as categorias";
@@ -56,24 +59,6 @@ function construirModalMeses() {
 
         selectStr.appendChild(op); // Adiciona a tag <option> criada como filha da tag <select> já existente.
     }
-}
-
-// Interações do Modal de Filtros invocadas pelos botões "Aplicar" e "Resetar"
-window.aplicarFiltrosModal = function () {
-    stateFiltroMes = document.getElementById('filtroSelectMes').value;
-    stateFiltroCategoria = document.getElementById('filtroSelectCategoria').value;
-
-    const textoMes = document.getElementById('filtroSelectMes').options[document.getElementById('filtroSelectMes').selectedIndex].text;
-    document.getElementById('mesSelectLabel').innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="me-1"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon></svg>` + textoMes;
-
-    renderizarTransacoes();
-}
-
-window.limparFiltros = function () {
-    //Ao limpar os filtros, devemos configurar um padrão para o mês atual e para a categoria "Todas as categorias"
-    document.getElementById('filtroSelectMes').selectedIndex = 0; // Volta a HOJE
-    document.getElementById('filtroSelectCategoria').value = "Todas as categorias";
-    aplicarFiltrosModal(); // Aplica automaticamente após limpar
 }
 
 // Motor Mestre de Renderização de UI (Mobile-First) via BolsoDB
@@ -153,13 +138,10 @@ function renderizarTransacoes() {
             `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line></svg>`;
 
         // Atribuição da operação de Exclusão e Edição 
-        // Estas funções serão atribuídas ao atributo onClick de cada Transação que for exibida
-        // O acionamento da deleção/edição será feito mediante ao clique
-        const deleteHandler = isGanho ? `removerTransacao('${item.id}', 'ganho')` : `removerTransacao('${item.id}', 'gasto')`;
-        const editHandler = `abrirModalEdicao('${item.id}')`;
+        // O acionamento da deleção/edição será feito mediante ao clique capturado via event delegation
+        const deleteType = isGanho ? 'ganho' : 'gasto';
 
-        // Aqui estamos adicionando cada transação individual a nossa lista de transações, a qual é descrita dentro do arquivo lista-transacoes.html.
-        // Preste muita atenção às variáveis que são passadas como argumentos dos atributos de cada tag que está sendo construída dentro da string abaixo.
+        // Aqui estamos adicionando cada transação individual a nossa lista
         const li = document.createElement('li');
         li.style.cssText = `border-left: 4px solid ${corHex}; background: #fff; padding: 12px; border-radius: 8px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 1px 4px rgba(0,0,0,0.05);`;
         li.innerHTML = `
@@ -178,11 +160,11 @@ function renderizarTransacoes() {
                 <!-- Editar e Deletar Exclusivos em Telas Viewers -->
                 <div class="d-flex align-items-center gap-2 ms-1">
                     <!-- Botão de Editar -->
-                    <button class="btn btn-sm btn-link text-primary p-0 m-0 opacity-75" onclick="${editHandler}" data-bs-toggle="modal" data-bs-target="#modalEditar" title="Editar lançamento">
+                    <button class="btn btn-sm btn-link text-primary p-0 m-0 opacity-75 editar-transacao" data-id="${item.id}" data-bs-toggle="modal" data-bs-target="#modalEditar" title="Editar lançamento">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
                     </button> 
                     <!-- Botão de Deletar -->
-                    <button class="btn btn-sm btn-link text-danger p-0 m-0 opacity-75" onclick="${deleteHandler}" title="Excluir lançamento">
+                    <button class="btn btn-sm btn-link text-danger p-0 m-0 opacity-75 remover-transacao" data-id="${item.id}" data-type="${deleteType}" title="Excluir lançamento">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
                     </button>
                 </div>
@@ -192,9 +174,57 @@ function renderizarTransacoes() {
     }
 }
 
-// Exportação global (para inline html onClick events)
-// Ao definirmos estas funções globalmente, podemos chamá-las diretamente no HTML sem precisar nos preocupar com escopo.
-window.removerTransacao = function (id, type) {
+// Adicionar Event Listeners
+document.addEventListener("DOMContentLoaded", () => {
+    const btnLimpar = document.getElementById("btnLimparFiltros");
+    if (btnLimpar) btnLimpar.addEventListener("click", limparFiltros);
+
+    const btnAplicar = document.getElementById("btnAplicarFiltros");
+    if (btnAplicar) btnAplicar.addEventListener("click", aplicarFiltrosModal);
+
+    const btnSalvar = document.getElementById("btnSalvarEdicao");
+    if (btnSalvar) btnSalvar.addEventListener("click", salvarEdicaoModal);
+
+    // Event Delegation
+    const listaContainer = document.getElementById("listaTransacoesContainer");
+    if (listaContainer) {
+        listaContainer.addEventListener("click", (e) => {
+            const btnDeletar = e.target.closest(".remover-transacao");
+            if (btnDeletar) {
+                const id = btnDeletar.dataset.id;
+                const type = btnDeletar.dataset.type;
+                removerTransacao(id, type);
+            }
+
+            const btnEditar = e.target.closest(".editar-transacao");
+            if (btnEditar) {
+                const id = btnEditar.dataset.id;
+                abrirModalEdicao(id);
+            }
+        });
+    }
+});
+
+// Funções Removidas do Window, agora locais:
+function aplicarFiltrosModal() {
+    stateFiltroMes = document.getElementById('filtroSelectMes').value;
+    stateFiltroCategoria = document.getElementById('filtroSelectCategoria').value;
+
+    const textoMes = document.getElementById('filtroSelectMes').options[document.getElementById('filtroSelectMes').selectedIndex].text;
+
+    // Este HTML que está sendo injetado corresponde ao símbolo de funil junto do nome do mês que são exibidos ao selecionarmos um determinado mês como filtro 
+    document.getElementById('mesSelectLabel').innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="me-1"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon></svg>` + textoMes;
+
+    renderizarTransacoes();
+}
+
+function limparFiltros() {
+    document.getElementById('filtroSelectMes').selectedIndex = 0; // Posiciona a primeira opção de filtro como sendo a que está selecionada 
+    document.getElementById('filtroSelectCategoria').value = "Todas as categorias"; //Ao 
+    aplicarFiltrosModal(); // Aplica automaticamente após limpar
+}
+
+function removerTransacao(id, type) {
     if (confirm("🚨 Tem certeza que deseja apagar essa transação permanente? Esse valor irá refletir o seu saldo principal.")) {
         if (type === 'gasto') {
             const arr = BolsoDB.getTransacoes();
@@ -207,12 +237,11 @@ window.removerTransacao = function (id, type) {
         } else {
             BolsoDB.removerGanho(id);
         }
-        // UI Repaint - Efeito Fluid
         renderizarTransacoes();
     }
 }
 
-window.abrirModalEdicao = function (id) {
+function abrirModalEdicao(id) {
     const arr = BolsoDB.getTransacoes();
     const trx = arr.find(e => e.id === id);
     if (!trx) return;
@@ -246,7 +275,7 @@ window.abrirModalEdicao = function (id) {
     }
 }
 
-window.salvarEdicaoModal = function () {
+function salvarEdicaoModal() {
     const id = document.getElementById('editTransacaoId').value;
     const nome = document.getElementById('editTransacaoNome').value;
     const valor = parseFloat(document.getElementById('editTransacaoValor').value);
@@ -259,9 +288,7 @@ window.salvarEdicaoModal = function () {
 
     const payload = { nome, valor, categoria };
 
-    // Envia para o motor de estado global (calculo matemático de delta acontece la dentro)
     if (BolsoDB.editarTransacao(id, payload)) {
-        // UI Repaint - Efeito Fluid instantâneo na listagem
         renderizarTransacoes();
     } else {
         alert("Houve um problema ao editar a transação.");

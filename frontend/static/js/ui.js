@@ -7,6 +7,9 @@
 
 'use strict';
 
+import { BolsoDB } from './database.js';
+import { BolsoEngine } from './engine.js';
+
 // ─────────────────────────────────────────────────────────────
 //  FORMATAÇÃO
 // ─────────────────────────────────────────────────────────────
@@ -423,7 +426,7 @@ function renderOverview(charts = {}) {
 //  EXPOSIÇÃO PÚBLICA
 // ─────────────────────────────────────────────────────────────
 
-const UI = {
+export const UI = {
     renderSaldo,
     renderTransacoes,
     renderAlertas,

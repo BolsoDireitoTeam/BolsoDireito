@@ -4,12 +4,12 @@
 // ============================================================
 
 /** Formata uma data para pt-BR longa. */
-function FormatDate(date) {
+export function FormatDate(date) {
     return date.toLocaleDateString('pt-BR', { year: 'numeric', month: 'long', day: 'numeric' });
 }
 
 /** Formata um número para moeda brasileira. */
-function formatarMoeda(valor) {
+export function formatarMoeda(valor) {
     return 'R$ ' + Number(valor).toFixed(2).replace('.', ',');
 }
 
@@ -17,7 +17,7 @@ function formatarMoeda(valor) {
  * Alterna entre overview.html ↔ view-mensal.html.
  * Usado pelo botão "Painel" na bottom-nav.
  */
-function toggleViews() {
+export function toggleViews() {
     const path = window.location.pathname;
     if (path.includes('overview.html')) {
         window.location.href = 'view-mensal.html';
@@ -32,7 +32,7 @@ function toggleViews() {
  * Abre/fecha o Action Sheet e seu overlay.
  * Os IDs padrão são: 'actionSheet' e 'menuOverlay'.
  */
-function toggleMenu() {
+export function toggleMenu() {
     const sheet   = document.getElementById('actionSheet');
     const overlay = document.getElementById('menuOverlay');
     if (sheet)   sheet.classList.toggle('active');

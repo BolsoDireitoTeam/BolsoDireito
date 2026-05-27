@@ -9,12 +9,32 @@
 
 'use strict';
 
+import { BolsoDB } from './database.js';
+import { BolsoEngine } from './engine.js';
+import { UI } from './ui.js';
+import { toggleMenu } from '../../utils.js';
+
 // ─────────────────────────────────────────────────────────────
-//  INICIALIZAÇÃO GLOBAL
+//  INICIALIZAÇÃO GLOBAL STRINGS e EVENT DELEGATION
 //  Executado em TODAS as páginas que carregam este script.
 // ─────────────────────────────────────────────────────────────
 
 document.addEventListener('DOMContentLoaded', () => {
+    // Escuta global para navegação em arquivos limpos
+    document.addEventListener('click', (e) => {
+        const btn = e.target.closest('button, .upload-area, .action-sheet-overlay');
+        if (!btn) return;
+
+        if (btn.dataset.href) {
+            window.location.href = btn.dataset.href;
+            return;
+        }
+
+        const action = btn.dataset.action;
+        if (action === 'back') history.back();
+        if (action === 'toggle-menu') toggleMenu();
+        if (action === 'toggle-views') toggleViews();
+    });
     // 1 - Injeta Layouts Universais (Custom Elements)
     _injectFooter();
 
@@ -28,8 +48,12 @@ document.addEventListener('DOMContentLoaded', () => {
         // Apenas precisamos nos preocupar caso alguma destas páginas esteja ativa, posto que daí teremos que destacar o ícone presente no rodapé da página.
         case 'overview': initOverview(); break;
         case 'view-mensal': initViewMensal(); break;
+        case 'view-anual': initViewAnual(); break;
         case 'teclado-valores': initTecladoValores(); break;
         case 'escolher-tipo': initEscolherTipo(); break;
+        case 'escolher-categoria': initEscolherCategoria(); break;
+        case 'upload-extrato': initUploadExtrato(); break;
+        case 'upload-fatura': initUploadFatura(); break;
         default: break;
     }
 });
@@ -38,7 +62,7 @@ document.addEventListener('DOMContentLoaded', () => {
 //  PÁGINA: overview.html
 // ─────────────────────────────────────────────────────────────
 
-function initOverview() {
+export function initOverview() {
     // Renderização inicial completa
     let charts = UI.renderOverview();
 
@@ -85,7 +109,7 @@ function initOverview() {
 //  PÁGINA: view-mensal.html
 // ─────────────────────────────────────────────────────────────
 
-function initViewMensal() {
+export function initViewMensal() {
     const hoje = new Date();
     let anoAtual = hoje.getFullYear();
     let mesIndex = hoje.getMonth(); // 0-indexed
@@ -124,10 +148,63 @@ function initViewMensal() {
 }
 
 // ─────────────────────────────────────────────────────────────
+//  PÁGINA: view-anual.html
+// ─────────────────────────────────────────────────────────────
+
+export function initViewAnual() {
+    // Chart.js é carregado via CDN no <head> do HTML (variável global Chart)
+    if (typeof Chart !== 'undefined') {
+        Chart.defaults.font.family = "'Roboto', sans-serif";
+        Chart.defaults.color = '#7f8c8d';
+    }
+
+    let anoAtual = new Date().getFullYear();
+    const anoDisplay = document.getElementById('anoAtual');
+    if (anoDisplay) anoDisplay.innerText = anoAtual;
+
+    // Criação do gráfico de barras anual
+    const canvas = document.getElementById('anualChart');
+    if (canvas && typeof Chart !== 'undefined') {
+        new Chart(canvas.getContext('2d'), {
+            type: 'bar',
+            data: {
+                labels: ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'],
+                datasets: [{
+                    label: 'Gastos',
+                    data: [2800, 2600, 3100, 2900, 3200, 2700, 1900, 3000, 3100, 3500, 4000, 5200],
+                    backgroundColor: '#ACB6E5',
+                    borderRadius: 6,
+                    barPercentage: 0.7
+                }]
+            },
+            options: {
+                responsive: true, maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    y: { beginAtZero: true, display: false },
+                    x: { grid: { display: false } }
+                }
+            }
+        });
+    }
+
+    // Navegação de anos
+    function mudarAno(dir) {
+        anoAtual += dir;
+        if (anoDisplay) anoDisplay.innerText = anoAtual;
+    }
+
+    const btnPrev = document.getElementById('btn-ano-prev');
+    const btnNext = document.getElementById('btn-ano-next');
+    if (btnPrev) btnPrev.addEventListener('click', () => mudarAno(-1));
+    if (btnNext) btnNext.addEventListener('click', () => mudarAno(1));
+}
+
+// ─────────────────────────────────────────────────────────────
 //  PÁGINA: teclado-valores.html
 // ─────────────────────────────────────────────────────────────
 
-function initTecladoValores() {
+export function initTecladoValores() {
     const params = new URLSearchParams(window.location.search);
     const tipo = params.get('tipo'); // 'ganho' | 'gasto'
 
@@ -143,9 +220,66 @@ function initTecladoValores() {
 
     // Substitui o confirmarValor() inline do HTML pelo handler real
     const btnConfirmar = document.getElementById('btn-confirmar');
+
+    // -- Lógica da Calculadora --
+    let expressao = '';
+    const visorEq = document.getElementById('visorEquacao');
+    const visorRes = document.getElementById('visorResultado');
+
+    function formatar(v) { return 'R$ ' + v.toFixed(2).replace('.', ','); }
+
+    function atualizar() {
+        if(visorEq) visorEq.innerText = expressao || '0';
+        try {
+            let expr = expressao.replaceAll(",", ".");
+            if (/[+\-]$/.test(expr)) expr = expr.slice(0, -1);
+            if (expr) {
+                if(visorRes) visorRes.innerText = formatar(eval(expr));
+            } else {
+                if(visorRes) visorRes.innerText = 'R$ 0,00';
+            }
+        } catch (e) {
+            if(visorRes) visorRes.innerText = 'Err';
+            if(visorEq) visorEq.innerText = 'Err';
+        }
+    }
+
+    function inserir(c) {
+        const last = expressao.slice(-1);
+        if (['+', '-'].includes(c) && ['+', '-'].includes(last)) return;
+        expressao += c;
+        atualizar();
+    }
+
+    function apagar() { expressao = expressao.slice(0, -1); atualizar(); }
+    function limpar() { expressao = ''; atualizar(); }
+
+    function calcular() {
+        try {
+            let expr = expressao.replace(/,/g, '.');
+            expressao = eval(expr).toString().replace('.', ',');
+            atualizar();
+        } catch (e) {
+            alert('Expressão inválida');
+        }
+    }
+
+    const calcKeypad = document.querySelector('.calc-keypad');
+    if (calcKeypad) {
+        calcKeypad.addEventListener('click', (e) => {
+            const btn = e.target.closest('.calc-btn');
+            if (!btn) return;
+            const action = btn.dataset.calc;
+            if (action === 'inserir') inserir(btn.dataset.val);
+            else if (action === 'apagar') apagar();
+            else if (action === 'calcular') calcular();
+            else if (action === 'limpar') limpar();
+        });
+    }
+
     if (!btnConfirmar) return;
 
-    btnConfirmar.onclick = () => {
+    btnConfirmar.addEventListener('click', () => {
         // Lê o valor calculado do visor (usando o valor já avaliado)
         const visorRes = document.getElementById('visorResultado');
         const textoVisor = visorRes ? visorRes.textContent : 'R$ 0,00';
@@ -177,14 +311,110 @@ function initTecladoValores() {
             localStorage.setItem('valorTemporario', valor);
             window.location.href = 'escolher-categoria.html';
         }
-    };
+    });
+}
+
+// ─────────────────────────────────────────────────────────────
+//  PÁGINA: escolher-categoria.html
+// ─────────────────────────────────────────────────────────────
+
+export function initEscolherCategoria() {
+    const valor = localStorage.getItem('valorTemporario');
+    if (valor) {
+        const valorDisplay = document.getElementById('valorDisplay');
+        if (valorDisplay) valorDisplay.innerText = 'R$ ' + parseFloat(valor).toFixed(2).replace('.', ',');
+    } else {
+        alert('Nenhum valor definido. Voltando...');
+        window.location.href = 'teclado-valores.html?tipo=gasto';
+        return;
+    }
+
+    const categorias = ['Lazer', 'Transporte', 'Saúde', 'Alimentação', 'Moradia', 'Outros'];
+    const lista = document.getElementById('listaCategorias');
+    if (lista) {
+        categorias.forEach(cat => {
+            const btn = document.createElement('button');
+            btn.className = 'menu-btn-wide';
+            btn.textContent = cat;
+            lista.appendChild(btn);
+        });
+
+        lista.addEventListener('click', (e) => {
+            const btn = e.target.closest('.menu-btn-wide');
+            if (btn) {
+                localStorage.setItem('categoriaTemporaria', btn.textContent);
+                window.location.href = 'escolher-tipo-gasto.html';
+            }
+        });
+    }
+}
+
+// ─────────────────────────────────────────────────────────────
+//  PÁGINA: upload-extrato / upload-fatura
+// ─────────────────────────────────────────────────────────────
+
+export function initUploadExtrato() {
+    _initGenericoUpload('extrato.csv', '../dashboard/overview.html', 'Lendo movimentações da conta corrente...\n\n(Na Fase 4, isso atualizará o Saldo e o Extrato automaticamente!)');
+}
+
+export function initUploadFatura() {
+    _initGenericoUpload('fatura.csv', '../dashboard/overview.html', 'Lendo colunas e processando o arquivo...\n\n(Na Fase 4, isso transformará os dados em gastos na tela de Overview!)');
+}
+
+function _initGenericoUpload(defaultFileName, redirectUrl, alertMsg) {
+    function toggleTutorial() {
+        const content = document.getElementById('tutorialContent');
+        const icon    = document.getElementById('chevronIcon');
+        if (!content || !icon) return;
+        content.classList.toggle('active');
+        icon.style.transform = content.classList.contains('active') ? 'rotate(180deg)' : 'rotate(0deg)';
+    }
+
+    function handleFile(e) {
+        const file = e.target.files[0];
+        const zone = document.getElementById('dropZone');
+        const fb   = document.getElementById('fileFeedback');
+        if (!file) return;
+        if (!file.name.endsWith('.csv')) {
+            alert('Selecione apenas arquivos .csv');
+            e.target.value = '';
+            return;
+        }
+        const fileNameEl = document.getElementById('fileName');
+        if (fileNameEl) fileNameEl.innerText = file.name;
+        if (fb) fb.style.display = 'flex';
+        if (zone) {
+            zone.style.borderColor = 'var(--bd-primary)';
+            zone.style.background  = '#f0fdfa';
+        }
+    }
+
+    function processarFile() {
+        const input = document.getElementById('csvInput');
+        if (!input || !input.files.length) { alert('Anexe um arquivo primeiro!'); return; }
+        alert(alertMsg);
+        window.location.href = redirectUrl;
+    }
+
+    const btnTutorial = document.getElementById('btn-tutorial');
+    if (btnTutorial) btnTutorial.addEventListener('click', toggleTutorial);
+
+    const dropZone = document.getElementById('dropZone');
+    const csvInput = document.getElementById('csvInput');
+    if (dropZone && csvInput) {
+        dropZone.addEventListener('click', () => csvInput.click());
+        csvInput.addEventListener('change', handleFile);
+    }
+
+    const btnProcessar = document.getElementById('btn-processar');
+    if (btnProcessar) btnProcessar.addEventListener('click', processarFile);
 }
 
 // ─────────────────────────────────────────────────────────────
 //  PÁGINA: escolher-tipo-gasto.html
 // ─────────────────────────────────────────────────────────────
 
-function initEscolherTipo() {
+export function initEscolherTipo() {
     const valor = parseFloat(localStorage.getItem('valorTemporario') ?? '0');
     const categoria = localStorage.getItem('categoriaTemporaria') ?? '';
 
@@ -276,26 +506,26 @@ function _injectFooter() {
     // Template fixo contendo Overlay + FormSheet + NavGlobal
     const htmlString = `
     <!-- Action Sheet Overlay -->
-    <div class="action-sheet-overlay" id="menuOverlay" onclick="typeof toggleMenu === 'function' ? toggleMenu() : _fecharActionSheet()"></div>
+    <div class="action-sheet-overlay" id="menuOverlay"></div>
 
     <!-- Action Sheet Form -->
     <div class="action-sheet" id="actionSheet">
         <h3 style="margin-bottom: 24px; text-align: center; color: #333; font-size: 1.1rem;">O que deseja registrar?</h3>
         <div class="action-grid">
-            <button class="action-btn" id="btn-novo-ganho" onclick="window.location.href='../transacoes/teclado-valores.html?tipo=ganho'">
+            <button class="action-btn" id="btn-novo-ganho">
                 <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <line x1="12" y1="5" x2="12" y2="19"></line>
                     <line x1="5" y1="12" x2="19" y2="12"></line>
                 </svg>
                 Novo Ganho
             </button>
-            <button class="action-btn" id="btn-novo-gasto" onclick="window.location.href='../transacoes/teclado-valores.html?tipo=gasto'">
+            <button class="action-btn" id="btn-novo-gasto">
                 <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <line x1="5" y1="12" x2="19" y2="12"></line>
                 </svg>
                 Novo Gasto
             </button>
-            <button class="action-btn" id="btn-importar-extrato" onclick="window.location.href='../upload/extrato-upload.html'">
+            <button class="action-btn" id="btn-importar-extrato">
                 <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
                     <polyline points="17 8 12 3 7 8"></polyline>
@@ -303,7 +533,7 @@ function _injectFooter() {
                 </svg>
                 Importar Extrato
             </button>
-            <button class="action-btn" id="btn-importar-fatura" onclick="window.location.href='../upload/fatura-upload.html'">
+            <button class="action-btn" id="btn-importar-fatura">
                 <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <rect x="2" y="5" width="20" height="14" rx="2"></rect>
                     <line x1="2" y1="10" x2="22" y2="10"></line>
@@ -324,7 +554,7 @@ function _injectFooter() {
 
     <!-- Bottom Nav Engine -->
     <nav class="bottom-nav">
-        <button class="nav-btn ${activePage === 'overview' ? 'active' : ''}" id="nav-painel" onclick="window.location.href='../dashboard/overview.html'">
+        <button class="nav-btn ${activePage === 'overview' ? 'active' : ''}" id="nav-painel">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <rect x="3" y="3" width="7" height="7"></rect>
                 <rect x="14" y="3" width="7" height="7"></rect>
@@ -334,14 +564,14 @@ function _injectFooter() {
             <span>Painel</span>
         </button>
 
-        <button class="nav-btn-add" id="nav-add" onclick="typeof toggleMenu === 'function' ? toggleMenu() : alert('Action Menu requisitado')" aria-label="Adicionar">
+        <button class="nav-btn-add" id="nav-add" aria-label="Adicionar">
             <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                 <line x1="12" y1="5" x2="12" y2="19"></line>
                 <line x1="5" y1="12" x2="19" y2="12"></line>
             </svg>
         </button>
 
-        <button class="nav-btn ${activePage === 'perfil' ? 'active' : ''}" id="nav-perfil" onclick="window.location.href='../profile/usuario.html'">
+        <button class="nav-btn ${activePage === 'perfil' ? 'active' : ''}" id="nav-perfil">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
                 <circle cx="12" cy="7" r="4"></circle>
@@ -351,6 +581,16 @@ function _injectFooter() {
     </nav>`;
 
     bdFooterTag.innerHTML = htmlString;
+
+    // Conectar Event Listeners da UI injetada
+    document.getElementById('menuOverlay')?.addEventListener('click', () => { toggleMenu(); });
+    document.getElementById('btn-novo-ganho')?.addEventListener('click', () => { window.location.href='../transacoes/teclado-valores.html?tipo=ganho'; });
+    document.getElementById('btn-novo-gasto')?.addEventListener('click', () => { window.location.href='../transacoes/teclado-valores.html?tipo=gasto'; });
+    document.getElementById('btn-importar-extrato')?.addEventListener('click', () => { window.location.href='../upload/extrato-upload.html'; });
+    document.getElementById('btn-importar-fatura')?.addEventListener('click', () => { window.location.href='../upload/fatura-upload.html'; });
+    document.getElementById('nav-painel')?.addEventListener('click', () => { window.location.href='../dashboard/overview.html'; });
+    document.getElementById('nav-add')?.addEventListener('click', () => { toggleMenu(); });
+    document.getElementById('nav-perfil')?.addEventListener('click', () => { window.location.href='../profile/usuario.html'; });
 }
 
 /**

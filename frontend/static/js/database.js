@@ -628,7 +628,7 @@ function initDB() {
  * Todas as funções que o restante do app (e os testes no console) devem usar
  * estão expostas aqui. Variáveis internas (_state, etc.) ficam encapsuladas.
  */
-const BolsoDB = { //Este objeto está sendo declarado dentro de um contexto local, por conta da declaração com "const", logo, ele não será atributo do objeto global "window".
+export const BolsoDB = { //Este objeto está sendo declarado dentro de um contexto local, por conta da declaração com "const", logo, ele não será atributo do objeto global "window".
     // ── Setup ──────────────────────────────────────────
     init: initDB,
     reset: resetarEstado,
