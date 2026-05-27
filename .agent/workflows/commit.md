@@ -11,6 +11,7 @@ Todo commit gerado para este projeto deve aderir ao seguinte formato:
      - Não usar letra maiúscula no início do descritivo do título.
 - **Corpo**: Sempre deve haver um corpo descritivo com o resumo da solução gerada listado **imperativamente** utilizando ponteiros em listas (bullet points) no formato `* texto detalhado`. Evite parágrafos textuais e maçantes longos.
 - **Idioma**: Português do Brasil (pt-BR).
+Além disso, devemos sempre tentar optar por uma linguagem mais simples, visando o melhor entendimento do leitor.
 
 **Exemplo da visualização desejada:**
 `feat(transacoes): integração do modal HTML e banco de dados`

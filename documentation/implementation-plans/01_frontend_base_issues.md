@@ -20,14 +20,14 @@
 
 ---
 
-## Issue #1: Refinamento da Navegação Principal (Hub)
+## Issue #1: Refinamento da Navegação Principal (Hub) ✅
 **Descrição:** Para não termos páginas "soltas" e difíceis de testar, a primeira criação técnica será plugar os novos links de Navegação.
 * **Arquivos Afetados:** `[MODIFY] frontend/pages/profile/usuario.html`
 * **Tarefas da Issue:** Inserir 4 botões na interface do usuário (Acesso a Administrador, Extrato, Metas e Investimentos).
 
 ---
 
-## Issue #2: Módulo da Entidade "Transação"
+## Issue #2: Módulo da Entidade "Transação" ✅
 **Descrição:** Construção da interface raiz para a entidade de **Transação** registrada na Matriz de Casos de Uso. Esta será a listagem oficial vinculada ao usuário para apresentar sua timeline de rendas e gastos.
 * **Arquivos Afetados:** `[NEW] frontend/pages/transacoes/lista-transacoes.html` (antigo extrato).
 * **Tarefas da Issue:** Criar HTML da lista de transações baseada num mock visual temporal e incorporar controles de filtragem/gestão da entidade.
