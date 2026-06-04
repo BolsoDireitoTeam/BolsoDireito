@@ -19,7 +19,7 @@ import { toggleMenu } from '../../utils.js';
 //  Executado em TODAS as páginas que carregam este script.
 // ─────────────────────────────────────────────────────────────
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
     // Escuta global para navegação em arquivos limpos
     document.addEventListener('click', (e) => {
         const btn = e.target.closest('button, .upload-area, .action-sheet-overlay');
@@ -35,8 +35,8 @@ document.addEventListener('DOMContentLoaded', () => {
         if (action === 'toggle-menu') toggleMenu();
         if (action === 'toggle-views') toggleViews();
     });
-    // 1 - Injeta Layouts Universais (Custom Elements)
-    _injectFooter();
+    // 1 - Injeta Layouts Universais (Custom Elements) assincronamente
+    await _injectFooter();
 
     // 2 - Inicializa o banco de dados local (carrega do localStorage)
     BolsoDB.init();
@@ -168,7 +168,7 @@ export function initViewAnual() {
         new Chart(canvas.getContext('2d'), {
             type: 'bar',
             data: {
-                labels: ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'],
+                labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'],
                 datasets: [{
                     label: 'Gastos',
                     data: [2800, 2600, 3100, 2900, 3200, 2700, 1900, 3000, 3100, 3500, 4000, 5200],
@@ -229,18 +229,18 @@ export function initTecladoValores() {
     function formatar(v) { return 'R$ ' + v.toFixed(2).replace('.', ','); }
 
     function atualizar() {
-        if(visorEq) visorEq.innerText = expressao || '0';
+        if (visorEq) visorEq.innerText = expressao || '0';
         try {
             let expr = expressao.replaceAll(",", ".");
             if (/[+\-]$/.test(expr)) expr = expr.slice(0, -1);
             if (expr) {
-                if(visorRes) visorRes.innerText = formatar(eval(expr));
+                if (visorRes) visorRes.innerText = formatar(eval(expr));
             } else {
-                if(visorRes) visorRes.innerText = 'R$ 0,00';
+                if (visorRes) visorRes.innerText = 'R$ 0,00';
             }
         } catch (e) {
-            if(visorRes) visorRes.innerText = 'Err';
-            if(visorEq) visorEq.innerText = 'Err';
+            if (visorRes) visorRes.innerText = 'Err';
+            if (visorEq) visorEq.innerText = 'Err';
         }
     }
 
@@ -364,7 +364,7 @@ export function initUploadFatura() {
 function _initGenericoUpload(defaultFileName, redirectUrl, alertMsg) {
     function toggleTutorial() {
         const content = document.getElementById('tutorialContent');
-        const icon    = document.getElementById('chevronIcon');
+        const icon = document.getElementById('chevronIcon');
         if (!content || !icon) return;
         content.classList.toggle('active');
         icon.style.transform = content.classList.contains('active') ? 'rotate(180deg)' : 'rotate(0deg)';
@@ -373,7 +373,7 @@ function _initGenericoUpload(defaultFileName, redirectUrl, alertMsg) {
     function handleFile(e) {
         const file = e.target.files[0];
         const zone = document.getElementById('dropZone');
-        const fb   = document.getElementById('fileFeedback');
+        const fb = document.getElementById('fileFeedback');
         if (!file) return;
         if (!file.name.endsWith('.csv')) {
             alert('Selecione apenas arquivos .csv');
@@ -385,7 +385,7 @@ function _initGenericoUpload(defaultFileName, redirectUrl, alertMsg) {
         if (fb) fb.style.display = 'flex';
         if (zone) {
             zone.style.borderColor = 'var(--bd-primary)';
-            zone.style.background  = '#f0fdfa';
+            zone.style.background = '#f0fdfa';
         }
     }
 
@@ -494,103 +494,61 @@ export function initEscolherTipo() {
 // ─────────────────────────────────────────────────────────────
 
 /**
- * Injeta o Action Sheet e o Bottom Nav em tags <bd-footer>
+ * Injeta o Action Sheet e o Bottom Nav em tags <bd-footer>.
+ * Busca de arquivo HTML externo e manipulação virtual
+ * para injeção programática de estados antes de afetar o DOM real.
  */
-function _injectFooter() {
-    const bdFooterTag = document.querySelector('bd-footer');
+async function _injectFooter() {
+    const bdFooterTag = document.querySelector('bd-footer'); //busca a tag html <bd-footer>
     if (!bdFooterTag) return;
 
     // Identifica a página atual (overview, transacoes, perfil, configuracao)
     const activePage = bdFooterTag.getAttribute('active-page') || '';
 
-    // Template fixo contendo Overlay + FormSheet + NavGlobal
-    const htmlString = `
-    <!-- Action Sheet Overlay -->
-    <div class="action-sheet-overlay" id="menuOverlay"></div>
+    try {
+        // 1. Fetching Assíncrono: Busca o HTML base do rodapé no servidor local
+        // Foi preciso trocar footer.html por footer.txt para que o fetch funcionasse enquanto estivessemos utilizando da extensão do Live Server!
+        const response = await fetch('../../components/footer.txt');
+        //O conteúdo abaixo só é executado quando o fetch tiver retornado!
+        //...
+        if (!response.ok) throw new Error('Falha ao buscar footer.html');
 
-    <!-- Action Sheet Form -->
-    <div class="action-sheet" id="actionSheet">
-        <h3 style="margin-bottom: 24px; text-align: center; color: #333; font-size: 1.1rem;">O que deseja registrar?</h3>
-        <div class="action-grid">
-            <button class="action-btn" id="btn-novo-ganho">
-                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <line x1="12" y1="5" x2="12" y2="19"></line>
-                    <line x1="5" y1="12" x2="19" y2="12"></line>
-                </svg>
-                Novo Ganho
-            </button>
-            <button class="action-btn" id="btn-novo-gasto">
-                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <line x1="5" y1="12" x2="19" y2="12"></line>
-                </svg>
-                Novo Gasto
-            </button>
-            <button class="action-btn" id="btn-importar-extrato">
-                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                    <polyline points="17 8 12 3 7 8"></polyline>
-                    <line x1="12" y1="3" x2="12" y2="15"></line>
-                </svg>
-                Importar Extrato
-            </button>
-            <button class="action-btn" id="btn-importar-fatura">
-                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <rect x="2" y="5" width="20" height="14" rx="2"></rect>
-                    <line x1="2" y1="10" x2="22" y2="10"></line>
-                </svg>
-                Importar Fatura
-            </button>
-            ${activePage === 'overview' ? `
-            <button class="action-btn" id="btn-virar-mes" style="grid-column: 1 / -1;">
-                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <polyline points="23 4 23 10 17 10"/>
-                    <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>
-                </svg>
-                Virar Mês
-            </button>
-            ` : ''}
-        </div>
-    </div>
+        // Extrai o texto puro da requisição HTTP
+        const htmlStr = await response.text();
 
-    <!-- Bottom Nav Engine -->
-    <nav class="bottom-nav">
-        <button class="nav-btn ${activePage === 'overview' ? 'active' : ''}" id="nav-painel">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="3" y="3" width="7" height="7"></rect>
-                <rect x="14" y="3" width="7" height="7"></rect>
-                <rect x="14" y="14" width="7" height="7"></rect>
-                <rect x="3" y="14" width="7" height="7"></rect>
-            </svg>
-            <span>Painel</span>
-        </button>
+        //Este conteúdo abaixo é apenas executado quando o response.text() tiver sido retornado!
+        //...
 
-        <button class="nav-btn-add" id="nav-add" aria-label="Adicionar">
-            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                <line x1="12" y1="5" x2="12" y2="19"></line>
-                <line x1="5" y1="12" x2="19" y2="12"></line>
-            </svg>
-        </button>
+        // 2. Criação do DOM Virtual: Parser lê a string "morta" e converte numa árvore de elementos real
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(htmlStr, 'text/html');
 
-        <button class="nav-btn ${activePage === 'perfil' ? 'active' : ''}" id="nav-perfil">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                <circle cx="12" cy="7" r="4"></circle>
-            </svg>
-            <span>Perfil</span>
-        </button>
-    </nav>`;
+        // 3. Estilização Dinâmica: Adiciona a classe '.active' visualmente baseando-se no contexto atual.
+        // Este trecho de código if..else abaixo faz com que consigamos sinalizar, por meio de uma cor,
+        // o item do menu inferior que deve ficar em evidência de acordo com a página que estivermos navegando.
+        if (activePage === 'overview') {
+            doc.getElementById('nav-painel')?.classList.add('active');
+            // A adição desta classe fará com que o CSS consiga identificar que deve aplicar uma diferenciação de cor.
+        } else if (activePage === 'perfil') {
+            doc.getElementById('nav-perfil')?.classList.add('active');
+        }
 
-    bdFooterTag.innerHTML = htmlString;
+        // 4. Injeção Final: Transfere a árvore preenchida e manipulada para a tela do usuário
+        bdFooterTag.innerHTML = doc.body.innerHTML;
 
-    // Conectar Event Listeners da UI injetada
-    document.getElementById('menuOverlay')?.addEventListener('click', () => { toggleMenu(); });
-    document.getElementById('btn-novo-ganho')?.addEventListener('click', () => { window.location.href='../transacoes/teclado-valores.html?tipo=ganho'; });
-    document.getElementById('btn-novo-gasto')?.addEventListener('click', () => { window.location.href='../transacoes/teclado-valores.html?tipo=gasto'; });
-    document.getElementById('btn-importar-extrato')?.addEventListener('click', () => { window.location.href='../upload/extrato-upload.html'; });
-    document.getElementById('btn-importar-fatura')?.addEventListener('click', () => { window.location.href='../upload/fatura-upload.html'; });
-    document.getElementById('nav-painel')?.addEventListener('click', () => { window.location.href='../dashboard/overview.html'; });
-    document.getElementById('nav-add')?.addEventListener('click', () => { toggleMenu(); });
-    document.getElementById('nav-perfil')?.addEventListener('click', () => { window.location.href='../profile/usuario.html'; });
+        // 5. Acoplamento de Ações: Conecta Event Listeners da UI injetada agora que ela existe fisicamente
+        document.getElementById('menuOverlay')?.addEventListener('click', () => { toggleMenu(); });
+        document.getElementById('btn-novo-ganho')?.addEventListener('click', () => { window.location.href = '../transacoes/teclado-valores.html?tipo=ganho'; });
+        document.getElementById('btn-novo-gasto')?.addEventListener('click', () => { window.location.href = '../transacoes/teclado-valores.html?tipo=gasto'; });
+        document.getElementById('btn-importar-extrato')?.addEventListener('click', () => { window.location.href = '../upload/extrato-upload.html'; });
+        document.getElementById('btn-importar-fatura')?.addEventListener('click', () => { window.location.href = '../upload/fatura-upload.html'; });
+        document.getElementById('nav-painel')?.addEventListener('click', () => { window.location.href = '../dashboard/overview.html'; });
+        document.getElementById('nav-add')?.addEventListener('click', () => { toggleMenu(); });
+        document.getElementById('nav-perfil')?.addEventListener('click', () => { window.location.href = '../profile/usuario.html'; });
+
+    } catch (err) {
+        console.error('[App] Erro crítico ao injetar footer isolado:', err);
+    }
 }
 
 /**
